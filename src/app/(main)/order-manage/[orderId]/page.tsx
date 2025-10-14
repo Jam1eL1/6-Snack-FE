@@ -39,7 +39,7 @@ export default function OrderManageDetailPage() {
   // TODO - shipppingFee 없에고 orderRequest.deliveryFee 참조
   const calculatedTotal: number =
     orderRequest?.products?.reduce((sum: number, item) => sum + item.price * item.quantity, 0) || 0;
-  const shippingFee: number = 3000;
+  const shippingFee: number = 5;
   const finalTotal: number = calculatedTotal + shippingFee;
 
   const currentMonthBudget = orderRequest?.budget?.currentMonthBudget || 0;

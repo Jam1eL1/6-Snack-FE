@@ -92,7 +92,7 @@ export default function OrderItem({ isPending, cartItems }: TOrderItemProps) {
           <div className="flex justify-between items-center w-full">
             <p className="font-bold text-[18px]/[22px] tracking-tight text-primary-950">총 주문금액</p>
             <p className="font-extrabold text-[18px]/[22px] tracking-tight text-primary-950 sm:text-[24px]/[30px]">
-              {formatPrice(totalPrice ? totalPrice + 3000 : 0)}원
+              ${formatPrice(totalPrice ? totalPrice + 5 : 0)}
             </p>
           </div>
         </div>
