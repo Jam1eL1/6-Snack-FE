@@ -10,11 +10,7 @@ const nextConfig: NextConfig = {
   //   ignoreBuildErrors: true, // TypeScript 오류도 무시하려면
   // },
   images: {
-    remotePatterns: [
-      { hostname: "example.com" },
-      { hostname: "team3-snack-s3.s3.amazonaws.com" },
-      { hostname: "d2beg4tvxabcw1.cloudfront.net" },
-    ],
+    remotePatterns: [{ hostname: "example.com" }, { hostname: "snack-s3-bucket-2025.s3.us-west-2.amazonaws.com" }],
   },
 };
 
