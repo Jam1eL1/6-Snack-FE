@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 
-// 쿠키에서 토큰 가져오는 함수 (클라이언트)
+// Function to get token from cookie (client)
 export function getTokenFromCookie() {
   if (typeof window === "undefined") return null;
 
@@ -9,20 +9,20 @@ export function getTokenFromCookie() {
   return tokenCookie ? tokenCookie.trim().split("=")[1] : null;
 }
 
-// 서버에서 쿠키에서 토큰 가져오는 함수
+// Function to get token from cookie on server
 export async function getTokenFromServerCookie() {
   const cookieStore = await cookies();
   return cookieStore.get("accessToken")?.value || null;
 }
 
-// 쿠키에 토큰 저장 함수 (서버, 클라이언트 환경 어디에서든 자유롭게 사용 가능)
+// Function to save token to cookie (can be used freely in both server and client environments)
 export function setTokensToCookie(accessToken: string, refreshToken?: string) {
   if (typeof window === "undefined") {
-    // 서버 환경인 경우
+    // In server environment
     return setServerSideTokens(accessToken, refreshToken);
   }
 
-  // 브라우저 환경인 경우
+  // In browser environment
   const accessTokenData = JSON.parse(atob(accessToken.split(".")[1]));
   const accessTokenExpiresIn = accessTokenData.exp - Math.floor(Date.now() / 1000);
 
@@ -35,7 +35,7 @@ export function setTokensToCookie(accessToken: string, refreshToken?: string) {
   }
 }
 
-// 서버 사이드 토큰 설정
+// Server-side token setting
 async function setServerSideTokens(accessToken: string, refreshToken?: string) {
   const cookieStore = await cookies();
 
@@ -68,17 +68,17 @@ async function setServerSideTokens(accessToken: string, refreshToken?: string) {
   }
 }
 
-// 쿠키에서 토큰 삭제
+// Delete token from cookie
 export async function removeTokensFromCookie() {
   if (typeof window === "undefined") {
-    // 서버 환경인 경우
+    // In server environment
     const cookieStore = await cookies();
     cookieStore.delete("accessToken");
     cookieStore.delete("refreshToken");
     return;
   }
 
-  // 브라우저 환경인 경우
+  // In browser environment
   document.cookie = "accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
   document.cookie = "refreshToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
 }

@@ -1,15 +1,17 @@
-export const convertStatus = (raw: string): "대기중" | "요청완료" | "요청반려" | "요청취소" => {
+export const convertStatus = (
+  raw: string,
+): "Pending" | "Request Complete" | "Request Rejected" | "Request Cancelled" => {
   switch (raw) {
     case "PENDING":
-      return "대기중";
+      return "Pending";
     case "APPROVED":
     case "INSTANT_APPROVED":
-      return "요청완료";
+      return "Request Complete";
     case "REJECTED":
-      return "요청반려";
+      return "Request Rejected";
     case "CANCELED":
-      return "요청취소";
+      return "Request Cancelled";
     default:
-      return "대기중";
+      return "Pending";
   }
 };

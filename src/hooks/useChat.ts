@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState, useCallback, useEffect } from 'react';
-import { ChatMessage, ChatRequest, ChatResponse } from '@/types/chat.types';
+import { useState, useCallback, useEffect } from "react";
+import { ChatMessage, ChatRequest, ChatResponse } from "@/types/chat.types";
 
-function createMessage(partial: Omit<ChatMessage, 'id' | 'createdAt'>): ChatMessage {
+function createMessage(partial: Omit<ChatMessage, "id" | "createdAt">): ChatMessage {
   return {
     id: crypto.randomUUID(),
     createdAt: new Date().toISOString(),
@@ -16,12 +16,13 @@ export function useChat() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [lastUserMessage, setLastUserMessage] = useState<string | null>(null);
 
-  // 초기 웰컴 메시지
+  // Initial welcome message
   useEffect(() => {
     setMessages([
       createMessage({
-        role: 'assistant',
-        content: '안녕하세요! Snack AI 도우미입니다. 무엇을 도와드릴까요? 예: "이번 달 예산 현황은 어떻게 봐?", "구매 요청 승인 권한은?"',
+        role: "assistant",
+        content:
+          'Hello! I\'m the Snack AI assistant. How can I help you? Examples: "How is this month\'s budget looking?", "What are the purchase request approval permissions?"',
       }),
     ]);
   }, []);
@@ -30,29 +31,29 @@ export function useChat() {
     async (userMessage: string) => {
       if (!userMessage.trim() || isLoading) return;
 
-      const userMsg = createMessage({ role: 'user', content: userMessage.trim() });
+      const userMsg = createMessage({ role: "user", content: userMessage.trim() });
       const optimistic = [...messages, userMsg];
       setMessages(optimistic);
       setLastUserMessage(userMessage.trim());
       setIsLoading(true);
 
       try {
-        const res = await fetch('/api/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ messages: optimistic } as ChatRequest),
         });
 
         if (!res.ok) throw new Error(`API request failed with status ${res.status}`);
 
         const data: ChatResponse = await res.json();
-        const aiMessage = createMessage({ role: 'assistant', content: data.message });
+        const aiMessage = createMessage({ role: "assistant", content: data.message });
         setMessages((prev) => [...prev, aiMessage]);
       } catch (error) {
-        console.error('[useChat] Chat API error:', error);
+        console.error("[useChat] Chat API error:", error);
         const errorMessage = createMessage({
-          role: 'assistant',
-          content: '죄송합니다. 오류가 발생했습니다. 아이콘을 눌러 다시 시도할 수 있어요.',
+          role: "assistant",
+          content: "Sorry, an error occurred. You can try again by clicking the icon.",
           error: true,
         });
         setMessages((prev) => [...prev, errorMessage]);
@@ -60,7 +61,7 @@ export function useChat() {
         setIsLoading(false);
       }
     },
-    [messages, isLoading]
+    [messages, isLoading],
   );
 
   const resendLast = useCallback(() => {
