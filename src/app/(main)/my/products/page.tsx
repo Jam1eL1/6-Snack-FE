@@ -59,7 +59,7 @@ export default function MyProductsPage() {
     <div className="md:px-[24px]">
       <div className="flex justify-between items-center pt-[10px] pb-[20px] md:mt-[80px] md:pt-0 md:pb-[40px]">
         <h2 className="font-bold text-[18px]/[22px] tracking-tight text-primary-950">상품 등록 내역</h2>
-        <Dropdown onChange={handleSort} options={["최신순", "낮은 가격순", "높은 가격순"]} />
+        <Dropdown onChange={handleSort} options={["Newest", "Lowest Price", "Highest Price"]} />
       </div>
       <div className="mx-[-24px] outline-1 outline-[#e6e6e6] md:hidden"></div>
       {isPending ? (
