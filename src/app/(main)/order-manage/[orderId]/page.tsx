@@ -334,7 +334,7 @@ export default function OrderManageDetailPage() {
           >
             <div className="self-stretch inline-flex justify-start items-center">
               <div className="flex w-[140px] h-[50px] p-2 border-r border-b border-primary-100 justify-start items-center text-sm/[17px] tracking-tight sm:text-base/[20px]">
-                This Month's Expenses
+                This Month&apos;s Expenses
               </div>
               <div className="flex-1 h-[50px] px-2 sm:px-4 py-2 border-b border-primary-100 flex justify-start items-center">
                 <div className="text-center justify-center text-primary-900 text-sm sm:text-base font-bold">
