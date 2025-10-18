@@ -43,17 +43,17 @@ export default function AuthenticatedHeader() {
   const cartItemCount = cartItems?.cart.length ?? 0;
 
   const commonMenuItems: TSideMenuItem[] = [
-    { id: "products", label: "상품 리스트", href: "/products" },
-    { id: "my-order-list", label: "구매 요청 내역", href: "/my/order-list" },
-    { id: "my-products", label: "상품 등록 내역", href: "/my/products" },
+    { id: "products", label: "Products", href: "/products" },
+    { id: "my-order-list", label: "My Orders", href: "/my/order-list" },
+    { id: "my-products", label: "My Listings", href: "/my/products" },
   ];
 
   const adminMenuItems = [
-    { id: "order-manage", label: "구매 요청 관리", href: "/order-manage" },
-    { id: "order-history", label: "구매 내역 확인", href: "/order-history" },
+    { id: "order-manage", label: "Manage Orders", href: "/order-manage" },
+    { id: "order-history", label: "Order History", href: "/order-history" },
   ];
 
-  const superAdminMenuItems = [{ id: "manage-users", label: "관리", href: "/manage/users" }];
+  const superAdminMenuItems = [{ id: "manage-users", label: "Administration", href: "/manage/users" }];
 
   const getCommonMenuItems = () => {
     let menuItems = [...commonMenuItems];
@@ -72,13 +72,13 @@ export default function AuthenticatedHeader() {
   const getSideMenuItems = () => {
     const commonItems = getCommonMenuItems();
 
-    commonItems.push({ id: "my-favorites", label: "찜목록", href: "/my/favorites" });
+    commonItems.push({ id: "my-favorites", label: "Favorites", href: "/my/favorites" });
 
     if (isMobile) {
-      commonItems.push({ id: "profile", label: "마이 페이지", href: "/profile" });
+      commonItems.push({ id: "profile", label: "Account", href: "/profile" });
     }
 
-    commonItems.push({ id: "logout", label: "로그아웃", href: "" });
+    commonItems.push({ id: "logout", label: "Log Out", href: "" });
 
     return commonItems;
   };
@@ -130,13 +130,13 @@ export default function AuthenticatedHeader() {
     router.push("/products");
   };
 
-  const currentCategoryName = selectedCategory?.parent || "전체";
+  const currentCategoryName = selectedCategory?.parent || "All";
   return (
     <header className="sticky top-0 w-full h-14 sm:h-25 md:h-[90px] flex justify-between items-center overflow-hidden pl-[10px] pr-[24px] pt-[16px] pb-[16px] sm:px-[24px] sm:py-[28px] md:px-[100px] md:py-[32px] bg-white/90 shadow-[0px_4px_6px_0px_rgba(0,0,0,0.02)] backdrop-blur-lg z-200">
       <div className="flex items-center justify-center md:gap-10">
         <Link href="/products">
           <div className="relative w-[102.75px] h-[44px]">
-            <Image src={img_logo} fill alt="스낵 로고" className="object-contain" />
+            <Image src={img_logo} fill alt="Snack logo" className="object-contain" />
           </div>
         </Link>
         <div className="hidden md:block">
@@ -179,7 +179,7 @@ export default function AuthenticatedHeader() {
               <p
                 className={`text-primary-950 text-sm/[17px] tracking-tight ${pathname === "/my/favorites" ? "font-bold" : "font-normal"}`}
               >
-                찜목록
+                Favorites
               </p>
             </div>
           </Link>
@@ -187,7 +187,7 @@ export default function AuthenticatedHeader() {
         <div className="flex items-center sm:gap-5">
           <Link href="/cart">
             <div className="relative w-[24px] h-[24px]">
-              <Image src={ic_cart} alt="장바구니" fill className="object-contain" />
+              <Image src={ic_cart} alt="Shopping cart" fill className="object-contain" />
               {cartItemCount > 0 && (
                 <div className="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] rounded-full w-4 h-4 flex items-center justify-center font-bold">
                   {cartItemCount}
@@ -206,7 +206,7 @@ export default function AuthenticatedHeader() {
             onClick={logout}
             className="cursor-pointer hidden sm:block font-normal text-primary-950 hover:font-bold transition-all"
           >
-            로그아웃
+            Log Out
           </button>
         </div>
 

@@ -97,7 +97,7 @@ export default function ProductRegistrationForm({
               <div className="flex-1">
                 <Dropdown
                   options={parentCategoryOptions}
-                  placeholder="대분류"
+                  placeholder="Main Category"
                   onChange={handleParentCategoryChange}
                   className="w-full"
                   height="h-14"
@@ -106,7 +106,7 @@ export default function ProductRegistrationForm({
               <div className="flex-1">
                 <Dropdown
                   options={childrenCategoryOptions}
-                  placeholder="소분류"
+                  placeholder="Sub Category"
                   onChange={handleChildrenCategoryChange}
                   className="w-full"
                   height="h-14"

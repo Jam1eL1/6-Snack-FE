@@ -7,7 +7,6 @@ import { TChildrenProps } from "@/types/children.types";
 import Header from "@/components/layout/Header";
 import Providers from "./Providers";
 import GeneralLayout from "@/components/layout/GeneralLayout";
-import Chatbot from "@/components/chatbot/Chatbot";
 
 const suit = localFont({
   src: "../assets/fonts/suit_variable.woff2",
@@ -31,7 +30,6 @@ export default function RootLayout({ children }: TChildrenProps) {
           <main className="relative flex-1">
             <GeneralLayout>{children}</GeneralLayout>
           </main>
-          <Chatbot />
         </Providers>
       </body>
     </html>

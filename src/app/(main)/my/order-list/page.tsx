@@ -21,7 +21,7 @@ const PAGE_SIZE = 5;
 export default function MyOrderListPage() {
   const [requests, setRequests] = useState<TOrderItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [sortOption, setSortOption] = useState("최신순");
+  const [sortOption, setSortOption] = useState("Newest");
   const [toastVisible, setToastVisible] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -68,9 +68,9 @@ export default function MyOrderListPage() {
   })();
 
   const getProductName = (receipts: TOrderItem["receipts"]) => {
-    if (!receipts.length) return "상품 없음";
+    if (!receipts.length) return "No products";
     if (receipts.length === 1) return receipts[0].productName;
-    return `${receipts[0].productName} 외 ${receipts.length - 1}건`;
+    return `${receipts[0].productName} and ${receipts.length - 1} more`;
   };
 
   const paginated = sorted.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
@@ -79,7 +79,7 @@ export default function MyOrderListPage() {
     if (!isLoading && !isError && requests.length > 0 && paginated.length === 0 && currentPage > 1) {
       setCurrentPage((p) => p - 1);
     }
-  }, [requests.length, paginated.length, isLoading, isError]);
+  }, [requests.length, paginated.length, isLoading, isError, currentPage]);
 
   if (isLoading) {
     return (
@@ -91,26 +91,26 @@ export default function MyOrderListPage() {
 
   if (isError || requests.length === 0) {
     return (
-      <section className="flex flex-1 justify-center min-h-screen" role="status" aria-label="빈 상태">
+      <section className="flex flex-1 justify-center min-h-screen" role="status" aria-label="Empty state">
         <div className="sm:w-80 inline-flex flex-col justify-start items-center gap-7 py-12 mt-[142px] sm:mt-[222px] md:mt-[191px]">
-          <div className="w-24 h-24 relative" role="img" aria-label="주문 내역 없음 아이콘">
-            <Image src={icNoOrder} alt="주문 내역 없음" fill className="object-contain" />
+          <div className="w-24 h-24 relative" role="img" aria-label="No order history icon">
+            <Image src={icNoOrder} alt="No order history" fill className="object-contain" />
           </div>
           <div className="self-stretch flex flex-col justify-start items-center gap-12">
             <div className="w-72 flex flex-col justify-start items-center gap-2.5">
               <h2 className="self-stretch text-center text-neutral-800 text-2xl font-extrabold">
-                구매 요청 내역이 없어요
+                No purchase requests yet
               </h2>
               <p className="self-stretch text-center text-neutral-700 text-base leading-relaxed">
-                원하는 상품을 요청해보세요.
+                Request the products you want.
               </p>
             </div>
             <button
               className="self-stretch h-16 px-4 py-3 bg-neutral-800 rounded-sm inline-flex justify-center items-center cursor-pointer"
               onClick={() => router.push("/products")}
-              aria-label="상품 리스트 페이지로 이동"
+              aria-label="Go to product list page"
             >
-              <span className="text-white text-base font-bold">상품 리스트로 이동</span>
+              <span className="text-white text-base font-bold">Go to Product List</span>
             </button>
           </div>
         </div>
@@ -121,17 +121,17 @@ export default function MyOrderListPage() {
   return (
     <main className="flex flex-col items-center md:px-0 pt-10 pb-40 min-h-[calc(100vh-112px)]">
       <div className="w-full max-w-[1400px] py-4 flex justify-between items-center">
-        <h1 className="text-lg font-bold text-primary-950">구매 요청 내역</h1>
-        <Dropdown onChange={setSortOption} options={["최신순", "낮은 가격순", "높은 가격순"]} />
+        <h1 className="text-lg font-bold text-primary-950">Purchase Request History</h1>
+        <Dropdown onChange={setSortOption} options={["Newest", "Lowest Price", "Highest Price"]} />
       </div>
 
       <div className="w-full max-w-[1400px] flex-1">
         <div className="hidden sm:grid grid-cols-[1fr_1.5fr_1fr_1fr_1fr] w-full py-5 border-b border-t border-primary-100 justify-start items-center md:gap-10 lg:gap-20 text-primary-500 text-sm md:text-base">
-          <div className="min-w-[90px]">구매 요청일</div>
-          <div className="min-w-[140px]">상품 정보</div>
-          <div className="min-w-[90px]">주문 금액</div>
-          <div className="min-w-[90px]">상태</div>
-          <div className="min-w-[78px]">비고</div>
+          <div className="min-w-[90px]">Request Date</div>
+          <div className="min-w-[140px]">Product Info</div>
+          <div className="min-w-[90px]">Order Amount</div>
+          <div className="min-w-[90px]">Status</div>
+          <div className="min-w-[78px]">Remarks</div>
         </div>
 
         <div style={{ minHeight: `${6 * 88}px` }} className="flex flex-col">
@@ -155,7 +155,7 @@ export default function MyOrderListPage() {
         />
       </div>
 
-      {toastVisible && <Toast text="요청이 성공적으로 취소되었습니다." variant="success" isVisible={toastVisible} />}
+      {toastVisible && <Toast text="Your request has been canceled." variant="success" isVisible={toastVisible} />}
     </main>
   );
 }

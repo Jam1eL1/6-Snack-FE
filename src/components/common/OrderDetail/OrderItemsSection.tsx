@@ -33,7 +33,7 @@ export default function OrderItemsSection({
   products, 
   receipts, 
   title = "구매 품목",
-  shippingFee = 3000 
+  shippingFee = 5 
 }: TOrderItemsSectionProps) {
   const [isItemsExpanded, setIsItemsExpanded] = useState<boolean>(true);
 

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-// Profile 업데이트용 Zod 스키마
+// Zod schema for profile update
 export const profileSchema = z
   .object({
     company: z.string().optional(),
@@ -8,19 +8,19 @@ export const profileSchema = z
       .string()
       .optional()
       .refine((val) => !val || val.length >= 1, {
-        message: "비밀번호를 입력해주세요.",
+        message: "Please enter your password.",
       })
       .refine((val) => !val || val.length >= 8, {
-        message: "비밀번호는 최소 8자 이상이어야 합니다.",
+        message: "Password must be at least 8 characters long.",
       })
       .refine((val) => !val || /[a-zA-Z]/.test(val), {
-        message: "영문자를 포함해야 합니다.",
+        message: "Must include English letters.",
       })
       .refine((val) => !val || /[0-9]/.test(val), {
-        message: "숫자를 포함해야 합니다.",
+        message: "Must include numbers.",
       })
       .refine((val) => !val || /[^a-zA-Z0-9]/.test(val), {
-        message: "특수문자를 포함해야 합니다.",
+        message: "Must include special characters.",
       }),
     confirmPassword: z.string().optional(),
   })

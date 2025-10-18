@@ -140,7 +140,7 @@ export default function Order() {
         <div role="group" aria-label="정렬 옵션">
           <Dropdown
             onChange={(selected) => setOrderBy(orderByMap[selected] || orderByMap["최신순"])}
-            options={["최신순", "낮은 가격순", "높은 가격순"]}
+            options={["Newest", "Lowest Price", "Highest Price"]}
             aria-label="주문 목록 정렬"
           />
         </div>

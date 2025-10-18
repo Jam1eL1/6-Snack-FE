@@ -1,33 +1,33 @@
 /**
- * 사이드 메뉴 아이템 타입
+ * Side Menu Item Type
  */
 export type TSideMenuItem = {
-  /** 고유 식별자 */
+  /** Unique identifier */
   id: string;
-  /** 메뉴에 표시될 텍스트 */
+  /** Text to be displayed on the menu */
   label: string;
-  /** 현재 활성화 상태 (deprecated: currentPath로 대체) */
+  /** Current active status (deprecated: replaced by currentPath) */
   isActive?: boolean;
-  /** 페이지 경로 (활성화 상태 결정에 사용) */
+  /** Page path (used to determine active status) */
   href?: string;
-  /** 추가 CSS 클래스 - 태블릿 이상부터 특정 네비게이션 숨기기 위해서 */
+  /** Additional CSS class - Used to hide specific navigation on tablet and above */
   className?: string;
 };
 
 /**
- * 사이드 메뉴 컴포넌트 Props 타입
+ * Side Menu Component Props Type
  */
 export type TSideMenuProps = {
-  /** 메뉴 아이템 배열 */
+  /** Array of menu items */
   items: TSideMenuItem[];
-  /** 메뉴 열림/닫힘 상태 */
+  /** Menu open/close state */
   isOpen: boolean;
-  /** 현재 페이지 경로 (활성화 상태 결정) */
+  /** Current page path (determines active status) */
   currentPath?: string;
-  /** 메뉴 아이템 클릭 시 호출되는 콜백 */
+  /** Callback function called when a menu item is clicked */
   onItemClick?: (item: TSideMenuItem) => void;
-  /** 메뉴 닫기 콜백 */
+  /** Callback function to close the menu */
   onClose?: () => void;
-  /** 추가 CSS 클래스 */
+  /** Additional CSS class */
   className?: string;
 };

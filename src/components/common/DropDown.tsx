@@ -16,11 +16,11 @@ type TDropdownProps = {
   height?: string;
 };
 
-const defaultOptions = ["최신순", "판매순", "낮은 가격순", "높은 가격순"];
+const defaultOptions = ["Newest", "Popular", "Lowest Price", "Highest Price"];
 
 export default function Dropdown({
   options = [],
-  placeholder = "정렬",
+  placeholder = "Sort",
   onChange,
   className,
   disabled = false,
@@ -57,7 +57,7 @@ export default function Dropdown({
 
   return (
     <div ref={dropdownRef} className={twMerge("relative inline-block min-w-[110px]", className)}>
-      {/* 드롭다운 버튼 */}
+      {/* Dropdown button */}
       <div
         className={`${height || "h-11"} w-full px-4 py-2.5 bg-white border border-primary-100 ${
           isOpen ? "border-b-0" : "border"
@@ -68,14 +68,14 @@ export default function Dropdown({
         <div className="w-4 h-4 relative">
           <Image
             src={isOpen ? ChevronUpIcon : ChevronDownIcon}
-            alt="드롭다운 아이콘"
+            alt="dropdown icon"
             fill
             style={{ objectFit: "contain" }}
           />
         </div>
       </div>
 
-      {/* 드롭다운 메뉴 */}
+      {/* Dropdown menu */}
       {isOpen && (
         <div className="absolute w-full z-20 bg-white border border-primary-100 border-t-0 rounded-b max-h-[300px] overflow-y-auto scrollbar">
           {menuOptions.map((option) => (

@@ -39,7 +39,7 @@ export default function OrderManageDetailPage() {
   // TODO - shipppingFee 없에고 orderRequest.deliveryFee 참조
   const calculatedTotal: number =
     orderRequest?.products?.reduce((sum: number, item) => sum + item.price * item.quantity, 0) || 0;
-  const shippingFee: number = 3000;
+  const shippingFee: number = 5;
   const finalTotal: number = calculatedTotal + shippingFee;
 
   const currentMonthBudget = orderRequest?.budget?.currentMonthBudget || 0;
@@ -76,7 +76,7 @@ export default function OrderManageDetailPage() {
   const handleApprove = async () => {
     try {
       if (budgetAfterPurchase < 0 && remainingBudget !== undefined) {
-        showToast("예산이 부족합니다.", "error", remainingBudget);
+        showToast("Insufficient budget.", "error", remainingBudget);
         return;
       }
       await updateOrderMutation.mutateAsync({
@@ -86,10 +86,10 @@ export default function OrderManageDetailPage() {
 
       openModal(
         <OrderActionModal
-          modalTitle="승인 완료"
-          modalDescription="승인이 완료되었어요!<br />구매 내역을 통해 배송 현황을 확인해보세요"
-          leftButtonText="홈으로"
-          rightButtonText="구매 내역 보기"
+          modalTitle="Approval Complete"
+          modalDescription="Approval has been completed!<br />Check shipping status through purchase history"
+          leftButtonText="Go Home"
+          rightButtonText="View Purchase History"
           onLeftClick={() => {
             router.push("/products");
           }}
@@ -99,7 +99,7 @@ export default function OrderManageDetailPage() {
         />,
       );
     } catch {
-      showToast("승인 처리에 실패했습니다.", "error");
+      showToast("Failed to process approval.", "error");
     }
   };
 
@@ -112,10 +112,10 @@ export default function OrderManageDetailPage() {
 
       openModal(
         <OrderActionModal
-          modalTitle="요청 반려"
-          modalDescription="요청이 반려되었어요<br />목록에서 다른 요청을 확인해보세요"
-          leftButtonText="홈으로"
-          rightButtonText="구매 요청 내역 보기"
+          modalTitle="Request Rejected"
+          modalDescription="Request has been rejected<br />Check other requests from the list"
+          leftButtonText="Go Home"
+          rightButtonText="View Purchase Request History"
           onLeftClick={() => {
             router.push("/products");
           }}
@@ -125,7 +125,7 @@ export default function OrderManageDetailPage() {
         />,
       );
     } catch {
-      showToast("반려 처리에 실패했습니다.", "error");
+      showToast("Failed to process rejection.", "error");
     }
   };
 
@@ -137,7 +137,7 @@ export default function OrderManageDetailPage() {
     return (
       <main className="min-h-screen bg-white flex items-center justify-center" role="main" aria-live="assertive">
         <div className="text-base sm:text-lg md:text-xl text-red-600">
-          {error instanceof Error ? error.message : "주문 내역을 찾을 수 없습니다."}
+          {error instanceof Error ? error.message : "Order history not found."}
         </div>
       </main>
     );
@@ -156,7 +156,7 @@ export default function OrderManageDetailPage() {
         role="main"
       >
         <header>
-          <h1 className="self-stretch justify-center text-lg/[22px] font-bold">구매 요청 상세</h1>
+          <h1 className="self-stretch justify-center text-lg/[22px] font-bold">Purchase Request Details</h1>
         </header>
 
         <section
@@ -168,11 +168,13 @@ export default function OrderManageDetailPage() {
             onClick={() => setIsItemsExpanded(!isItemsExpanded)}
             aria-expanded={isItemsExpanded}
             aria-controls="items-content"
-            aria-label={`요청 품목 ${orderRequest.products?.length || 0}개 ${isItemsExpanded ? "접기" : "펼치기"}`}
+            aria-label={`Requested items ${orderRequest.products?.length || 0} ${isItemsExpanded ? "collapse" : "expand"}`}
           >
-            <div className="justify-center text-primary-950 text-base/[20px] tracking-tight font-bold">요청 품목</div>
+            <div className="justify-center text-primary-950 text-base/[20px] tracking-tight font-bold">
+              Requested Items
+            </div>
             <div className="justify-center  text-primary-950 text-base/[20px] tracking-tight  font-normal">
-              총 {orderRequest.products?.length || 0}개
+              Total {orderRequest.products?.length || 0} items
             </div>
             <ArrowIconSvg
               direction={isItemsExpanded ? "up" : "down"}
@@ -189,7 +191,7 @@ export default function OrderManageDetailPage() {
               <div
                 className="flex flex-col w-full sm:pt-[20px] sm:px-[20px] sm:pb-[30px] gap-[20px] sm:gap-0"
                 role="list"
-                aria-label="주문 상품 목록"
+                aria-label="Order item list"
               >
                 {orderRequest.products?.map((item) => (
                   <div
@@ -202,7 +204,7 @@ export default function OrderManageDetailPage() {
                         <div className="relative w-[75%] h-[75%]">
                           <Image
                             src={item.imageUrl}
-                            alt={`${item.productName} 상품 이미지`}
+                            alt={`${item.productName} product image`}
                             fill
                             className="object-contain"
                           />
@@ -215,16 +217,16 @@ export default function OrderManageDetailPage() {
                           {item.productName}
                         </p>
                         <div className="text-primary-950 text-sm/[17px] tracking-tight sm:text-base/[20px] font-bold">
-                          {formatPrice(item.price)}원
+                          ${formatPrice(item.price)}
                         </div>
                       </div>
 
                       <div className="flex w-full items-center justify-between">
                         <div className=" text-primary-500 text-[13px]/[16px] sm:text-base/[20px] tracking-tight font-bold">
-                          수량 {item.quantity}개
+                          Quantity {item.quantity}
                         </div>
                         <div className="sm:hidden text-center  text-primary-700 text-base/[20px] tracking-tight font-extrabold">
-                          {formatPrice(item.price * item.quantity)}원
+                          ${formatPrice(item.price * item.quantity)}
                         </div>
                       </div>
                     </div>
@@ -237,28 +239,28 @@ export default function OrderManageDetailPage() {
                 <div
                   className="w-full flex flex-col gap-4 sm:gap-2.5 sm:pt-[20px] sm:px-[20px]"
                   role="region"
-                  aria-label="주문 금액 정보"
+                  aria-label="Order amount information"
                 >
                   <div className="flex justify-between items-center">
                     <div className="text-primary-700 tracking-tight text-sm/[17px] sm:text-base/[20px] font-bold">
-                      주문금액
+                      Order Amount
                     </div>
                     <div className="text-primary-700 tracking-tight text-sm/[17px] sm:text-base/[20px] font-bold">
-                      {formatPrice(calculatedTotal)}원
+                      ${formatPrice(calculatedTotal)}
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
                     <div className="text-primary-700 tracking-tight text-sm/[17px] sm:text-base/[20px] font-bold">
-                      배송비
+                      Shipping Fee
                     </div>
                     <div className="text-primary-700 tracking-tight text-sm/[17px] sm:text-base/[20px] font-bold">
-                      {formatPrice(shippingFee)}원
+                      ${formatPrice(shippingFee)}
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
-                    <div className="text-primary-950 text-lg/[22px] tracking-tight font-bold">총 주문금액</div>
+                    <div className="text-primary-950 text-lg/[22px] tracking-tight font-bold">Total Order Amount</div>
                     <div className="text-primary-950 text-lg/[22px] sm:text-[24px]/[30px] tracking-tight font-extrabold">
-                      {formatPrice(finalTotal)}원
+                      ${formatPrice(finalTotal)}
                     </div>
                   </div>
                 </div>
@@ -273,17 +275,17 @@ export default function OrderManageDetailPage() {
               id="request-info-title"
               className="text-center justify-center tracking-tight text-primary-950 text-sm/[17px] sm:text-base/[20px] font-extrabold"
             >
-              요청 정보
+              Request Information
             </h2>
           </div>
           <div
             className="self-stretch flex flex-col justify-center items-start sm:flex-row sm:justify-start sm:items-stretch "
             role="region"
-            aria-label="요청 상세 정보"
+            aria-label="Request details information"
           >
             <div className="self-stretch inline-flex justify-start items-center sm:flex-1">
               <div className="flex w-[140px] h-[50px] p-2 border-r border-b border-primary-100 justify-start items-center text-sm/[17px] tracking-tight sm:text-base/[20px] text-primary-950">
-                요청인
+                Requester
               </div>
               <div className="flex-1 h-[50px] px-2 sm:px-5 py-2 border-b border-primary-100 flex justify-start items-center sm:border-r">
                 <div className="text-center justify-center text-primary-900 text-sm font-bold sm:text-base tracking-tight ">
@@ -293,7 +295,7 @@ export default function OrderManageDetailPage() {
             </div>
             <div className="self-stretch inline-flex justify-start items-center sm:flex-1">
               <div className="flex w-[140px] h-[50px] p-2 border-r border-b border-primary-100 text-primary-950 justify-start items-center text-sm/[17px] tracking-tight sm:text-base/[20px]">
-                요청 날짜
+                Request Date
               </div>
               <div className="flex-1 h-[50px] px-2 sm:px-5 py-2 border-b border-primary-100 flex justify-start items-center">
                 <div className="text-center justify-center text-primary-900 text-sm sm:text-base font-bold tracking-tight">
@@ -305,7 +307,7 @@ export default function OrderManageDetailPage() {
           <div className="self-stretch flex flex-col justify-center items-start">
             <div className="self-stretch inline-flex justify-start items-center">
               <div className="flex w-[140px] h-[50px] py-4 px-2 sm:py-5 text-primary-950 border-r border-b border-primary-100 justify-start items-center text-sm/[17px] tracking-tight sm:text-base/[20px]">
-                요청 메세지
+                Request Message
               </div>
               <div className="flex-1 h-[50px] py-4 px-2 sm:px-5 border-b border-primary-100 flex justify-start items-center">
                 <div className="text-start justify-center text-primary-900 text-sm sm:text-base font-bold tracking-tight">
@@ -322,31 +324,31 @@ export default function OrderManageDetailPage() {
               id="budget-info-title"
               className="text-center justify-center tracking-tight text-primary-950 text-sm/[17px] sm:text-base/[20px] font-extrabold"
             >
-              예산 정보
+              Budget Information
             </h2>
           </div>
           <div
             className="self-stretch flex flex-col justify-center items-start"
             role="region"
-            aria-label="예산 상세 정보"
+            aria-label="Budget details information"
           >
             <div className="self-stretch inline-flex justify-start items-center">
               <div className="flex w-[140px] h-[50px] p-2 border-r border-b border-primary-100 justify-start items-center text-sm/[17px] tracking-tight sm:text-base/[20px]">
-                이번 달 지출액
+                This Month&apos;s Expenses
               </div>
               <div className="flex-1 h-[50px] px-2 sm:px-4 py-2 border-b border-primary-100 flex justify-start items-center">
                 <div className="text-center justify-center text-primary-900 text-sm sm:text-base font-bold">
-                  {formatPrice(currentMonthExpense)}원
+                  ${formatPrice(currentMonthExpense)}
                 </div>
               </div>
             </div>
             <div className="self-stretch inline-flex justify-start items-center">
               <div className="flex w-[140px] h-[50px] p-2 border-r border-b border-primary-100 justify-start items-center text-sm/[17px] tracking-tight sm:text-base/[20px]">
-                이번 달 남은 예산
+                Remaining Budget This Month
               </div>
               <div className="flex-1 h-[50px] px-2 sm:px-4 py-2 border-b border-primary-100 flex justify-start items-center">
                 <div className="text-center justify-center text-primary-900 text-sm sm:text-base font-bold">
-                  {formatPrice(remainingBudget)}원
+                  ${formatPrice(remainingBudget)}
                 </div>
               </div>
             </div>

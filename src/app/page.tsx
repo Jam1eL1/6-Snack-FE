@@ -6,11 +6,11 @@ import tabletImg from "@/assets/images/landing/landingPage_tablet.webp";
 import desktopImg from "@/assets/images/landing/landingPage_desktop.webp";
 
 const CARD_TEXTS = [
-  "흩어진 간식 구매처를 통합하고,\n기수별 지출을 똑똑하게 관리하세요.",
-  "관리자와 유저\n모두 이용할 수 있어요.",
-  "다양한 품목도\n한 눈에 파악해봐요.",
-  "쉽고 빠르게 구매를 요청해보세요.",
-  "여러 플랫폼에서 구매한 간식 내역을\n한 곳에서 쉽게 관리해요.",
+  "Integrate scattered snack purchase points and\nmanage spending by batch intelligently.",
+  "Both administrators and users\ncan use it.",
+  "Check various items\nat a glance.",
+  "Request purchases easily and quickly.",
+  "Manage snack purchase history from multiple platforms\nin one place easily.",
 ];
 
 export default function LandingPage() {
@@ -18,16 +18,18 @@ export default function LandingPage() {
     <div className="flex flex-col">
       <div className="flex flex-col items-center justify-start pt-10 flex-grow">
         <h1 className="text-center text-2xl sm:text-4xl md:text-5xl font-extrabold text-primary-950 leading-tight">
-          내가 원하는 간식을 쉽고 빠르게 구매
+          The Single Platform for Smart Office Procurement.
         </h1>
 
-        <h2 className="mt-2 text-center text-lg sm:text-xl md:text-2xl font-semibold text-primary-300">with Snack</h2>
+        <h2 className="mt-2 text-center text-lg sm:text-xl md:text-2xl font-semibold text-primary-300">
+          From breakroom snacks to office supplies, manage all spend and expenses smarter.
+        </h2>
 
         <Link
           href="/signup/super-admin"
           className="mt-6 bg-primary-950 text-white px-5 py-2.5 rounded-full flex items-center gap-1"
         >
-          <span className="text-base font-bold">Sign Now</span>
+          <span className="text-base font-bold">Sign Up</span>
           <ArrowRightIcon />
         </Link>
 
@@ -56,7 +58,7 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* Desktop/Tablet 고정 슬라이드 */}
+      {/* Desktop/Tablet Fixed Slide */}
       <div className="hidden sm:block fixed bottom-0 w-full py-6 overflow-hidden z-20 bg-transparent backdrop-blur">
         <div className="flex animate-slide gap-10 w-max px-8">
           {[...CARD_TEXTS, ...CARD_TEXTS, ...CARD_TEXTS].map((text, idx) => (
@@ -70,7 +72,7 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* Mobile 고정 슬라이드 */}
+      {/* Mobile Fixed Slide */}
       <div className="block sm:hidden fixed bottom-0 w-full z-20 bg-transparent backdrop-blur ">
         <div className="h-[260px] relative">
           {[0, 1].map((row) => (
