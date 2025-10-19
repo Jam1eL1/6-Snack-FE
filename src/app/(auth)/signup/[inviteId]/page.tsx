@@ -46,7 +46,7 @@ export default function InviteSignUpPage() {
 
   const passwordInput = watch("password");
   const passwordConfirmInput = watch("passwordConfirm");
-  // 언마운트 시 타이머 클린업
+  // Clean up the timer when unmounting
   useEffect(() => {
     return () => {
       if (timerRef.current) {
@@ -68,7 +68,7 @@ export default function InviteSignUpPage() {
         const data = await getInviteApi(inviteId);
         setInviteInfo(data);
       } catch (error) {
-        setInviteError(error instanceof Error ? error.message : "초대 링크가 유효하지 않습니다.");
+        setInviteError(error instanceof Error ? error.message : "The invite link is not valid.");
       } finally {
         setIsLoading(false);
       }
@@ -88,7 +88,7 @@ export default function InviteSignUpPage() {
       router.push("/login");
     } catch {
       setIsToastVisible(true);
-      setToastText("회원가입에 실패했습니다. 다시 시도해주세요.");
+      setToastText("Something went wrong. Please try again.");
       if (timerRef.current) clearTimeout(timerRef.current);
 
       timerRef.current = setTimeout(() => {
@@ -113,12 +113,12 @@ export default function InviteSignUpPage() {
       <div className="flex flex-col h-screen justify-center items-center gap-[20px] -mb-[24px]">
         <section className="flex flex-col gap-[16px] justify-center items-center">
           <div className="relative w-[40vw] h-[30vh] max-w-[300px] aspect-[7/8]">
-            <Image src={img_dog_error} alt="에러를 나타내는 강아지 이미지" fill className="object-contain" />
+            <Image src={img_dog_error} alt="Error image" fill className="object-contain" />
           </div>
 
           <div role="status" className="text-center font-medium text-[16px]/[24px] sm:text-[20px]/[30px]">
-            <h2>접근이 제한된 페이지입니다.</h2>
-            <p>이 페이지는 유효한 초대 링크를 가진 사람만 접근 할 수 있습니다.</p>
+            <h2>Access is restricted to this page.</h2>
+            <p>This page can only be accessed by a user with a valid invitation link.</p>
           </div>
         </section>
 
@@ -126,7 +126,7 @@ export default function InviteSignUpPage() {
           href="/login"
           className="rounded-[2px] inline-flex justify-center items-center bg-primary-100 font-semibold text-[16px]/[20px] tracking-tight w-full max-w-[230px] min-h-[56px] sm:max-w-[310px] sm:h-[64px]"
         >
-          로그인 페이지로 돌아가기
+          Go back to the login page
         </Link>
       </div>
     );
@@ -144,10 +144,10 @@ export default function InviteSignUpPage() {
         <div className="sm:hidden">
           <div className="flex flex-col items-center justify-center gap-[10px]">
             <h1 className="text-lg/[22px] sm:text-2xl/[30px] font-bold tracking-tight text-center align-middle sm:self-stretch sm:text-start">
-              {inviteInfo?.name} 님, 만나서 반갑습니다.
+              Welcome, {inviteInfo?.name}.
             </h1>
             <p className="text-primary-600 text-sm/[17px] sm:text-base/[20px] tracking-tight text-center align-middle sm:self-stretch sm:text-start ">
-              비밀번호를 입력해 회원가입을 완료해주세요.
+              Please enter your password to complete your registration.
             </p>
           </div>
         </div>
@@ -157,18 +157,18 @@ export default function InviteSignUpPage() {
         <div className="hidden sm:block sm:mb-[20px]">
           <div className="flex flex-col items-start justify-center gap-[10px]">
             <h1 className="text-primary-950 text-lg/[22px] sm:text-2xl/[30px] font-bold tracking-tight align-middle ">
-              {inviteInfo?.name} 님, 만나서 반갑습니다.
+              Welcome, {inviteInfo?.name}.
             </h1>
             <p className="text-primary-600 text-sm/[17px] sm:text-base/[20px] tracking-tight align-middle">
-              비밀번호를 입력해 회원가입을 완료해주세요.
+              Please enter your password to complete your registration.
             </p>
           </div>
         </div>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-full mb-[30px] gap-[20px]">
-          {/* 이메일 */}
+          {/* Email */}
           <div className="flex flex-col justify-between w-full h-[56px] py-2 px-1 border-b border-primary-200">
             <label htmlFor="email" className="text-primary-500 text-xs/[15px] font-normal tracking-tight">
-              이메일
+              Email
             </label>
             <input
               id="email"
@@ -179,7 +179,7 @@ export default function InviteSignUpPage() {
               className="outline-none text-base/[20px] tracking-tight text-primary-300"
             />
           </div>
-          {/* 비밀번호 input wrapper*/}
+          {/* Password input wrapper*/}
           <div className="flex flex-col gap-1">
             <div
               className={clsx(
@@ -196,13 +196,13 @@ export default function InviteSignUpPage() {
                     "absolute left-[4px] top-[8px] font-normal text-[12px]/[15px] tracking-tight text-primary-600 transition-all duration-300",
                   )}
                 >
-                  비밀번호
+                  Password
                 </label>
                 <input
                   id="password"
                   type={showPassword ? "text" : "password"}
                   {...register("password")}
-                  placeholder="비밀번호를 입력하세요"
+                  placeholder="Enter your password"
                   aria-describedby={errors.password ? "password-error" : undefined}
                   aria-invalid={!!errors.password}
                   className={clsx(
@@ -211,11 +211,11 @@ export default function InviteSignUpPage() {
                   )}
                 />
               </div>
-              {/* 비밀번호 보임토글 */}
+              {/* Password visibility toggle */}
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
+                aria-label={showPassword ? "Hide password" : "Show password"}
                 className={clsx(
                   passwordInput ? "opacity-100" : "opacity-0",
                   "mt-[24px] cursor-pointer transition-all duration-300",
@@ -245,13 +245,13 @@ export default function InviteSignUpPage() {
                     "absolute left-[4px] top-[8px] font-normal text-[12px]/[15px] tracking-tight text-primary-600 transition-all duration-300",
                   )}
                 >
-                  비밀번호 확인
+                  Confirm Password
                 </label>
                 <input
                   id="passwordConfirm"
                   type={showPasswordConfirm ? "text" : "password"}
                   {...register("passwordConfirm")}
-                  placeholder="비밀번호를 다시 입력하세요"
+                  placeholder="Re-enter your password"
                   aria-describedby={errors.passwordConfirm ? "passwordConfirm-error" : undefined}
                   aria-invalid={!!errors.passwordConfirm}
                   className={clsx(
@@ -263,7 +263,7 @@ export default function InviteSignUpPage() {
               <button
                 type="button"
                 onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}
-                aria-label={showPasswordConfirm ? "비밀번호 확인 숨기기" : "비밀번호 확인 보기"}
+                aria-label={showPasswordConfirm ? "Hide password confirmation" : "Show password confirmation"}
                 className={clsx(
                   passwordConfirmInput ? "opacity-100" : "opacity-0",
                   "mt-[24px] cursor-pointer transition-all duration-300",
@@ -280,7 +280,7 @@ export default function InviteSignUpPage() {
 
         <Button
           type="primary"
-          label={isDisabled ? "처리 중..." : "가입하기"}
+          label={isDisabled ? "Processing..." : "Sign Up"}
           className={clsx(
             "w-full h-[64px] mb-[24px]",
             isValid && !isDisabled ? "bg-primary-950 text-primary-50" : "bg-primary-100 text-primary-300",
@@ -291,15 +291,15 @@ export default function InviteSignUpPage() {
         />
         {!isValid && (
           <div id="form-validation-info" className="sr-only">
-            모든 필수 항목을 올바르게 입력해주세요.
+            Please correctly fill in all required fields.
           </div>
         )}
         <div className="flex w-full justify-center items-center">
           <p className="text-center text-primary-500 text-base/[20px] tracking-tight ">
-            이미 계정이 있으신가요?
+            Already have an account?
             <Link href="/login">
               <span className="text-primary-950 text-base/[20px] tracking-tight font-bold underline decoration-primary-950 underline-offset-2 ml-1">
-                로그인
+                Log In
               </span>
             </Link>
           </p>
