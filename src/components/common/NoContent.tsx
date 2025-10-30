@@ -14,8 +14,8 @@ type TNoContentProps = {
 
 export default function NoContent({
   title,
-  subText1 = "설명1",
-  subText2 = "설명2",
+  subText1 = "",
+  subText2 = "",
   buttonText,
   className,
   onClick,

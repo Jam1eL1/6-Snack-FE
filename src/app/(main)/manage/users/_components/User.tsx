@@ -23,22 +23,22 @@ export default function User() {
   const searchParams = useSearchParams();
   const name = searchParams.get("name") ?? "";
   const queryClient = useQueryClient();
-  const MEMVERS_PAGE = 5;
+  const MEMBERS_PAGE = 5;
 
-  // 검색어가 변경될 때 페이지네이션을 1페이지로 리셋
+  // Reset pagination to page 1 when the search term changes
   useEffect(() => {
     setCurrentPaginationPage(1);
   }, [name]);
 
-  // Toast 상태
+  // Toast state
   const [toastVisible, setToastVisible] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string>("");
   const [toastVariant, setToastVariant] = useState<TToastVariant>("success");
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Toast 표시 함수
+  // Function to display Toast
   const showToast = (message: string, variant: TToastVariant) => {
-    // 기존 타이머가 있다면 클리어
+    // Clear existing timer if any
     if (timerRef.current) {
       clearTimeout(timerRef.current);
     }
@@ -49,7 +49,7 @@ export default function User() {
     timerRef.current = setTimeout(() => setToastVisible(false), 3000);
   };
 
-  // 컴포넌트 언마운트 시 타이머 정리
+  // Cleanup timer on component unmount
   useEffect(() => {
     return () => {
       if (timerRef.current) {
@@ -58,7 +58,7 @@ export default function User() {
     };
   }, []);
 
-  // 회원 목록 조회
+  // Fetch member list
   const {
     data: membersData,
     isLoading: isLoadingMembers,
@@ -69,7 +69,7 @@ export default function User() {
   });
 
   const members = useMemo(() => membersData?.users ?? [], [membersData?.users]);
-  const totalPages = Math.ceil(members.length / MEMVERS_PAGE);
+  const totalPages = Math.ceil(members.length / MEMBERS_PAGE);
 
   useEffect(() => {
     if (totalPages === 0 || currentPaginationPage > totalPages) {
@@ -77,7 +77,7 @@ export default function User() {
     }
   }, [totalPages, currentPaginationPage]);
 
-  // 회원 삭제 mutation
+  // User deletion mutation
   const deleteUserMutation = useMutation({
     mutationFn: deleteUserById,
     onSuccess: (data) => {
@@ -85,12 +85,12 @@ export default function User() {
       queryClient.invalidateQueries({ queryKey: ["companyUsers"] });
     },
     onError: (error) => {
-      showToast("유저 삭제에 실패했습니다.", "error");
+      showToast("Failed to delete user.", "error");
       console.error(error);
     },
   });
 
-  // 회원 초대 mutation
+  // User invitation mutation
   const inviteUserMutation = useMutation({
     mutationFn: async (data: { name: string; email: string; role: "USER" | "ADMIN" }) => {
       const currentUser = await getUserApi();
@@ -108,29 +108,31 @@ export default function User() {
     },
     onSuccess: (result) => {
       if (result.emailSent) {
-        showToast("초대 이메일이 성공적으로 발송되었습니다.", "success");
+        showToast("Invitation email sent successfully.", "success");
       } else {
-        showToast("초대 링크는 생성되었지만 이메일 발송에 실패했습니다.", "error");
+        showToast("Invitation link created but email sending failed.", "error");
       }
-      // 회원 목록 캐시 무효화하여 다시 조회
+      // Invalidate member list cache to refetch
       queryClient.invalidateQueries({ queryKey: ["companyUsers"] });
     },
     onError: (error) => {
       const message: string = (error as Error).message || "";
       const isConflict =
-        /Unique constraint/i.test(message) || /이미 초대/i.test(message) || /이미 등록된 이메일/i.test(message);
+        /Unique constraint/i.test(message) ||
+        /already invited/i.test(message) ||
+        /email already registered/i.test(message);
       if (isConflict) {
-        showToast("이미 초대 내역이 존재합니다.", "error");
+        showToast("An invitation history already exists.", "error");
       } else {
-        showToast(message || "초대 발송에 실패했습니다.", "error");
+        showToast(message || "Failed to send invitation.", "error");
       }
       console.error(error);
     },
   });
 
   const paginateMembers = useMemo(() => {
-    const start = (currentPaginationPage - 1) * MEMVERS_PAGE;
-    return members.slice(start, start + MEMVERS_PAGE);
+    const start = (currentPaginationPage - 1) * MEMBERS_PAGE;
+    return members.slice(start, start + MEMBERS_PAGE);
   }, [members, currentPaginationPage]);
 
   const handleDeleteUser = (userId: string) => {
@@ -141,23 +143,23 @@ export default function User() {
     inviteUserMutation.mutate(data);
   };
 
-  // 에러 처리
+  // Error handling
   if (membersError) {
-    showToast(membersError instanceof Error ? membersError.message : "회원 목록 불러오기 실패", "error");
+    showToast(membersError instanceof Error ? membersError.message : "Failed to load member list", "error");
   }
 
   return (
-    <main aria-label="회원 관리 페이지">
+    <main aria-label="Member Management Page">
       <header className="flex justify-between items-center sm:mt-15 md:mt-[21px]">
-        <h1 className="mt-[20px] pb-3 self-stretch text-lg font-bold sm:mt-0 sm:text-2xl">회원 관리</h1>
+        <h1 className="mt-[20px] pb-3 self-stretch text-lg font-bold sm:mt-0 sm:text-2xl">Member Management</h1>
         <Button
           type="black"
-          label="회원 초대하기"
+          label="Invite Member"
           className="w-50 h-16 hidden sm:block rounded-[2px]"
           onClick={() => {
             openModal(<InviteMemberModal onSubmit={handleInviteUser} />);
           }}
-          aria-label="새 회원 초대하기"
+          aria-label="Invite new member"
         />
       </header>
 
@@ -165,43 +167,48 @@ export default function User() {
         <SearchBar />
       </Suspense>
 
-      <section aria-label="회원 목록" className="mt-10">
-        {/* PC 테이블 헤더 */}
+      <section aria-label="Member List" className="mt-10">
+        {/* PC Table Header */}
         <div
           className="w-full mt-10 self-stretch p-5 border-t border-b border-neutral-200 hidden sm:flex justify-start items-center gap-8"
           role="table"
-          aria-label="회원 목록 테이블 헤더"
+          aria-label="Member list table header"
         >
-          <div className="px-14 flex justify-start items-center mr-2" role="columnheader" aria-label="이름 컬럼">
-            <div className="justify-center text-primary-500 text-base font-bold">이름</div>
+          <div className="px-14 flex justify-start items-center mr-2" role="columnheader" aria-label="Name column">
+            <div className="justify-center text-primary-500 text-base font-bold">Name</div>
           </div>
           <div
             className="flex-1 justify-center text-primary-500 text-base font-bold"
             role="columnheader"
-            aria-label="메일 컬럼"
+            aria-label="Email column"
           >
-            메일
+            Email
           </div>
           <div
             className="w-20 text-center justify-center text-primary-500 text-base font-bold"
             role="columnheader"
-            aria-label="권한 컬럼"
+            aria-label="Role column"
           >
-            권한
+            Role
           </div>
           <div
             className="w-48 text-center justify-center text-primary-500 text-base font-bold"
             role="columnheader"
-            aria-label="비고 컬럼"
+            aria-label="Notes column"
           >
-            비고
+            Notes
           </div>
         </div>
 
-        {/* 회원 목록 */}
-        <div role="list" aria-label="회원 목록">
+        {/* Member List */}
+        <div role="list" aria-label="Member list">
           {isLoadingMembers || deleteUserMutation.isPending || inviteUserMutation.isPending ? (
-            <div className="py-10 flex justify-center" role="status" aria-live="polite" aria-label="회원 목록 로딩 중">
+            <div
+              className="py-10 flex justify-center"
+              role="status"
+              aria-live="polite"
+              aria-label="Loading member list"
+            >
               <DogSpinner />
             </div>
           ) : paginateMembers.length > 0 ? (
@@ -210,16 +217,15 @@ export default function User() {
                 <MemberList
                   {...member}
                   onClickDeleteUser={handleDeleteUser}
-                  onRoleUpdate={() => showToast("권한이 성공적으로 변경되었습니다.", "success")}
+                  onRoleUpdate={() => showToast("Role successfully updated.", "success")}
                 />
               </div>
             ))
           ) : (
             <NoContent
-              title="아직 회원이 없어요"
-              subText1="함께 이용할 회원을 초대하고"
-              subText2="간식 구매를 통합 관리하세요"
-              buttonText="회원 초대하기"
+              title="No Team Members Found"
+              subText1="Invite your team members to join!"
+              buttonText="Invite Member"
               onClick={() => {
                 openModal(<InviteMemberModal mode="invite" onSubmit={handleInviteUser} />);
               }}
@@ -228,9 +234,9 @@ export default function User() {
         </div>
       </section>
 
-      {/* 페이지네이션 */}
+      {/* Pagination */}
       {paginateMembers.length > 0 && (
-        <nav aria-label="회원 목록 페이지네이션" className="mt-6">
+        <nav aria-label="Member list pagination" className="mt-6">
           <Pagination
             currentPage={currentPaginationPage}
             totalPages={totalPages}
@@ -239,17 +245,17 @@ export default function User() {
         </nav>
       )}
 
-      {/* 모바일 초대 버튼 */}
+      {/* Mobile Invite Button */}
       {paginateMembers.length > 0 && (
         <div className="w-full pt-6 flex justify-center">
           <Button
             type="black"
-            label="회원 초대하기"
+            label="Invite Member"
             className="w-50 h-16 sm:hidden rounded-[2px]"
             onClick={() => {
               openModal(<InviteMemberModal mode="invite" onSubmit={handleInviteUser} />);
             }}
-            aria-label="새 회원 초대하기 (모바일)"
+            aria-label="Invite new member (Mobile)"
           />
         </div>
       )}
