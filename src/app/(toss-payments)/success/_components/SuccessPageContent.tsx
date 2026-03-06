@@ -16,6 +16,7 @@ type TSuccessPageContentProps = {
 export default function SuccessPageContent({ orderId, amount, paymentKey }: TSuccessPageContentProps) {
   const [success, setSuccess] = useState<boolean>(false);
   const router = useRouter();
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
   const { data: order, isPending } = useQuery({
     queryKey: ["order", orderId],
@@ -46,20 +47,15 @@ export default function SuccessPageContent({ orderId, amount, paymentKey }: TSuc
     async function confirm() {
       hasConfirmed.current = true; // ✅ 중복 방지
 
-      const response = await fetch(
-        process.env.NODE_ENV === "production"
-          ? "https://api.5nack.site/payments/confirm"
-          : "http://localhost:8080/payments/confirm",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestData),
-          credentials: "include",
-          cache: "no-store",
+      const response = await fetch(`${apiBaseUrl}/payments/confirm`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify(requestData),
+        credentials: "include",
+        cache: "no-store",
+      });
 
       const json = await response.json();
 
@@ -72,7 +68,7 @@ export default function SuccessPageContent({ orderId, amount, paymentKey }: TSuc
     }
 
     confirm();
-  }, [order, amount, orderId, paymentKey, router]);
+  }, [order, amount, orderId, paymentKey, router, apiBaseUrl]);
 
   if (isPending || !success) {
     return (

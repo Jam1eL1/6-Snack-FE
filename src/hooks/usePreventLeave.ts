@@ -3,22 +3,19 @@
 import { useEffect } from "react";
 
 export function usePreventLeave(orderId: string) {
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+
   // 취소 API 호출
   async function cancel(orderId: string) {
-    const response = await fetch(
-      process.env.NODE_ENV === "production"
-        ? "https://api.5nack.site/payments/cancel"
-        : "http://localhost:8080/payments/cancel",
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ orderId }),
-        credentials: "include",
-        cache: "no-store",
+    const response = await fetch(`${apiBaseUrl}/payments/cancel`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+      body: JSON.stringify({ orderId }),
+      credentials: "include",
+      cache: "no-store",
+    });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
