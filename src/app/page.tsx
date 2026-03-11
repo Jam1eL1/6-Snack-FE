@@ -6,11 +6,10 @@ import tabletImg from "@/assets/images/landing/landingPage_tablet.webp";
 import desktopImg from "@/assets/images/landing/landingPage_desktop.webp";
 
 const CARD_TEXTS = [
-  "Integrate scattered snack purchase points and\nmanage spending by batch intelligently.",
-  "Both administrators and users\ncan use it.",
-  "Check various items\nat a glance.",
-  "Request purchases easily and quickly.",
-  "Manage snack purchase history from multiple platforms\nin one place easily.",
+  "Consolidate all your office procurement in one place\nand manage spending smarter.",
+  "Designed for both administrators and employees\nto use effortlessly.",
+  "Browse a wide range of items\nat a glance.",
+  "Request purchases in just a few clicks.",
 ];
 
 export default function LandingPage() {
