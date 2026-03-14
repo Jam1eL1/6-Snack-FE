@@ -5,12 +5,12 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const cookieFetch = async <T>(path: string, options: RequestInit = {}): Promise<T> => {
   const method = options.method || "GET";
-  // 개발 완료후 삭제
-  console.log(`🌐 API 요청: ${method} ${API_BASE_URL}${path}`);
+  // Remove this log after development is complete
+  console.log(`API request: ${method} ${API_BASE_URL}${path}`);
 
-  // fetch 호출 부분을 함수로 분리
+  // Extract the fetch call into a helper function
   const request = async () => {
-    // FormData를 보낼 때는 Content-Type 헤더를 설정하지 않아야 브라우저가 자동으로 boundary를 설정합니다
+    // Do not set Content-Type for FormData so the browser can set the boundary automatically
     const isFormData = options.body instanceof FormData;
 
     return await fetch(`${API_BASE_URL}${path}`, {
@@ -30,14 +30,14 @@ export const cookieFetch = async <T>(path: string, options: RequestInit = {}): P
 
   if (response.status === 401 && !isRefreshRequest) {
     try {
-      console.log("🔄 액세스 토큰 갱신 시도");
+      console.log("Attempting to refresh access token");
       await refreshAccessToken();
-      console.log("✅ 액세스 토큰 갱신 성공, 원본 요청 재시도");
+      console.log("Access token refreshed successfully, retrying original request");
       response = await request();
     } catch (refreshError) {
-      console.error("❌ 액세스 토큰 재발급 실패:", refreshError);
+      console.error("Access token refresh failed:", refreshError);
       await logout();
-      throw new Error("세션이 만료되었습니다. 다시 로그인해주세요.");
+      throw new Error("Your session has expired. Please log in again.");
     }
   }
 
@@ -55,7 +55,7 @@ export const cookieFetch = async <T>(path: string, options: RequestInit = {}): P
 
 export const defaultFetch = async <T>(path: string, options: RequestInit = {}): Promise<T> => {
   const method = options.method || "GET";
-  console.log(`🌐 API 요청: ${method} ${API_BASE_URL}${path}`);
+  console.log(`API request: ${method} ${API_BASE_URL}${path}`);
 
   const response = await fetch(`${API_BASE_URL}${path}`, {
     cache: "no-store",
