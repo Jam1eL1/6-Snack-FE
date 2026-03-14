@@ -2,8 +2,18 @@ import { logout } from "@/app/actions/auth";
 import { refreshAccessToken } from "./auth.api";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+let refreshPromise: Promise<unknown> | null = null;
 
-export const cookieFetch = async <T>(path: string, options: RequestInit = {}): Promise<T> => {
+const waitForRefresh = () => {
+  if (!refreshPromise) {
+    refreshPromise = refreshAccessToken().finally(() => {
+      refreshPromise = null;
+    });
+  }
+  return refreshPromise;
+};
+
+export const cookieFetch = async <T>(path: string, options: RequestInit = {}, hasRetried = false): Promise<T> => {
   const method = options.method || "GET";
   // Remove this log after development is complete
   console.log(`API request: ${method} ${API_BASE_URL}${path}`);
@@ -28,12 +38,11 @@ export const cookieFetch = async <T>(path: string, options: RequestInit = {}): P
 
   const isRefreshRequest = path === "/auth/refresh-token";
 
-  if (response.status === 401 && !isRefreshRequest) {
+  if (response.status === 401 && !isRefreshRequest && !hasRetried) {
     try {
       console.log("Attempting to refresh access token");
-      await refreshAccessToken();
-      console.log("Access token refreshed successfully, retrying original request");
-      response = await request();
+      await waitForRefresh();
+      return cookieFetch<T>(path, options, true);
     } catch (refreshError) {
       console.error("Access token refresh failed:", refreshError);
       await logout();
