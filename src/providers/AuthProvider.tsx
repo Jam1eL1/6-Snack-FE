@@ -20,6 +20,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   const [user, setUser] = useState<TUser | null>(null);
   const pathname = usePathname();
   const router = useRouter();
+  const excludedRoutes = ["/", "/login", "/signup"];
 
   const getUser = async () => {
     try {
@@ -47,31 +48,13 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   };
   // Whenever path changes check auth status except for non-protected routes
   useEffect(() => {
-    if (
-      pathname === "/" ||
-      pathname.startsWith("/auth") ||
-      pathname.startsWith("/login") ||
-      pathname.startsWith("/signup")
-    )
-      return;
-
+    const shouldSkipAuthCheck = excludedRoutes.some((route) =>
+      route === "/" ? pathname === "/" : pathname.startsWith(route),
+    );
+    if (shouldSkipAuthCheck) return;
     console.log("Checking authentication state:", pathname);
     getUser();
   }, [pathname]);
-
-  // On initial mount
-  useEffect(() => {
-    const currentPath = pathname;
-    if (
-      currentPath !== "/" &&
-      !currentPath.startsWith("/auth") &&
-      !currentPath.startsWith("/login") &&
-      !currentPath.startsWith("/signup")
-    ) {
-      console.log("Checking authentication state on initial app load");
-      getUser();
-    }
-  }, []);
 
   return <AuthContext.Provider value={{ user, login, logout, register }}>{children}</AuthContext.Provider>;
 }
