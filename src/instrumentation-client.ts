@@ -8,11 +8,11 @@ if (isSentryEnabled) {
 
     integrations: [Sentry.replayIntegration()],
 
-    tracesSampleRate: 1,
-    enableLogs: true,
+    tracesSampleRate: 0.1,
+    enableLogs: false,
 
-    replaysSessionSampleRate: 0.1,
-    replaysOnErrorSampleRate: 1.0,
+    replaysSessionSampleRate: 0,
+    replaysOnErrorSampleRate: 0.1,
     debug: false,
   });
 }
