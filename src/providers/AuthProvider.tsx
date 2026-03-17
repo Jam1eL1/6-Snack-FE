@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { getUserApi } from "@/lib/api/user.api";
-import { loginApi, logoutApi, registerApi } from "@/lib/api/auth.api";
+import { loginApi, logoutApi } from "@/lib/api/auth.api";
 import { usePathname, useRouter } from "next/navigation";
 import { TUser, TAuthContextType } from "@/types/auth.types";
 
@@ -32,10 +32,6 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     }
   };
 
-  const register = async () => {
-    await registerApi();
-  };
-
   const login = async (email: string, password: string) => {
     const userData = await loginApi(email, password);
     setUser(userData);
@@ -56,5 +52,5 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     getUser();
   }, [pathname]);
 
-  return <AuthContext.Provider value={{ user, login, logout, register }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user, login, logout }}>{children}</AuthContext.Provider>;
 }
