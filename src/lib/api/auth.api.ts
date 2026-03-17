@@ -10,7 +10,7 @@ export const loginApi = async (email: string, password: string) => {
   });
   if (!response.ok) {
     const errorData = await response.json();
-    throw new Error(errorData.message || "로그인에 실패했습니다");
+    throw new Error(errorData.message || "Login failed.");
   }
   const result = await response.json();
   return result.user ? result.user : result;
@@ -22,11 +22,6 @@ export const logoutApi = async () => {
     method: "POST",
     credentials: "include",
   });
-};
-
-export const registerApi = async () => {
-  // 일반 회원가입은 초대 링크가 필요하므로 에러 반환
-  throw new Error("일반 회원가입은 초대 링크가 필요합니다");
 };
 
 export const refreshAccessToken = async () => {

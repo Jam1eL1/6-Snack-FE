@@ -14,12 +14,12 @@ const waitForRefresh = () => {
 
 export const cookieFetch = async <T>(path: string, options: RequestInit = {}, hasRetried = false): Promise<T> => {
   const method = options.method || "GET";
-  // Remove this log after development is complete
+  // Remove this log when development is complete.
   console.log(`API request: ${method} ${API_BASE_URL}${path}`);
 
-  // Extract the fetch call into a helper function
+  // Keep the fetch call in a helper so retries reuse the same request setup.
   const request = async () => {
-    // Do not set Content-Type for FormData so the browser can set the boundary automatically
+    // Let the browser set the multipart boundary for FormData requests.
     const isFormData = options.body instanceof FormData;
 
     return await fetch(`${API_BASE_URL}${path}`, {

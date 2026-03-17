@@ -46,7 +46,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     setUser(null);
     router.push("/");
   };
-  // Whenever path changes check auth status except for non-protected routes
+  // Re-check auth state on route changes except for public routes.
   useEffect(() => {
     const shouldSkipAuthCheck = excludedRoutes.some((route) =>
       route === "/" ? pathname === "/" : pathname.startsWith(route),
