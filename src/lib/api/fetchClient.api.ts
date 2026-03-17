@@ -1,4 +1,5 @@
 import { logoutApi, refreshAccessToken } from "./auth.api";
+import { SessionExpiredError } from "./auth.errors";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 let refreshPromise: Promise<unknown> | null = null;
@@ -44,8 +45,7 @@ export const cookieFetch = async <T>(path: string, options: RequestInit = {}, ha
       return cookieFetch<T>(path, options, true);
     } catch (refreshError) {
       console.error("Access token refresh failed:", refreshError);
-      await logoutApi();
-      throw new Error("Your session has expired. Please log in again.");
+      throw new SessionExpiredError();
     }
   }
 
