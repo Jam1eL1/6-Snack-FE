@@ -2,7 +2,7 @@ export type TUser = {
   id: string;
   name: string;
   email: string;
-  role?: string;
+  role: string;
   company?: {
     id: number;
     name: string;
