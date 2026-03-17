@@ -1,4 +1,3 @@
-import { logout } from "@/app/actions/auth";
 import { refreshAccessToken } from "./auth.api";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -45,7 +44,6 @@ export const cookieFetch = async <T>(path: string, options: RequestInit = {}, ha
       return cookieFetch<T>(path, options, true);
     } catch (refreshError) {
       console.error("Access token refresh failed:", refreshError);
-      await logout();
       throw new Error("Your session has expired. Please log in again.");
     }
   }
