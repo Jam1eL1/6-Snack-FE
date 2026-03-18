@@ -2,9 +2,10 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { getUserApi } from "@/lib/api/user.api";
-import { loginApi, logoutApi, registerApi } from "@/lib/api/auth.api";
+import { loginApi, logoutApi } from "@/lib/api/auth.api";
 import { usePathname, useRouter } from "next/navigation";
 import { TUser, TAuthContextType } from "@/types/auth.types";
+import { SessionExpiredError } from "@/lib/api/auth.errors";
 
 const AuthContext = createContext<TAuthContextType | undefined>(undefined);
 
@@ -27,13 +28,14 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
       const userData = await getUserApi();
       setUser(userData);
     } catch (error) {
-      console.log("Failed to fetch user info:", error);
+      if (error instanceof SessionExpiredError) {
+        setUser(null);
+        router.push("/login");
+        return;
+      }
       setUser(null);
+      console.log("Failed to fetch user info:", error);
     }
-  };
-
-  const register = async () => {
-    await registerApi();
   };
 
   const login = async (email: string, password: string) => {
@@ -46,7 +48,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     setUser(null);
     router.push("/");
   };
-  // Whenever path changes check auth status except for non-protected routes
+  // Re-check auth state on route changes except for public routes.
   useEffect(() => {
     const shouldSkipAuthCheck = excludedRoutes.some((route) =>
       route === "/" ? pathname === "/" : pathname.startsWith(route),
@@ -56,5 +58,5 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     getUser();
   }, [pathname]);
 
-  return <AuthContext.Provider value={{ user, login, logout, register }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user, login, logout }}>{children}</AuthContext.Provider>;
 }
