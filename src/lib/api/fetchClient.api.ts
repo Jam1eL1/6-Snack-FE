@@ -36,7 +36,7 @@ export const cookieFetch = async <T>(
     });
   };
 
-  let response = await request();
+  const response = await request();
 
   if (response.status === 401 && shouldRefreshOn401 && !hasRetried) {
     try {
