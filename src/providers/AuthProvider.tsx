@@ -5,6 +5,7 @@ import { getUserApi } from "@/lib/api/user.api";
 import { loginApi, logoutApi } from "@/lib/api/auth.api";
 import { usePathname, useRouter } from "next/navigation";
 import { TUser, TAuthContextType } from "@/types/auth.types";
+import { SessionExpiredError } from "@/lib/api/auth.errors";
 
 const AuthContext = createContext<TAuthContextType | undefined>(undefined);
 
@@ -27,8 +28,13 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
       const userData = await getUserApi();
       setUser(userData);
     } catch (error) {
-      console.log("Failed to fetch user info:", error);
+      if (error instanceof SessionExpiredError) {
+        setUser(null);
+        router.push("/login");
+        return;
+      }
       setUser(null);
+      console.log("Failed to fetch user info:", error);
     }
   };
 
