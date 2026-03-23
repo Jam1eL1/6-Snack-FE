@@ -1,26 +1,5 @@
 import { cookieFetch } from "./fetchClient.api";
 
-export enum Role {
-  USER = "USER",
-  ADMIN = "ADMIN",
-  SUPER_ADMIN = "SUPER_ADMIN",
-}
-
-export type TUserInfo = {
-  id: string;
-  name: string;
-  email: string;
-  role: Role;
-  company: {
-    name: string;
-  };
-};
-
-export async function getUserInfo(): Promise<TUserInfo> {
-  const response = await cookieFetch("/users/me");
-  return (response as { user: TUserInfo }).user;
-}
-
 export async function updateCompany(userId: string, company: string) {
   return await cookieFetch(`/super-admin/users/${userId}/company`, {
     method: "PATCH",
