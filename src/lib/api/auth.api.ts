@@ -16,7 +16,7 @@ export type TLoginResponse = {
   user: TUser;
 };
 
-export const loginApi = async (email: string, password: string): Promise<TUser> => {
+export const login = async (email: string, password: string): Promise<TUser> => {
   const response = await cookieFetch<TLoginResponse>("/auth/login", {
     method: "POST",
     body: JSON.stringify({ email, password }),
@@ -25,7 +25,7 @@ export const loginApi = async (email: string, password: string): Promise<TUser> 
   return response.user;
 };
 
-export const logoutApi = async (): Promise<void> => {
+export const logout = async (): Promise<void> => {
   return await cookieFetch("/auth/logout", {
     method: "POST",
     shouldRefreshOn401: false,
@@ -38,7 +38,7 @@ export const refreshAccessToken = async () => {
   });
 };
 
-export const signUpWithInviteApi = async (
+export const signUpWithInvite = async (
   inviteId: string,
   password: string,
   passwordConfirm: string,

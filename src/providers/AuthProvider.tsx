@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { getUserApi } from "@/lib/api/user.api";
-import { loginApi, logoutApi } from "@/lib/api/auth.api";
+import { login, logout } from "@/lib/api/auth.api";
 import { usePathname, useRouter } from "next/navigation";
 import { TUser, TAuthContextType } from "@/types/auth.types";
 import { SessionExpiredError } from "@/lib/api/auth.errors";
@@ -39,12 +39,12 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   };
 
   const login = async (email: string, password: string) => {
-    const userData = await loginApi(email, password);
+    const userData = await login(email, password);
     setUser(userData);
   };
 
   const logout = async () => {
-    await logoutApi();
+    await logout();
     setUser(null);
     router.push("/");
   };

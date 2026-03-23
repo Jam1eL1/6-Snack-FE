@@ -11,7 +11,7 @@ import VisibilityOffIconSvg from "@/components/svg/VisibilityOffIconSvg";
 import VisibilityOnIconSvg from "@/components/svg/VisibilityOnIconSvg";
 import clsx from "clsx";
 import Button from "@/components/ui/Button";
-import { signUpWithInviteApi } from "@/lib/api/auth.api";
+import { signUpWithInvite } from "@/lib/api/auth.api";
 import img_dog_error from "@/assets/images/img_dog_error.png";
 import Image from "next/image";
 import DogSpinner from "@/components/common/DogSpinner";
@@ -84,7 +84,7 @@ export default function InviteSignUpPage() {
 
     try {
       setIsDisabled(true);
-      await signUpWithInviteApi(inviteId, data.password, data.passwordConfirm);
+      await signUpWithInvite(inviteId, data.password, data.passwordConfirm);
       router.push("/login");
     } catch {
       setIsToastVisible(true);

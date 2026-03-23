@@ -1,9 +1,15 @@
+export enum Role {
+  USER = "USER",
+  ADMIN = "ADMIN",
+  SUPER_ADMIN = "SUPER_ADMIN",
+}
+
 export type TUser = {
   id: string;
   name: string;
   email: string;
-  role: string;
-  company?: {
+  role: Role;
+  company: {
     id: number;
     name: string;
   };
