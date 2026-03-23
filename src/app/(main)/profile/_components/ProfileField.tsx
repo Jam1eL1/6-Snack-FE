@@ -1,6 +1,6 @@
 "use client";
 
-import { Role } from "@/lib/api/profile.api";
+import { Role } from "@/types/auth.types";
 import clsx from "clsx";
 
 type TProfileFieldProps = {
