@@ -32,7 +32,7 @@ export default function AuthenticatedHeader() {
 
   const { selectedCategory, setSelectedCategory, clearSelectedCategory } = useCategoryStore();
 
-  const { user, logout } = useAuth();
+  const { user, signOut } = useAuth();
   const { isMobile } = useDeviceType();
 
   const { data: cartItems } = useQuery({
@@ -103,7 +103,7 @@ export default function AuthenticatedHeader() {
 
   const handleItemClick = (item: TSideMenuItem) => {
     if (item.id === "logout") {
-      logout();
+      signOut();
       setIsMenuOpen(false);
     } else if (item.href) {
       router.push(item.href);
@@ -203,7 +203,7 @@ export default function AuthenticatedHeader() {
           </div>
           <VerticalBarIconSvg className="hidden sm:block text-primary-100" />
           <button
-            onClick={logout}
+            onClick={signOut}
             className="cursor-pointer hidden sm:block font-normal text-primary-950 hover:font-bold transition-all"
           >
             Log Out

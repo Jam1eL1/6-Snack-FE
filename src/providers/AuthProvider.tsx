@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { getUser } from "@/lib/api/user.api";
-import { login as loginRequest, logout as logoutRequest } from "@/lib/api/auth.api";
+import { login, logout } from "@/lib/api/auth.api";
 import { usePathname, useRouter } from "next/navigation";
 import { TUser, TAuthContextType } from "@/types/auth.types";
 import { SessionExpiredError } from "@/lib/api/auth.errors";
@@ -23,13 +23,13 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   const pathname = usePathname();
   const router = useRouter();
 
-  const login = async (email: string, password: string) => {
-    const userData = await loginRequest(email, password);
+  const signIn = async (email: string, password: string) => {
+    const userData = await login(email, password);
     setUser(userData);
   };
 
-  const logout = async () => {
-    await logoutRequest();
+  const signOut = async () => {
+    await logout();
     setUser(null);
     router.push("/");
   };
@@ -59,5 +59,5 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     loadUser();
   }, [pathname, router]);
 
-  return <AuthContext.Provider value={{ user, login, logout }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user, signIn, signOut }}>{children}</AuthContext.Provider>;
 }

@@ -17,6 +17,6 @@ export type TUser = {
 
 export type TAuthContextType = {
   user: TUser | null;
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => Promise<void>;
+  signIn: (email: string, password: string) => Promise<void>;
+  signOut: () => Promise<void>;
 };

@@ -22,7 +22,7 @@ export default function LoginPage() {
   const [toastText, setToastText] = useState<string>("");
 
   const router = useRouter();
-  const { login } = useAuth();
+  const { signIn } = useAuth();
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -60,7 +60,7 @@ export default function LoginPage() {
 
     try {
       setIsDisabled(true);
-      await login(email, password);
+      await signIn(email, password);
 
       router.push("/products");
     } catch (e) {
