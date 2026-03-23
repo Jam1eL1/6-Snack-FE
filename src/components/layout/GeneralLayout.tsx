@@ -7,7 +7,7 @@ import React from "react";
 export default function GeneralLayout({ children }: TChildrenProps) {
   const currentPath = usePathname();
 
-  const isAuthPage = ["/login", "/signup", "/profile"].some((path) => currentPath.startsWith(path));
+  const isAuthPage = ["/signin", "/signup", "/profile"].some((path) => currentPath.startsWith(path));
 
   const isLandingPage = currentPath === "/";
 

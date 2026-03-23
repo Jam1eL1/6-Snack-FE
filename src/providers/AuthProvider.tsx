@@ -8,7 +8,7 @@ import { TUser, TAuthContextType } from "@/types/auth.types";
 import { SessionExpiredError } from "@/lib/api/auth.errors";
 
 const AuthContext = createContext<TAuthContextType | undefined>(undefined);
-const excludedRoutes = ["/", "/login", "/signup"];
+const excludedRoutes = ["/", "/signin", "/signup"];
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -47,7 +47,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
       } catch (error) {
         if (error instanceof SessionExpiredError) {
           setUser(null);
-          router.push("/login");
+          router.push("/signin");
           return;
         }
         setUser(null);

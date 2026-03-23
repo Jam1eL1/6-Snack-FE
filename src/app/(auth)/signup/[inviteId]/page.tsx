@@ -16,7 +16,7 @@ import img_dog_error from "@/assets/images/img_dog_error.png";
 import Image from "next/image";
 import DogSpinner from "@/components/common/DogSpinner";
 import { inviteSignupSchema, TInviteSignUpFormData } from "@/lib/schemas/inviteSignupSchema";
-import FormErrorMessage from "../../login/_components/FormErrorMessage";
+import FormErrorMessage from "../../signin/_components/FormErrorMessage";
 import Toast from "@/components/common/Toast";
 
 export default function InviteSignUpPage() {
@@ -85,7 +85,7 @@ export default function InviteSignUpPage() {
     try {
       setIsDisabled(true);
       await signUpWithInvite(inviteId, data.password, data.passwordConfirm);
-      router.push("/login");
+      router.push("/signin");
     } catch {
       setIsToastVisible(true);
       setToastText("Something went wrong. Please try again.");
@@ -123,7 +123,7 @@ export default function InviteSignUpPage() {
         </section>
 
         <Link
-          href="/login"
+          href="/signin"
           className="rounded-[2px] inline-flex justify-center items-center bg-primary-100 font-semibold text-[16px]/[20px] tracking-tight w-full max-w-[230px] min-h-[56px] sm:max-w-[310px] sm:h-[64px]"
         >
           Go back to the login page
@@ -297,7 +297,7 @@ export default function InviteSignUpPage() {
         <div className="flex w-full justify-center items-center">
           <p className="text-center text-primary-500 text-base/[20px] tracking-tight ">
             Already have an account?
-            <Link href="/login">
+            <Link href="/signin">
               <span className="text-primary-950 text-base/[20px] tracking-tight font-bold underline decoration-primary-950 underline-offset-2 ml-1">
                 Log In
               </span>

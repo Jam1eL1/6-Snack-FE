@@ -194,7 +194,7 @@ const SignUpForm = () => {
         <p className={clsx("text-center", "mt-6", "text-sm", "text-[--color-primary-700]")}>
           이미 계정이 있으신가요?{" "}
           <a
-            href="/login"
+            href="/signin"
             className={clsx(
               "text-[--color-primary-950]",
               "font-semibold",

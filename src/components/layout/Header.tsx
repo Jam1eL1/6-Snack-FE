@@ -12,7 +12,7 @@ export default function Header() {
   const isUnprotectedRoute = pathname === "/" || pathname.startsWith("/signup");
 
   // 유저
-  const isAuthRoute = pathname.startsWith("/login");
+  const isAuthRoute = pathname.startsWith("/signin");
 
   // 보호된 페이지 경로 (main app)
   const isProtectedRoute =

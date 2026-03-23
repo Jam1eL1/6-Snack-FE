@@ -11,7 +11,7 @@ import { useAuth } from "@/providers/AuthProvider";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema, TLoginFormData } from "@/lib/schemas/login.schema";
+import { signInSchema, TSignInFormData } from "@/lib/schemas/signin.schema";
 import FormErrorMessage from "./_components/FormErrorMessage";
 import Toast from "@/components/common/Toast";
 
@@ -36,8 +36,8 @@ export default function LoginPage() {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<TLoginFormData>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<TSignInFormData>({
+    resolver: zodResolver(signInSchema),
     mode: "onChange",
   });
 
@@ -55,7 +55,7 @@ export default function LoginPage() {
   }, []);
 
   // 로그인 함수
-  const onSubmit = async (body: TLoginFormData) => {
+  const onSubmit = async (body: TSignInFormData) => {
     const { email, password } = body;
 
     try {

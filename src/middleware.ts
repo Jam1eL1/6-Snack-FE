@@ -22,11 +22,11 @@ export function middleware(request: NextRequest) {
 
   // 로그인을 아예 안한 유저(둘 다 없음)는 랜딩, 로그인, 회원가입(하위포함)만 허용
   if (!authToken && !refreshToken) {
-    const allowedPaths = ["/", "/login"];
+    const allowedPaths = ["/", "/signin"];
     const isSignupPath = pathname === "/signup" || pathname.startsWith("/signup/");
     const isAllowed = allowedPaths.includes(pathname) || isSignupPath;
     if (!isAllowed) {
-      return NextResponse.redirect(new URL("/login", request.url));
+      return NextResponse.redirect(new URL("/signin", request.url));
     }
   }
 
@@ -36,8 +36,8 @@ export function middleware(request: NextRequest) {
   // 인증 상태 확인 : 쿠키만료기한과 토큰만료기한이 같으므로 토큰존재여부로 인증상태확인 가능
   const isAuthenticated = !!authToken;
 
-  // 인증 관련 경로 확인 - 라우트 그룹으로 인해 URL은 /login, /signup
-  const authPaths = ["/login", "/signup"];
+  // 인증 관련 경로 확인 - 라우트 그룹으로 인해 URL은 /signin, /signup
+  const authPaths = ["/signin", "/signup"];
   const isAuthRoute = authPaths.some((path) => pathname === path);
 
   // 로그인한 사용자가 인증 경로(로그인, 회원가입)에 접근하는 경우

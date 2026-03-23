@@ -79,7 +79,7 @@ export default function SuperAdminSignUpPage() {
     try {
       await superAdminSignUp(data);
       // 성공 시 바로 로그인 페이지로 이동
-      router.push("/login");
+      router.push("/signin");
     } catch {
       setIsLoading(false);
       showToast("회원가입에 실패했습니다. 다시 시도해주세요.", "error");
@@ -251,7 +251,7 @@ export default function SuperAdminSignUpPage() {
           <nav aria-label="계정 관련 링크" className="w-full flex justify-center">
             <p className="text-primary-500 text-base/[20px] tracking-tight text-center w-full">
               이미 계정이 있으신가요?
-              <Link href="/login" aria-label="로그인 페이지로 이동">
+              <Link href="/signin" aria-label="로그인 페이지로 이동">
                 <span className="text-primary-950 text-base/[20px] tracking-tight font-bold underline decoration-primary-950 underline-offset-2">
                   로그인
                 </span>
