@@ -1,24 +1,28 @@
 import { cookieFetch } from "./fetchClient.api";
 
-export async function updateCompany(userId: string, company: string) {
-  return await cookieFetch(`/super-admin/users/${userId}/company`, {
-    method: "PATCH",
-    body: JSON.stringify({
-      companyName: company,
-    }),
-  });
-}
+export type TUpdateCompanyInfoRequest = {
+  companyName?: string;
+  passwordData?: {
+    newPassword: string;
+    newPasswordConfirm: string;
+  };
+};
 
-export async function updateSuper(userId: string, company: string, password: string) {
-  return await cookieFetch(`/super-admin/users/${userId}/company`, {
+export type TUpdateCompanyInfoResponse = {
+  message: string;
+  company: {
+    id: number;
+    name: string;
+  };
+};
+
+export async function updateCompanyInfo(
+  userId: string,
+  data: TUpdateCompanyInfoRequest,
+): Promise<TUpdateCompanyInfoResponse> {
+  return await cookieFetch<TUpdateCompanyInfoResponse>(`/super-admin/users/${userId}/company`, {
     method: "PATCH",
-    body: JSON.stringify({
-      companyName: company,
-      passwordData: {
-        newPassword: password,
-        newPasswordConfirm: password,
-      },
-    }),
+    body: JSON.stringify(data),
   });
 }
 
