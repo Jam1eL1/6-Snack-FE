@@ -4,7 +4,7 @@ import React, { useEffect, useState, KeyboardEvent, useCallback } from "react";
 import Image from "next/image";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import IcSearch from "@/assets/icons/ic_search.svg";
-import { TSearchBarProps } from "@/types/serchBar.types";
+import { TSearchBarProps } from "@/types/searchBar.types";
 
 export default function SearchBar({ placeholder = "이름으로 검색하세요", initialValue = "" }: TSearchBarProps) {
   const router = useRouter();
