@@ -1,6 +1,6 @@
 import { cookieFetch } from "./fetchClient.api";
 
-export const cancelOrderApi = async (orderId: number): Promise<void> => {
+export const cancelOrder = async (orderId: number): Promise<void> => {
   console.log("🔥 fetch 실행 시작");
   return await cookieFetch(`/orders/${orderId}`, {
     method: "PATCH",

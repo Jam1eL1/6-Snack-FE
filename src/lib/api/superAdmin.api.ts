@@ -24,7 +24,7 @@ export const updateUserRole = async (userId: string, role: TUserRole): Promise<T
   return res;
 };
 
-export const superAdminSignUpApi = async (data: {
+export const superAdminSignUp = async (data: {
   email: string;
   name: string;
   companyName: string;

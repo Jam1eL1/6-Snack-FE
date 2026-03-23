@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import clsx from "clsx";
-import { superAdminSignUpApi } from "@/lib/api/superAdmin.api";
+import { superAdminSignUp } from "@/lib/api/superAdmin.api";
 import Input from "@/components/common/Input";
 import Toast from "@/components/common/Toast";
 import { TToastVariant } from "@/types/toast.types";
@@ -77,7 +77,7 @@ export default function SuperAdminSignUpPage() {
   const onSubmit = async (data: TSignUpFormData) => {
     setIsLoading(true);
     try {
-      await superAdminSignUpApi(data);
+      await superAdminSignUp(data);
       // 성공 시 바로 로그인 페이지로 이동
       router.push("/login");
     } catch {

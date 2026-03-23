@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { getInviteApi, TInviteInfo } from "@/lib/api/invite.api";
+import { getInvite, TInviteInfo } from "@/lib/api/invite.api";
 import VisibilityOffIconSvg from "@/components/svg/VisibilityOffIconSvg";
 import VisibilityOnIconSvg from "@/components/svg/VisibilityOnIconSvg";
 import clsx from "clsx";
@@ -65,7 +65,7 @@ export default function InviteSignUpPage() {
     const fetchInviteInfo = async () => {
       try {
         setIsLoading(true);
-        const data = await getInviteApi(inviteId);
+        const data = await getInvite(inviteId);
         setInviteInfo(data);
       } catch (error) {
         setInviteError(error instanceof Error ? error.message : "The invite link is not valid.");

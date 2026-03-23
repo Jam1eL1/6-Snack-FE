@@ -9,7 +9,7 @@ import NoContent from "@/components/common/NoContent";
 import { fetchAllCompanyUsers } from "@/lib/api/companyUser.api";
 import { sendInvite } from "@/lib/api/invite.api";
 import { deleteUserById } from "@/lib/api/superAdmin.api";
-import { getUserApi } from "@/lib/api/user.api";
+import { getUser } from "@/lib/api/user.api";
 import { useModal } from "@/providers/ModalProvider";
 import { TToastVariant } from "@/types/toast.types";
 import { useSearchParams } from "next/navigation";
@@ -93,7 +93,7 @@ export default function User() {
   // User invitation mutation
   const inviteUserMutation = useMutation({
     mutationFn: async (data: { name: string; email: string; role: "USER" | "ADMIN" }) => {
-      const currentUser = await getUserApi();
+      const currentUser = await getUser();
 
       const inviteData = {
         email: data.email,

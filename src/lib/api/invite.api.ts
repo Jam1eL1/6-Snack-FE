@@ -10,7 +10,7 @@ export type TInviteInfo = {
 };
 
 // 초대 정보 조회
-export const getInviteApi = async (inviteId: string): Promise<TInviteInfo> => {
+export const getInvite = async (inviteId: string): Promise<TInviteInfo> => {
   return cookieFetch(`/invite/${inviteId}`);
 };
 
