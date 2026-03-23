@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { updatePassword, updateSuper, updateCompany } from "@/lib/api/profile.api";
+import { updatePassword, updateCompanyInfo, TUpdateCompanyInfoRequest } from "@/lib/api/profile.api";
 import { profileSchema, TProfileFormData } from "@/lib/schemas/profile.schema";
 import { useAuth } from "@/providers/AuthProvider";
 import { Role, TUser } from "@/types/auth.types";
@@ -81,11 +81,18 @@ export default function ProfileForm() {
       }
 
       if (user.role === Role.SUPER_ADMIN) {
-        if (hasCompanyChanged && !data.password) {
-          return await updateCompany(user.id, data.company!.trim());
-        } else if (data.password) {
-          return await updateSuper(user.id, data.company?.trim() || typedUser?.company?.name || "", data.password);
+        const payload: TUpdateCompanyInfoRequest = {};
+
+        if (hasCompanyChanged) {
+          payload.companyName = data.company?.trim();
         }
+        if (data.password) {
+          payload.passwordData = {
+            newPassword: data.password,
+            newPasswordConfirm: data.password,
+          };
+        }
+        await updateCompanyInfo(user.id, payload);
       } else {
         if (data.password) {
           return await updatePassword(user.id, data.password);
