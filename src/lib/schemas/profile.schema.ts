@@ -14,42 +14,42 @@ export const profileSchema = z
         message: "Password must be at least 8 characters long.",
       })
       .refine((val) => !val || /[a-zA-Z]/.test(val), {
-        message: "Must include English letters.",
+        message: "Password must include at least one letter.",
       })
       .refine((val) => !val || /[0-9]/.test(val), {
-        message: "Must include numbers.",
+        message: "Password must include at least one number.",
       })
       .refine((val) => !val || /[^a-zA-Z0-9]/.test(val), {
-        message: "Must include special characters.",
+        message: "Password must include at least one special character.",
       }),
     confirmPassword: z.string().optional(),
   })
   .refine(
     (data) => {
-      // 비밀번호가 입력된 경우에만 확인 비밀번호와 일치하는지 검사
+      // Only check password confirmation when a password has been entered.
       if (data.password && data.password.length > 0) {
         return data.password === data.confirmPassword;
       }
       return true;
     },
     {
-      message: "비밀번호가 일치하지 않습니다.",
+      message: "Passwords do not match.",
       path: ["confirmPassword"],
     },
   )
   .refine(
     (data) => {
-      // 회사명이 변경된 경우 공백이 아니어야 함
+      // If the company field is provided, it must not be empty after trimming.
       if (data.company !== undefined) {
         return data.company.trim() !== "";
       }
       return true;
     },
     {
-      message: "회사명을 입력해주세요.",
+      message: "Please enter a company name.",
       path: ["company"],
     },
   );
 
-// 타입 정의
+// Type definition
 export type TProfileFormData = z.infer<typeof profileSchema>;
