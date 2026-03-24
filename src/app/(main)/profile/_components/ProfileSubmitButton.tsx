@@ -15,11 +15,11 @@ export default function ProfileSubmitButton({ isFormValid, isSubmitting, onSubmi
   return (
     <Button
       type={buttonType}
-      label={isSubmitting ? "변경 중..." : "변경하기"}
+      label={isSubmitting ? "Updating..." : "Save Changes"}
       className={`self-stretch h-16 p-4 ${!isFormValid ? "bg-primary-100 text-primary-300" : ""}`}
       disabled={!isFormValid || isSubmitting}
       onClick={onSubmit}
-      aria-label={isSubmitting ? "프로필 정보 변경 중입니다" : "프로필 정보 변경하기"}
+      aria-label={isSubmitting ? "Updating profile information" : "Save profile changes"}
       aria-describedby={!isFormValid ? "submit-button-description" : undefined}
     />
   );
