@@ -3,7 +3,7 @@
 import { Role } from "@/types/auth.types";
 import clsx from "clsx";
 
-type TProfileFieldProps = {
+type TProfileInfoFieldProps = {
   label: string;
   value?: string;
   isEditable?: boolean;
@@ -15,7 +15,7 @@ type TProfileFieldProps = {
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
 };
 
-export default function ProfileField({
+export default function ProfileInfoField({
   label,
   value,
   isEditable = false,
@@ -26,7 +26,7 @@ export default function ProfileField({
   onChange,
   onBlur,
   ...rest
-}: TProfileFieldProps) {
+}: TProfileInfoFieldProps) {
   const isSuperAdmin = role === Role.SUPER_ADMIN;
   const isCompanyField = name === "company";
 

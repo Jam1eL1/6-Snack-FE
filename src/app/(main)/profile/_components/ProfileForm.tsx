@@ -9,8 +9,8 @@ import { updatePassword, updateCompanyInfo, TUpdateCompanyInfoRequest } from "@/
 import { profileSchema, TProfileFormData } from "@/lib/schemas/profile.schema";
 import { useAuth } from "@/providers/AuthProvider";
 import { Role } from "@/types/auth.types";
-import ProfileField from "./ProfileField";
-import ProfilePasswordSection from "./ProfilePasswordSection";
+import ProfileInfoField from "./ProfileInfoField";
+import ProfilePasswordFields from "./ProfilePasswordFields";
 import ProfileSubmitButton from "./ProfileSubmitButton";
 import Toast from "@/components/common/Toast";
 
@@ -195,7 +195,7 @@ export default function ProfileForm() {
                 <legend className="sr-only">Basic information</legend>
 
                 {/* Company */}
-                <ProfileField
+                <ProfileInfoField
                   label="Company"
                   value={company !== undefined ? company : user?.company?.name || ""}
                   isEditable={user?.role === Role.SUPER_ADMIN}
@@ -206,16 +206,16 @@ export default function ProfileForm() {
                 />
 
                 {/* Role */}
-                <ProfileField label="Role" value={getRoleLabel(user?.role)} type="display" />
+                <ProfileInfoField label="Role" value={getRoleLabel(user?.role)} type="display" />
 
                 {/* Name */}
-                <ProfileField label="Name" value={user?.name || ""} type="display" />
+                <ProfileInfoField label="Name" value={user?.name || ""} type="display" />
 
                 {/* Email */}
-                <ProfileField label="Email" value={user?.email || ""} type="display" />
+                <ProfileInfoField label="Email" value={user?.email || ""} type="display" />
 
                 {/* Password section */}
-                <ProfilePasswordSection
+                <ProfilePasswordFields
                   passwordRegister={register("password")}
                   confirmPasswordRegister={register("confirmPassword")}
                   passwordError={errors.password?.message}

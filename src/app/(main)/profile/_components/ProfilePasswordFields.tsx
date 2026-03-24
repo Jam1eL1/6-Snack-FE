@@ -3,19 +3,19 @@
 import Input from "@/components/common/Input";
 import { UseFormRegisterReturn } from "react-hook-form";
 
-type TProfilePasswordSectionProps = {
+type TProfilePasswordFieldsProps = {
   passwordRegister: UseFormRegisterReturn;
   confirmPasswordRegister: UseFormRegisterReturn;
   passwordError?: string;
   confirmPasswordError?: string;
 };
 
-export default function ProfilePasswordSection({
+export default function ProfilePasswordFields({
   passwordRegister,
   confirmPasswordRegister,
   passwordError,
   confirmPasswordError,
-}: TProfilePasswordSectionProps) {
+}: TProfilePasswordFieldsProps) {
   return (
     <fieldset aria-label="Change password" className="space-y-4 w-full">
       <legend className="sr-only">Change password</legend>
