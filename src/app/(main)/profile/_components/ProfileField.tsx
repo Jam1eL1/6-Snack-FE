@@ -27,17 +27,17 @@ export default function ProfileField({
   onBlur,
   ...rest
 }: TProfileFieldProps) {
-  const SuperAdmin = role === Role.SUPER_ADMIN;
-  const CompanyName = label === "기업명";
+  const isSuperAdmin = role === Role.SUPER_ADMIN;
+  const isCompanyField = name === "company";
 
-  // 고유한 ID 생성
+  // Generate a stable field id.
   const fieldId = name || `profile-${label.toLowerCase().replace(/\s+/g, "-")}`;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let newValue = e.target.value;
 
-    if (CompanyName) {
-      // 회사명: 영문, 숫자, 한글, 특수문자 ()(),._- 만 허용
+    if (isCompanyField) {
+      // Company name: allow letters, numbers, Korean, spaces, and a small set of punctuation.
       newValue = newValue.replace(/[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ()(),._\-\s]/g, "").slice(0, 20);
       e.target.value = newValue;
     }
@@ -52,7 +52,7 @@ export default function ProfileField({
       <div
         className={clsx(
           "border-b",
-          SuperAdmin && isEditable && type === "input" ? "border-primary-900" : "border-primary-200",
+          isSuperAdmin && isEditable && type === "input" ? "border-primary-900" : "border-primary-200",
           finalError && "border-red-500",
         )}
       >
@@ -65,7 +65,7 @@ export default function ProfileField({
               id={fieldId}
               className={clsx(
                 "w-full px-1 text-base outline-none",
-                SuperAdmin ? "text-primary-900" : "text-primary-300 bg-transparent",
+                isSuperAdmin ? "text-primary-900" : "text-primary-300 bg-transparent",
               )}
               value={value}
               onChange={handleChange}
@@ -79,7 +79,7 @@ export default function ProfileField({
             <div
               className="w-full px-1 text-primary-300 text-base bg-transparent !text-primary-300"
               role="text"
-              aria-label={`${label}: ${value || "정보 없음"}`}
+              aria-label={`${label}: ${value || "No information available"}`}
             >
               {value}
             </div>

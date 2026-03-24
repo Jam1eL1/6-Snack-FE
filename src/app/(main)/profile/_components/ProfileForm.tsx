@@ -19,16 +19,16 @@ export default function ProfileForm() {
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  // Toast 상태
+  // Toast state
   const [toastVisible, setToastVisible] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string>("");
   const [toastVariant, setToastVariant] = useState<"success" | "error">("success");
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // 성공 후 버튼 비활성화 상태
+  // Disable the button after a successful update
   const [isSuccess, setIsSuccess] = useState(false);
 
-  // 리액트 훅 폼 설정
+  // React Hook Form setup
   const {
     register,
     handleSubmit,
@@ -41,25 +41,25 @@ export default function ProfileForm() {
     mode: "onChange",
   });
 
-  // 폼 값들 감시
+  // Watch form values
   const company = watch("company");
   const password = watch("password");
 
-  // register 함수 반환값 분리
+  // Extract the company field registration props
   const companyRegister = register("company");
 
-  // 변경사항 확인
+  // Track whether any values actually changed
   const hasCompanyChanged = Boolean(user?.role === Role.SUPER_ADMIN && company?.trim() !== (user?.company?.name || ""));
   const hasPasswordChanged = Boolean(password && password.length > 0);
 
   const hasAnyChanges = hasCompanyChanged || hasPasswordChanged;
 
-  // 폼 유효성 검사
+  // Form validity
   const isFormValid = Boolean(hasAnyChanges && isValid);
 
-  // Toast 표시 함수
+  // Show a toast message
   const showToast = (message: string, variant: "success" | "error") => {
-    // 기존 타이머가 있다면 클리어
+    // Clear the previous timer before showing a new toast.
     if (timerRef.current) {
       clearTimeout(timerRef.current);
     }
@@ -70,11 +70,11 @@ export default function ProfileForm() {
     timerRef.current = setTimeout(() => setToastVisible(false), 3000);
   };
 
-  // Profile 업데이트 Mutation
+  // Profile update mutation
   const updateProfile = useMutation({
     mutationFn: async (data: TProfileFormData) => {
       if (!user) {
-        throw new Error("사용자 정보를 찾을 수 없습니다.");
+        throw new Error("User information could not be found.");
       }
 
       if (user.role === Role.SUPER_ADMIN) {
@@ -97,27 +97,27 @@ export default function ProfileForm() {
       }
     },
     onSuccess: (data, variables) => {
-      // 성공 상태 설정
+      // Mark the update as successful.
       setIsSuccess(true);
 
-      // 성공 시 처리
+      // Show a success message based on what changed.
       if (user?.role === Role.SUPER_ADMIN) {
         if (hasCompanyChanged && !variables.password) {
-          showToast("회사명이 변경되었습니다.", "success");
+          showToast("Company name updated successfully.", "success");
         } else if (variables.password) {
-          showToast("정보가 변경되었습니다.", "success");
+          showToast("Your information has been updated.", "success");
         }
       } else {
         if (variables.password) {
-          showToast("비밀번호가 변경되었습니다.", "success");
+          showToast("Password updated successfully.", "success");
         }
       }
 
-      // 폼 초기화
+      // Reset password fields.
       setValue("password", "");
       setValue("confirmPassword", "");
 
-      // 캐시 무효화
+      // Invalidate cached user data.
       queryClient.invalidateQueries({ queryKey: ["user"] });
 
       setTimeout(() => {
@@ -125,12 +125,12 @@ export default function ProfileForm() {
       }, 1000);
     },
     onError: (error: Error) => {
-      const errorMessage = error.message || "업데이트 실패";
+      const errorMessage = error.message || "Update failed.";
       showToast(errorMessage, "error");
     },
   });
 
-  // 유저 정보 로드 및 폼 초기화
+  // Load user data into the form when it becomes available.
   useEffect(() => {
     if (user) {
       reset({
@@ -141,7 +141,7 @@ export default function ProfileForm() {
     }
   }, [user, reset]);
 
-  // 타이머 언마운트 시 클린업
+  // Clean up the toast timer on unmount.
   useEffect(() => {
     return () => {
       if (timerRef.current) {
@@ -150,24 +150,24 @@ export default function ProfileForm() {
     };
   }, []);
 
-  // 권한 라벨 함수
+  // Convert enum roles into display labels.
   const getRoleLabel = (role?: Role | null) => {
     switch (role) {
       case Role.USER:
-        return "일반 유저";
+        return "User";
       case Role.ADMIN:
-        return "관리자";
+        return "Admin";
       case Role.SUPER_ADMIN:
-        return "최고 관리자";
+        return "Super Admin";
       default:
         return "";
     }
   };
 
-  // 제출 핸들러
+  // Handle form submission.
   const onSubmit = async (data: TProfileFormData) => {
     if (!isFormValid) {
-      showToast("입력 정보를 확인해주세요.", "error");
+      showToast("Please review your input and try again.", "error");
       return;
     }
 
@@ -175,28 +175,28 @@ export default function ProfileForm() {
   };
 
   return (
-    <main aria-label="프로필 변경 페이지" className="w-full sm:w-auto">
+    <main aria-label="Profile settings page" className="w-full sm:w-auto">
       {toastVisible && <Toast text={toastMessage} variant={toastVariant} isVisible={toastVisible} />}
 
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="w-full sm:w-[600px] py-10 sm:px-14 sm:rounded-sm sm:shadow-[0px_0px_40px_0px_rgba(0,0,0,0.10)] sm:outline-offset-[-1px] inline-flex flex-col justify-center items-start gap-5"
-        aria-label="프로필 정보 변경 폼"
+        aria-label="Profile update form"
         noValidate
       >
         <header>
-          <h1 className="text-center justify-center text-xl font-bold font-suit">내 프로필 변경</h1>
+          <h1 className="text-center justify-center text-xl font-bold font-suit">Update Profile</h1>
         </header>
 
-        <section className="self-stretch flex flex-col justify-start items-center gap-6" aria-label="프로필 정보">
+        <section className="self-stretch flex flex-col justify-start items-center gap-6" aria-label="Profile information">
           <div className="self-stretch flex flex-col justify-start items-start gap-7">
             <div className="self-stretch flex flex-col justify-start items-start gap-8">
-              <fieldset className="self-stretch flex flex-col justify-start items-start gap-5" aria-label="기본 정보">
-                <legend className="sr-only">기본 정보</legend>
+              <fieldset className="self-stretch flex flex-col justify-start items-start gap-5" aria-label="Basic information">
+                <legend className="sr-only">Basic information</legend>
 
-                {/* 기업명 */}
+                {/* Company */}
                 <ProfileField
-                  label="기업명"
+                  label="Company"
                   value={company !== undefined ? company : user?.company?.name || ""}
                   isEditable={user?.role === Role.SUPER_ADMIN}
                   role={user?.role}
@@ -205,16 +205,16 @@ export default function ProfileForm() {
                   {...companyRegister}
                 />
 
-                {/* 권한 */}
-                <ProfileField label="권한" value={getRoleLabel(user?.role)} type="display" />
+                {/* Role */}
+                <ProfileField label="Role" value={getRoleLabel(user?.role)} type="display" />
 
-                {/* 이름 */}
-                <ProfileField label="이름" value={user?.name || ""} type="display" />
+                {/* Name */}
+                <ProfileField label="Name" value={user?.name || ""} type="display" />
 
-                {/* 이메일 */}
-                <ProfileField label="이메일" value={user?.email || ""} type="display" />
+                {/* Email */}
+                <ProfileField label="Email" value={user?.email || ""} type="display" />
 
-                {/* 비밀번호 섹션 */}
+                {/* Password section */}
                 <ProfilePasswordSection
                   passwordRegister={register("password")}
                   confirmPasswordRegister={register("confirmPassword")}
@@ -224,7 +224,7 @@ export default function ProfileForm() {
               </fieldset>
             </div>
 
-            {/* 제출 버튼 */}
+            {/* Submit button */}
             <ProfileSubmitButton
               isFormValid={isFormValid && !isSuccess}
               isSubmitting={updateProfile.isPending}
