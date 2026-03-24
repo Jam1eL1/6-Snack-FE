@@ -4,7 +4,6 @@ import { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { updatePassword, updateCompanyInfo, TUpdateCompanyInfoRequest } from "@/lib/api/profile.api";
 import { profileSchema, TProfileFormData } from "@/lib/schemas/profile.schema";
 import { useAuth } from "@/providers/AuthProvider";
@@ -17,16 +16,12 @@ import Toast from "@/components/common/Toast";
 export default function ProfileForm() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   // Toast state
   const [toastVisible, setToastVisible] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string>("");
   const [toastVariant, setToastVariant] = useState<"success" | "error">("success");
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Disable the button after a successful update
-  const [isSuccess, setIsSuccess] = useState(false);
 
   // React Hook Form setup
   const {
@@ -97,9 +92,6 @@ export default function ProfileForm() {
       }
     },
     onSuccess: (data, variables) => {
-      // Mark the update as successful.
-      setIsSuccess(true);
-
       // Show a success message based on what changed.
       if (user?.role === Role.SUPER_ADMIN) {
         if (hasCompanyChanged && !variables.password) {
@@ -119,10 +111,6 @@ export default function ProfileForm() {
 
       // Invalidate cached user data.
       queryClient.invalidateQueries({ queryKey: ["user"] });
-
-      setTimeout(() => {
-        router.push("/products");
-      }, 1000);
     },
     onError: (error: Error) => {
       const errorMessage = error.message || "Update failed.";
@@ -188,10 +176,16 @@ export default function ProfileForm() {
           <h1 className="text-center justify-center text-xl font-bold font-suit">Update Profile</h1>
         </header>
 
-        <section className="self-stretch flex flex-col justify-start items-center gap-6" aria-label="Profile information">
+        <section
+          className="self-stretch flex flex-col justify-start items-center gap-6"
+          aria-label="Profile information"
+        >
           <div className="self-stretch flex flex-col justify-start items-start gap-7">
             <div className="self-stretch flex flex-col justify-start items-start gap-8">
-              <fieldset className="self-stretch flex flex-col justify-start items-start gap-5" aria-label="Basic information">
+              <fieldset
+                className="self-stretch flex flex-col justify-start items-start gap-5"
+                aria-label="Basic information"
+              >
                 <legend className="sr-only">Basic information</legend>
 
                 {/* Company */}
@@ -226,7 +220,7 @@ export default function ProfileForm() {
 
             {/* Submit button */}
             <ProfileSubmitButton
-              isFormValid={isFormValid && !isSuccess}
+              isFormValid={isFormValid}
               isSubmitting={updateProfile.isPending}
               onSubmit={handleSubmit(onSubmit)}
             />
