@@ -116,7 +116,7 @@ export const getMyOrders = async (params?: {
     const queryString = queryParams.toString();
     const url = queryString ? `/admin/orders?${queryString}` : "/admin/orders";
 
-    return await cookieFetch(url);
+    return cookieFetch(url);
   } catch (error) {
     throw error;
   }

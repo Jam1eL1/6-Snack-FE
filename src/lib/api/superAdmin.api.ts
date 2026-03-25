@@ -32,7 +32,7 @@ export const superAdminSignUp = async (data: {
   password: string;
   passwordConfirm: string;
 }) => {
-  return await cookieFetch("/auth/signup", {
+  return cookieFetch("/auth/signup", {
     method: "POST",
     body: JSON.stringify(data),
   });

@@ -29,14 +29,14 @@ export async function updateCompanyInfo(
   userId: string,
   data: TUpdateCompanyInfoRequest,
 ): Promise<TUpdateCompanyInfoResponse> {
-  return await cookieFetch<TUpdateCompanyInfoResponse>(`/super-admin/users/${userId}/company`, {
+  return cookieFetch<TUpdateCompanyInfoResponse>(`/super-admin/users/${userId}/company`, {
     method: "PATCH",
     body: JSON.stringify(data),
   });
 }
 
 export async function updatePassword(userId: string, data: TUpdatePasswordRequest): Promise<TUpdatePasswordResponse> {
-  return await cookieFetch<TUpdatePasswordResponse>(`/users/${userId}/password`, {
+  return cookieFetch<TUpdatePasswordResponse>(`/users/${userId}/password`, {
     method: "PATCH",
     body: JSON.stringify(data),
   });

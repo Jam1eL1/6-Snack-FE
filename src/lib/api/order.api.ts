@@ -24,7 +24,7 @@ export const getAdminOrders = async ({
 
 // 구매 요청
 export const createOrder = async ({ requestMessage, cartItemIds }: TOrderRequestBody): Promise<TOrderResponse> => {
-  return await cookieFetch("/orders", {
+  return cookieFetch("/orders", {
     method: "POST",
     body: JSON.stringify({ requestMessage, cartItemIds }),
   });
@@ -32,7 +32,7 @@ export const createOrder = async ({ requestMessage, cartItemIds }: TOrderRequest
 
 // 즉시 구매
 export const orderNow = async (cartItemIds: number[]): Promise<TOrderNowResponse> => {
-  return await cookieFetch("/admin/orders/instant", {
+  return cookieFetch("/admin/orders/instant", {
     method: "POST",
     body: JSON.stringify({ cartItemIds }),
   });

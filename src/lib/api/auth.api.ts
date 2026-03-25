@@ -26,7 +26,7 @@ export const login = async (email: string, password: string): Promise<TUser> => 
 };
 
 export const logout = async (): Promise<void> => {
-  return await cookieFetch("/auth/logout", {
+  return cookieFetch("/auth/logout", {
     method: "POST",
     shouldRefreshOn401: false,
   });
