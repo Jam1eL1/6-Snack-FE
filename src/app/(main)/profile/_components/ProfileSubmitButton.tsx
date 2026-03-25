@@ -15,7 +15,7 @@ export default function ProfileSubmitButton({ isFormValid, isSubmitting, onSubmi
   return (
     <Button
       type={buttonType}
-      label={isSubmitting ? "Updating..." : "Save Changes"}
+      label={isSubmitting ? "Updating..." : "Submit"}
       className={`self-stretch h-16 p-4 ${!isFormValid ? "bg-primary-100 text-primary-300" : ""}`}
       disabled={!isFormValid || isSubmitting}
       onClick={onSubmit}

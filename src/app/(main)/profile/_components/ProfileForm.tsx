@@ -39,6 +39,7 @@ export default function ProfileForm() {
   // Watch form values
   const company = watch("company");
   const password = watch("password");
+  const confirmPassword = watch("confirmPassword");
 
   // Extract the company field registration props
   const companyRegister = register("company");
@@ -212,6 +213,8 @@ export default function ProfileForm() {
                 <ProfilePasswordFields
                   passwordRegister={register("password")}
                   confirmPasswordRegister={register("confirmPassword")}
+                  passwordValue={password}
+                  confirmPasswordValue={confirmPassword}
                   passwordError={errors.password?.message}
                   confirmPasswordError={errors.confirmPassword?.message}
                 />

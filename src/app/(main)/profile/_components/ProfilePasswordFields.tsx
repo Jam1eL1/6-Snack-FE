@@ -6,6 +6,8 @@ import { UseFormRegisterReturn } from "react-hook-form";
 type TProfilePasswordFieldsProps = {
   passwordRegister: UseFormRegisterReturn;
   confirmPasswordRegister: UseFormRegisterReturn;
+  passwordValue?: string;
+  confirmPasswordValue?: string;
   passwordError?: string;
   confirmPasswordError?: string;
 };
@@ -13,6 +15,8 @@ type TProfilePasswordFieldsProps = {
 export default function ProfilePasswordFields({
   passwordRegister,
   confirmPasswordRegister,
+  passwordValue,
+  confirmPasswordValue,
   passwordError,
   confirmPasswordError,
 }: TProfilePasswordFieldsProps) {
@@ -29,6 +33,7 @@ export default function ProfilePasswordFields({
         id="password"
         autoComplete="new-password"
         placeholder="Enter a new password (optional)"
+        value={passwordValue || ""}
         aria-describedby={passwordError ? "password-error" : undefined}
         aria-invalid={passwordError ? "true" : "false"}
         {...passwordRegister}
@@ -43,6 +48,7 @@ export default function ProfilePasswordFields({
         id="confirmPassword"
         autoComplete="new-password"
         placeholder="Re-enter your password"
+        value={confirmPasswordValue || ""}
         aria-describedby={confirmPasswordError ? "confirm-password-error" : undefined}
         aria-invalid={confirmPasswordError ? "true" : "false"}
         {...confirmPasswordRegister}
