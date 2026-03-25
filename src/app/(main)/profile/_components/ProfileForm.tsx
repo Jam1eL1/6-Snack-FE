@@ -4,7 +4,12 @@ import { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updatePassword, updateCompanyInfo, TUpdateCompanyInfoRequest } from "@/lib/api/profile.api";
+import {
+  updatePassword,
+  updateCompanyInfo,
+  TUpdateCompanyInfoRequest,
+  TUpdatePasswordRequest,
+} from "@/lib/api/profile.api";
 import { profileSchema, TProfileFormData } from "@/lib/schemas/profile.schema";
 import { useAuth } from "@/providers/AuthProvider";
 import { Role } from "@/types/auth.types";
@@ -88,7 +93,11 @@ export default function ProfileForm() {
         await updateCompanyInfo(user.id, payload);
       } else {
         if (data.password) {
-          return await updatePassword(user.id, data.password);
+          const payload: TUpdatePasswordRequest = {
+            newPassword: data.password,
+            newPasswordConfirm: data.password,
+          };
+          return await updatePassword(user.id, payload);
         }
       }
     },

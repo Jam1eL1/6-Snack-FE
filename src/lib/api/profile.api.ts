@@ -8,12 +8,21 @@ export type TUpdateCompanyInfoRequest = {
   };
 };
 
-export type TUpdateCompanyInfoResponse = {
+type TUpdateCompanyInfoResponse = {
   message: string;
   company: {
     id: number;
     name: string;
   };
+};
+
+export type TUpdatePasswordRequest = {
+  newPassword: string;
+  newPasswordConfirm: string;
+};
+
+type TUpdatePasswordResponse = {
+  message: string;
 };
 
 export async function updateCompanyInfo(
@@ -26,12 +35,9 @@ export async function updateCompanyInfo(
   });
 }
 
-export async function updatePassword(userId: string, password: string) {
-  return await cookieFetch(`/users/${userId}/password`, {
+export async function updatePassword(userId: string, data: TUpdatePasswordRequest): Promise<TUpdatePasswordResponse> {
+  return await cookieFetch<TUpdatePasswordResponse>(`/users/${userId}/password`, {
     method: "PATCH",
-    body: JSON.stringify({
-      newPassword: password,
-      newPasswordConfirm: password,
-    }),
+    body: JSON.stringify(data),
   });
 }
