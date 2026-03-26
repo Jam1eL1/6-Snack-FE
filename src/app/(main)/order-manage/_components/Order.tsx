@@ -6,7 +6,7 @@ import RequestList from "@/components/common/RequestList";
 import DogSpinner from "@/components/common/DogSpinner";
 import Toast from "@/components/common/Toast";
 import { useOrderVisibleCount } from "@/hooks/useOrderVisibleCount";
-import { fetchOrderDetail } from "@/lib/api/orderManage.api";
+import { getPendingOrderDetail } from "@/lib/api/orderManage.api";
 import { useModal } from "@/providers/ModalProvider";
 import { useMemo, useState, useRef, useEffect } from "react";
 import Image from "next/image";
@@ -157,7 +157,7 @@ export default function Order() {
             <RequestList
               orderRequests={orderRequests}
               onClickReject={async (orderSummary) => {
-                const fullOrder = await fetchOrderDetail(orderSummary.id);
+                const fullOrder = await getPendingOrderDetail(orderSummary.id);
                 openModal(
                   <OrderManageModal
                     order={fullOrder}
@@ -169,7 +169,7 @@ export default function Order() {
                 );
               }}
               onClickApprove={async (orderSummary) => {
-                const fullOrder = await fetchOrderDetail(orderSummary.id);
+                const fullOrder = await getPendingOrderDetail(orderSummary.id);
                 openModal(
                   <OrderManageModal
                     order={fullOrder}

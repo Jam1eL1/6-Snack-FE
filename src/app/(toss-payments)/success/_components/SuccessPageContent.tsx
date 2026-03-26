@@ -4,7 +4,7 @@ import React, { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchOrderWithoutStatus } from "@/lib/api/orderManage.api";
+import { getOrderDetailWithoutStatus } from "@/lib/api/orderManage.api";
 import CheckIconSvg from "@/components/svg/CheckIconSvg";
 
 type TSuccessPageContentProps = {
@@ -20,7 +20,7 @@ export default function SuccessPageContent({ orderId, amount, paymentKey }: TSuc
 
   const { data: order, isPending } = useQuery({
     queryKey: ["order", orderId],
-    queryFn: () => fetchOrderWithoutStatus(orderId ?? ""),
+    queryFn: () => getOrderDetailWithoutStatus(orderId ?? ""),
     enabled: !!orderId,
   });
 
