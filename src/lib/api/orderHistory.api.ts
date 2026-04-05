@@ -94,34 +94,6 @@ export type TOrderHistoryResponse = {
   data: TOrderHistory;
 };
 
-export type TOrderHistoryListResponse = {
-  orders: TOrderHistory[];
-  totalCount: number;
-  currentPage: number;
-  totalPages: number;
-};
-
-// 관리자 - 모든 주문 목록 조회
-export const getMyOrders = async (params?: {
-  page?: number;
-  sort?: string;
-  status?: "pending" | "approved" | "rejected" | "canceled";
-}): Promise<TOrderHistory[]> => {
-  try {
-    const queryParams = new URLSearchParams();
-    if (params?.page) queryParams.append("page", params.page.toString());
-    if (params?.sort) queryParams.append("sort", params.sort);
-    if (params?.status) queryParams.append("status", params.status);
-
-    const queryString = queryParams.toString();
-    const url = queryString ? `/admin/orders?${queryString}` : "/admin/orders";
-
-    return cookieFetch(url);
-  } catch (error) {
-    throw error;
-  }
-};
-
 // 관리자 - 주문 상세 조회
 export const getOrderDetail = async (
   orderId: string,
