@@ -16,9 +16,9 @@ type TBudget = {
 export type TOrderBase = {
   id: string;
   userId: string;
-  approver: null;
-  adminMessage: string;
-  requestMessage: string;
+  approver: string | null;
+  adminMessage: string | null;
+  requestMessage: string | null;
   deliveryFee: number;
   productsPriceTotal: number;
   createdAt: string;
@@ -58,6 +58,33 @@ export type TOrderNowResponse = {
     updatedAt: string;
     status: string;
   };
+};
+
+export type TPendingOrderResponse = {
+  orders: TOrderSummary[];
+  meta: { totalCount: number; itemsPerPage: number; currentPage: number; totalPages: number };
+};
+
+export type TAdminOrdersResponse = TPendingOrderResponse;
+
+export type TUpdateOrderStatusRequest = {
+  orderId: string;
+  status: "APPROVED" | "REJECTED";
+  adminMessage?: string;
+};
+
+export type TUpdateOrderStatusResponse = {
+  id: string;
+  companyId: number;
+  userId: string;
+  approver: string | null;
+  adminMessage: string | null;
+  requestMessage: string | null;
+  deliveryFee: number;
+  productsPriceTotal: number;
+  createdAt: string;
+  updatedAt: string;
+  status: "PENDING" | "APPROVED" | "REJECTED" | "CANCELED" | "INSTANT_APPROVED";
 };
 
 export type TOrderResponse = TOrderBase & {

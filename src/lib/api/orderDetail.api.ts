@@ -37,7 +37,7 @@ export const getOrderDetail = async (
   status: "pending" | "approved" = "pending",
 ): Promise<TOrderWithBudget> => {
   try {
-    const response: TOrderWithBudget = await cookieFetch(`/admin/orders/${orderId}?status=${status}`);
+    const response = await cookieFetch<TOrderWithBudget>(`/admin/orders/${orderId}?status=${status}`);
     return response;
   } catch (error) {
     throw error;

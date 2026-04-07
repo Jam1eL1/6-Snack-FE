@@ -1,7 +1,13 @@
-import { TOrderResponse, TOrderSummary, TOrderWithoutStatus } from "@/types/order.types";
+import {
+  TOrderResponse,
+  TOrderWithoutStatus,
+  TPendingOrderResponse,
+  TUpdateOrderStatusRequest,
+  TUpdateOrderStatusResponse,
+} from "@/types/order.types";
 import { cookieFetch } from "./fetchClient.api";
 
-export const getPendingOrders = async ({
+export const getPendingOrders = ({
   offset = 0,
   limit = 10,
   orderBy = "latest",
@@ -9,42 +15,26 @@ export const getPendingOrders = async ({
   offset?: number;
   limit?: number;
   orderBy?: string;
-}): Promise<{ orders: TOrderSummary[]; meta: { totalCount: number; currentPage: number; totalPages: number } }> => {
+}): Promise<TPendingOrderResponse> => {
   const page = Math.floor(offset / limit) + 1;
   const query = `?status=pending&page=${page}&limit=${limit}&orderBy=${orderBy}`;
-  const res = (await cookieFetch(`/admin/orders${query}`)) as {
-    orders: TOrderSummary[];
-    meta: { totalCount: number; currentPage: number; totalPages: number };
-  };
-  return res;
+  return cookieFetch<TPendingOrderResponse>(`/admin/orders${query}`);
 };
 
-export const getPendingOrderDetail = async (orderId: string): Promise<TOrderResponse> => {
-  const res = await cookieFetch(`/admin/orders/${orderId}?status=pending`);
-  return res as TOrderResponse;
+export const getPendingOrderDetail = (orderId: string): Promise<TOrderResponse> => {
+  return cookieFetch<TOrderResponse>(`/admin/orders/${orderId}?status=pending`);
+};
+export const getOrderDetailWithoutStatus = (orderId: string): Promise<TOrderWithoutStatus> => {
+  return cookieFetch<TOrderWithoutStatus>(`/admin/orders/${orderId}`);
 };
 
-export const getOrderDetailWithoutStatus = async (orderId: string): Promise<TOrderWithoutStatus> => {
-  const res = await cookieFetch(`/admin/orders/${orderId}`);
-  return res as TOrderWithoutStatus;
-};
-
-export const updateOrderStatus = async ({
+export const updateOrderStatus = ({
   orderId,
   status,
   adminMessage,
-}: {
-  orderId: string;
-  status: "APPROVED" | "REJECTED";
-  adminMessage?: string;
-}) => {
-  const res = await cookieFetch(`/admin/orders/${orderId}`, {
+}: TUpdateOrderStatusRequest): Promise<TUpdateOrderStatusResponse> => {
+  return cookieFetch<TUpdateOrderStatusResponse>(`/admin/orders/${orderId}`, {
     method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify({ status, adminMessage }),
   });
-
-  return res;
 };

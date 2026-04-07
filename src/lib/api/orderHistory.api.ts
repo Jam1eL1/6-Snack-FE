@@ -107,7 +107,7 @@ export const getOrderDetail = async (
     const url = queryString ? `/admin/orders/${orderId}?${queryString}` : `/admin/orders/${orderId}`;
 
     // 백엔드에서 직접 TOrderHistory 객체를 반환하므로 data 필드 접근 제거
-    const response: TOrderHistory = await cookieFetch(url);
+    const response = await cookieFetch<TOrderHistory>(url);
     return response;
   } catch (error) {
     throw error;
@@ -117,7 +117,7 @@ export const getOrderDetail = async (
 // 내 구매 요청 상세 조회
 export const getMyOrderDetail = async (orderId: string): Promise<TMyOrderDetail> => {
   try {
-    const response: TMyOrderDetailResponse = await cookieFetch(`/orders/${orderId}`);
+    const response = await cookieFetch<TMyOrderDetailResponse>(`/orders/${orderId}`);
     return response.data;
   } catch (error) {
     throw error;
@@ -127,7 +127,7 @@ export const getMyOrderDetail = async (orderId: string): Promise<TMyOrderDetail>
 // Cancel Order Request
 export const cancelOrder = async (orderId: string): Promise<void> => {
   try {
-    await cookieFetch(`/orders/${orderId}`, {
+    await cookieFetch<void>(`/orders/${orderId}`, {
       method: "PATCH",
       body: JSON.stringify({
         status: "CANCELED",
