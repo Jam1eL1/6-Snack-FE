@@ -2,19 +2,22 @@ import { cookieFetch } from "./fetchClient.api";
 
 /**
  * @xdnjs7
- * 1. orderDetail.api.ts에서 주문 조회가 지수님이 만드신 코드와 중복으로 보여서 합의 후 통합 진행하기
+ * 1. The order detail lookup appears to overlap with the implementation in orderDetail.api.ts, so merge after alignment.
  */
 
-// Purchase History Type Definitions (실제 백엔드 응답에 맞춤)
+// Purchase history type definitions (matched to the actual backend response)
 export type TProduct = {
   id: number;
+  productId: number;
+  orderId: string;
   productName: string;
   price: number;
-  imageUrl?: string;
+  imageUrl: string;
   quantity: number;
+  createdAt: string;
 };
 
-// 내 구매 요청 상세 조회용 타입 (실제 API 응답 구조)
+// Type for fetching my order request details (actual API response shape)
 export type TReceipt = {
   id: number;
   productId: number;
@@ -54,7 +57,7 @@ export type TMyOrderDetail = {
   approver: string | null;
   adminMessage: string | null;
   requestMessage: string | null;
-  // totalPrice: number; // deprecated, productsPriceTotal로 대체
+  // totalPrice: number; // deprecated, replaced by productsPriceTotal
   productsPriceTotal: number;
   deliveryFee: number;
   createdAt: string;
@@ -75,16 +78,18 @@ export type TBudget = {
 };
 
 export type TOrderHistory = {
-  id: number;
+  id: string;
+  companyId: number;
   userId: string;
-  status: "PENDING" | "APPROVED" | "REJECTED" | "CANCELED";
-  totalPrice: number;
-  adminMessage?: string;
-  requestMessage?: string;
+  approver: string | null;
+  adminMessage: string | null;
+  requestMessage: string | null;
+  deliveryFee: number;
+  productsPriceTotal: number;
   createdAt: string;
   updatedAt: string;
-  approver?: string;
-  requester?: string;
+  status: string;
+  requester: string;
   products: TProduct[];
   budget: TBudget;
 };
@@ -94,7 +99,7 @@ export type TOrderHistoryResponse = {
   data: TOrderHistory;
 };
 
-// 관리자 - 주문 상세 조회
+// Fetch order details for admin
 export const getOrderDetail = async (
   orderId: string,
   status?: "pending" | "approved" | "rejected" | "canceled",
@@ -106,7 +111,6 @@ export const getOrderDetail = async (
     const queryString = queryParams.toString();
     const url = queryString ? `/admin/orders/${orderId}?${queryString}` : `/admin/orders/${orderId}`;
 
-    // 백엔드에서 직접 TOrderHistory 객체를 반환하므로 data 필드 접근 제거
     const response = await cookieFetch<TOrderHistory>(url);
     return response;
   } catch (error) {
@@ -114,7 +118,7 @@ export const getOrderDetail = async (
   }
 };
 
-// 내 구매 요청 상세 조회
+// Fetch my order request details
 export const getMyOrderDetail = async (orderId: string): Promise<TMyOrderDetail> => {
   try {
     const response = await cookieFetch<TMyOrderDetailResponse>(`/orders/${orderId}`);
