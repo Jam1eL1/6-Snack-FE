@@ -1,29 +1,27 @@
 import { cookieFetch } from "./fetchClient.api";
 
-/**
- * @Jam1eL1
- * 1. order.api.ts로 통합하기(의견)
- * 2. orderHistory.api.ts에서 원빈님이 만드신 코드와 중복으로 보여서 합의 후 통합 진행하기
- */
-
-// 백엔드와 동일한 타입 정의
-export type TOrderWithBudget = {
-  id: number;
+export type TAdminOrderDetail = {
+  id: string;
+  companyId: number;
   userId: string;
   approver: string | null;
   adminMessage: string | null;
   requestMessage: string | null;
-  totalPrice: number;
+  deliveryFee: number;
+  productsPriceTotal: number;
   createdAt: string;
   updatedAt: string;
   status: string;
   requester: string;
   products: {
     id: number;
-    quantity: number;
+    productId: number;
+    orderId: string;
+    productName: string;
     price: number;
     imageUrl: string;
-    productName: string;
+    quantity: number;
+    createdAt: string;
   }[];
   budget: {
     currentMonthBudget: number | null;
@@ -31,15 +29,10 @@ export type TOrderWithBudget = {
   };
 };
 
-// 주문 상세 조회 API 함수 (관리자용)
-export const getOrderDetail = async (
+// get order detail for admin
+export const getOrderDetail = (
   orderId: string,
   status: "pending" | "approved" = "pending",
-): Promise<TOrderWithBudget> => {
-  try {
-    const response = await cookieFetch<TOrderWithBudget>(`/admin/orders/${orderId}?status=${status}`);
-    return response;
-  } catch (error) {
-    throw error;
-  }
+): Promise<TAdminOrderDetail> => {
+  return cookieFetch<TAdminOrderDetail>(`/admin/orders/${orderId}?status=${status}`);
 };
