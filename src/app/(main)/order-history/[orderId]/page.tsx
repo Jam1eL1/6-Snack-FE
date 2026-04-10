@@ -3,11 +3,8 @@
 import { useState, useEffect, useCallback, useMemo, Suspense, lazy } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import Head from "next/head";
-import { getOrderDetail, TOrderHistory } from "@/lib/api/orderHistory.api";
-import { 
-  getStatusText, 
-  formatDate 
-} from "@/components/common/OrderDetail";
+import { getOrderDetail, TAdminOrderDetail } from "@/lib/api/orderDetail.api";
+import { getStatusText, formatDate } from "@/components/common/OrderDetail";
 import DogSpinner from "@/components/common/DogSpinner";
 
 // Lazy loading으로 컴포넌트 분리 - 더 세밀한 분리
@@ -41,7 +38,7 @@ export default function OrderHistoryDetailPage({}: TOrderHistoryDetailPageProps)
   const orderId: string = params.orderId as string;
   const status: TOrderStatus = searchParams.get("status") as TOrderStatus;
 
-  const [orderData, setOrderData] = useState<TOrderHistory | null>(null);
+  const [orderData, setOrderData] = useState<TAdminOrderDetail | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -59,10 +56,10 @@ export default function OrderHistoryDetailPage({}: TOrderHistoryDetailPageProps)
     try {
       setIsLoading(true);
       setError(null);
-      
+
       // 비동기 작업을 별도로 처리하여 메인 스레드 블로킹 방지
-      const data: TOrderHistory = await getOrderDetail(orderId, status || undefined);
-      
+      const data: TAdminOrderDetail = await getOrderDetail(orderId, status || undefined);
+
       // 상태 업데이트를 requestAnimationFrame으로 지연시켜 렌더링 최적화
       requestAnimationFrame(() => {
         setOrderData(data);
@@ -82,7 +79,7 @@ export default function OrderHistoryDetailPage({}: TOrderHistoryDetailPageProps)
       const timer = setTimeout(() => {
         fetchOrderDetail();
       }, 0);
-      
+
       return () => clearTimeout(timer);
     }
   }, [orderId, fetchOrderDetail]);
@@ -98,15 +95,17 @@ export default function OrderHistoryDetailPage({}: TOrderHistoryDetailPageProps)
   // 메인 컨텐츠 메모이제이션 - 레이아웃 시프트 방지
   const mainContent = useMemo(() => {
     if (!orderData) return null;
-    
+
     return (
       <div className="min-h-screen bg-white">
         <div className="w-full max-w-7xl mx-auto pt-[30px] flex flex-col justify-start items-start gap-[23px]">
           <div className="self-stretch justify-center text-primary-950 text-lg font-bold ">구매 내역 상세</div>
 
-          <Suspense fallback={
-            <div className="w-full h-32 bg-primary-100 animate-pulse rounded" style={{ minHeight: '128px' }}></div>
-          }>
+          <Suspense
+            fallback={
+              <div className="w-full h-32 bg-primary-100 animate-pulse rounded" style={{ minHeight: "128px" }}></div>
+            }
+          >
             <OrderItemsSection
               products={orderData.products}
               title="구매 품목"
@@ -115,9 +114,11 @@ export default function OrderHistoryDetailPage({}: TOrderHistoryDetailPageProps)
             />
           </Suspense>
 
-          <Suspense fallback={
-            <div className="w-full h-32 bg-primary-100 animate-pulse rounded" style={{ minHeight: '128px' }}></div>
-          }>
+          <Suspense
+            fallback={
+              <div className="w-full h-32 bg-primary-100 animate-pulse rounded" style={{ minHeight: "128px" }}></div>
+            }
+          >
             <RequestInfoSection
               requester={orderData.requester}
               createdAt={orderData.createdAt}
@@ -125,9 +126,11 @@ export default function OrderHistoryDetailPage({}: TOrderHistoryDetailPageProps)
               formatDate={formatDate}
             />
           </Suspense>
-          <Suspense fallback={
-            <div className="w-full h-32 bg-primary-100 animate-pulse rounded" style={{ minHeight: '128px' }}></div>
-          }>
+          <Suspense
+            fallback={
+              <div className="w-full h-32 bg-primary-100 animate-pulse rounded" style={{ minHeight: "128px" }}></div>
+            }
+          >
             <ApprovalInfoSection
               approver={orderData.approver}
               updatedAt={orderData.updatedAt}
@@ -171,8 +174,9 @@ export default function OrderHistoryDetailPage({}: TOrderHistoryDetailPageProps)
           <link rel="dns-prefetch" href="//fonts.googleapis.com" />
           <link rel="dns-prefetch" href="//fonts.gstatic.com" />
           {/* Critical CSS 인라인화 */}
-          <style dangerouslySetInnerHTML={{
-            __html: `
+          <style
+            dangerouslySetInnerHTML={{
+              __html: `
               @font-face {
                 font-family: 'SUIT';
                 src: url('/fonts/suit.woff2') format('woff2');
@@ -185,8 +189,9 @@ export default function OrderHistoryDetailPage({}: TOrderHistoryDetailPageProps)
                 0%, 100% { opacity: 1; }
                 50% { opacity: .5; }
               }
-            `
-          }} />
+            `,
+            }}
+          />
         </Head>
         <LoadingComponent />
       </>
@@ -210,7 +215,10 @@ export default function OrderHistoryDetailPage({}: TOrderHistoryDetailPageProps)
     <>
       <Head>
         <title>{pageTitle}</title>
-        <meta name="description" content={`구매 내역 상세 페이지입니다. ${orderData.products?.length || 0}개의 상품이 포함되어 있습니다.`} />
+        <meta
+          name="description"
+          content={`구매 내역 상세 페이지입니다. ${orderData.products?.length || 0}개의 상품이 포함되어 있습니다.`}
+        />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -218,8 +226,9 @@ export default function OrderHistoryDetailPage({}: TOrderHistoryDetailPageProps)
         <link rel="dns-prefetch" href="//fonts.gstatic.com" />
         <link rel="preload" href="/fonts/suit.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         {/* Critical CSS 인라인화 */}
-        <style dangerouslySetInnerHTML={{
-          __html: `
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
             @font-face {
               font-family: 'SUIT';
               src: url('/fonts/suit.woff2') format('woff2');
@@ -232,8 +241,9 @@ export default function OrderHistoryDetailPage({}: TOrderHistoryDetailPageProps)
               0%, 100% { opacity: 1; }
               50% { opacity: .5; }
             }
-          `
-        }} />
+          `,
+          }}
+        />
       </Head>
       {mainContent}
     </>
