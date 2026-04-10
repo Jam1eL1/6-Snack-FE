@@ -107,9 +107,11 @@ export default function OrderHistoryDetailPage({}: TOrderHistoryDetailPageProps)
           <Suspense fallback={
             <div className="w-full h-32 bg-primary-100 animate-pulse rounded" style={{ minHeight: '128px' }}></div>
           }>
-            <OrderItemsSection 
+            <OrderItemsSection
               products={orderData.products}
               title="구매 품목"
+              productsPriceTotal={orderData.productsPriceTotal}
+              shippingFee={orderData.deliveryFee}
             />
           </Suspense>
 

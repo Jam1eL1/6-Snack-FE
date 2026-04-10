@@ -210,7 +210,12 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
           <Suspense
             fallback={<div className="w-full h-32 bg-primary-100 rounded" style={{ minHeight: "128px" }}></div>}
           >
-            <OrderItemsSection receipts={orderData.receipts} title="요청 품목" />
+            <OrderItemsSection
+              receipts={orderData.receipts}
+              title="요청 품목"
+              productsPriceTotal={orderData.productsPriceTotal}
+              shippingFee={orderData.deliveryFee}
+            />
           </Suspense>
 
           <Suspense
