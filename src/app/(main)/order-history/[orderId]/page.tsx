@@ -13,7 +13,7 @@ const RequestInfoSection = lazy(() => import("@/components/common/OrderDetail/Re
 const ApprovalInfoSection = lazy(() => import("@/components/common/OrderDetail/ApprovalInfoSection"));
 
 // 타입 정의
-type TOrderStatus = "pending" | "approved" | "rejected" | "canceled" | null;
+type TOrderStatus = "pending" | "approved" | null;
 
 type TOrderHistoryDetailPageProps = Record<string, never>;
 
