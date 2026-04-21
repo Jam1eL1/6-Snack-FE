@@ -62,24 +62,16 @@ export type TBudget = {
 
 // Fetch my order request details
 export const getMyOrderDetail = async (orderId: string): Promise<TMyOrderDetail> => {
-  try {
-    const response = await cookieFetch<TMyOrderDetailResponse>(`/orders/${orderId}`);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await cookieFetch<TMyOrderDetailResponse>(`/orders/${orderId}`);
+  return response.data;
 };
 
 // Cancel Order Request
-export const cancelOrder = async (orderId: string): Promise<void> => {
-  try {
-    await cookieFetch<void>(`/orders/${orderId}`, {
-      method: "PATCH",
-      body: JSON.stringify({
-        status: "CANCELED",
-      }),
-    });
-  } catch (error) {
-    throw error;
-  }
+export const cancelOrder = (orderId: string): Promise<void> => {
+  return cookieFetch<void>(`/orders/${orderId}`, {
+    method: "PATCH",
+    body: JSON.stringify({
+      status: "CANCELED",
+    }),
+  });
 };
