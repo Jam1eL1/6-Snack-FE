@@ -28,7 +28,7 @@ export default function MyOrderListPage() {
   const [isError, setIsError] = useState(false);
   const router = useRouter();
 
-  const cancelOrder = useCancelOrder((orderId: number) => {
+  const cancelOrder = useCancelOrder((orderId: string) => {
     setRequests((prev) => prev.filter((item) => item.id !== orderId));
     setToastVisible(true);
     setTimeout(() => setToastVisible(false), 3000);
@@ -51,7 +51,7 @@ export default function MyOrderListPage() {
     loadData();
   }, []);
 
-  const handleCancel = (orderId: number) => {
+  const handleCancel = (orderId: string) => {
     cancelOrder.mutate(orderId);
   };
 
