@@ -1,7 +1,7 @@
 import { TAdminOrdersResponse, TOrderNowResponse, TOrderRequestBody, TOrderResponse } from "@/types/order.types";
 import { cookieFetch } from "./fetchClient.api";
 
-// 관리자 구매내역 조회 API
+// Retrieve admin order history
 export const getAdminOrders = ({
   status,
   offset = 0,
@@ -22,7 +22,6 @@ export const getAdminOrders = ({
   return cookieFetch<TAdminOrdersResponse>(`/admin/orders?${params.toString()}`);
 };
 
-// 구매 요청
 export const createOrder = ({ requestMessage, cartItemIds }: TOrderRequestBody): Promise<TOrderResponse> => {
   return cookieFetch<TOrderResponse>("/orders", {
     method: "POST",
@@ -30,7 +29,7 @@ export const createOrder = ({ requestMessage, cartItemIds }: TOrderRequestBody):
   });
 };
 
-// 즉시 구매
+// Instant purchase from cart - admins only
 export const orderNow = (cartItemIds: number[]): Promise<TOrderNowResponse> => {
   return cookieFetch<TOrderNowResponse>("/admin/orders/instant", {
     method: "POST",

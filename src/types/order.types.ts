@@ -47,17 +47,7 @@ export type TOrderNowBody = {
 
 export type TOrderNowResponse = {
   message: string;
-  data: {
-    id: number;
-    userId: string;
-    approver: string;
-    adminMessage: string | null;
-    requestMessage: string | null;
-    totalPrice: number;
-    createdAt: string;
-    updatedAt: string;
-    status: string;
-  };
+  data: TUpdateOrderStatusResponse;
 };
 
 export type TPendingOrderResponse = {
