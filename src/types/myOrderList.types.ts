@@ -1,5 +1,5 @@
 export type TOrderItem = {
-  id: number;
+  id: string;
   userId: string;
   productsPriceTotal: number;
   deliveryFee: number;

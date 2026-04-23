@@ -6,7 +6,7 @@ import RequestList from "@/components/common/RequestList";
 import DogSpinner from "@/components/common/DogSpinner";
 import Toast from "@/components/common/Toast";
 import { useOrderVisibleCount } from "@/hooks/useOrderVisibleCount";
-import { fetchOrderDetail } from "@/lib/api/orderManage.api";
+import { getPendingOrderDetail } from "@/lib/api/orderManage.api";
 import { useModal } from "@/providers/ModalProvider";
 import { useMemo, useState, useRef, useEffect } from "react";
 import Image from "next/image";
@@ -26,18 +26,18 @@ export default function Order() {
   const { user } = useAuth();
   const router = useRouter();
 
-  // Zod 상태 관리(order)
+  // Zustand order state
   const setOrder = useOrderStore((state) => state.setOrder);
 
-  // Toast 상태
+  // Toast state
   const [toastVisible, setToastVisible] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string>("");
   const [toastVariant, setToastVariant] = useState<TToastVariant>("success");
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Toast 표시 함수
+  // Toast helper
   const showToast = (message: string, variant: TToastVariant) => {
-    // 기존 타이머가 있다면 클리어
+    // Clear the existing timer if there is one.
     if (timerRef.current) {
       clearTimeout(timerRef.current);
     }
@@ -62,7 +62,7 @@ export default function Order() {
 
   const prevVisibleCountRef = useRef(visibleCount);
 
-  // 주문 상태 업데이트 mutation
+  // Order status update mutation
   const { mutate: updateOrderStatusMutation } = useMutation({
     mutationFn: updateOrderStatus,
     onSuccess: () => {
@@ -70,7 +70,7 @@ export default function Order() {
     },
   });
 
-  // 사용자 정보가 변경될 때 쿼리 무효화
+  // Invalidate related queries when the user context changes.
   useEffect(() => {
     if (user?.company?.id) {
       queryClient.invalidateQueries({ queryKey: ["pendingOrders"] });
@@ -78,7 +78,7 @@ export default function Order() {
     }
   }, [user?.company?.id, queryClient]);
 
-  // 컴포넌트 언마운트 시 타이머 정리
+  // Clear the timer when the component unmounts.
   useEffect(() => {
     return () => {
       if (timerRef.current) {
@@ -87,7 +87,7 @@ export default function Order() {
     };
   }, []);
 
-  // 주문 목록 조회
+  // Fetch the order list
   const offset = (currentPaginationPage - 1) * visibleCount;
   const {
     data: orderData,
@@ -103,7 +103,7 @@ export default function Order() {
   const totalCount = orderData?.meta?.totalCount || 0;
   const totalPages = Math.ceil(totalCount / visibleCount);
 
-  // visibleCount가 변경될 때 페이지 조정
+  // Recalculate the current page when visibleCount changes.
   useEffect(() => {
     if (prevVisibleCountRef.current !== visibleCount) {
       const currentOffset = (currentPaginationPage - 1) * prevVisibleCountRef.current;
@@ -116,7 +116,7 @@ export default function Order() {
     }
   }, [visibleCount, currentPaginationPage]);
 
-  // 키보드 접근성을 위한 핸들러
+  // Keyboard accessibility handler
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
@@ -157,7 +157,7 @@ export default function Order() {
             <RequestList
               orderRequests={orderRequests}
               onClickReject={async (orderSummary) => {
-                const fullOrder = await fetchOrderDetail(orderSummary.id);
+                const fullOrder = await getPendingOrderDetail(orderSummary.id);
                 openModal(
                   <OrderManageModal
                     order={fullOrder}
@@ -169,7 +169,7 @@ export default function Order() {
                 );
               }}
               onClickApprove={async (orderSummary) => {
-                const fullOrder = await fetchOrderDetail(orderSummary.id);
+                const fullOrder = await getPendingOrderDetail(orderSummary.id);
                 openModal(
                   <OrderManageModal
                     order={fullOrder}
@@ -224,7 +224,7 @@ export default function Order() {
         )}
       </div>
 
-      {/* Toast 컴포넌트 */}
+      {/* Toast */}
       {toastVisible && (
         <Toast
           text={toastMessage}

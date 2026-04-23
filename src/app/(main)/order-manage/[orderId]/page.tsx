@@ -36,16 +36,6 @@ export default function OrderManageDetailPage() {
   });
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  // TODO - shipppingFee 없에고 orderRequest.deliveryFee 참조
-  const calculatedTotal: number =
-    orderRequest?.products?.reduce((sum: number, item) => sum + item.price * item.quantity, 0) || 0;
-  const shippingFee: number = 5;
-  const finalTotal: number = calculatedTotal + shippingFee;
-
-  const currentMonthBudget = orderRequest?.budget?.currentMonthBudget || 0;
-  const currentMonthExpense = orderRequest?.budget?.currentMonthExpense || 0;
-  const remainingBudget = currentMonthBudget - currentMonthExpense;
-  const budgetAfterPurchase = remainingBudget - finalTotal;
 
   useEffect(() => {
     return () => {
@@ -142,6 +132,14 @@ export default function OrderManageDetailPage() {
       </main>
     );
   }
+
+  const productsPriceTotal = orderRequest.productsPriceTotal;
+  const shippingFee = orderRequest.deliveryFee;
+  const finalTotal = productsPriceTotal + shippingFee;
+  const currentMonthBudget = orderRequest.budget.currentMonthBudget || 0;
+  const currentMonthExpense = orderRequest.budget.currentMonthExpense || 0;
+  const remainingBudget = currentMonthBudget - currentMonthExpense;
+  const budgetAfterPurchase = remainingBudget - finalTotal;
 
   return (
     <div className="min-h-screen bg-white">
@@ -246,7 +244,7 @@ export default function OrderManageDetailPage() {
                       Order Amount
                     </div>
                     <div className="text-primary-700 tracking-tight text-sm/[17px] sm:text-base/[20px] font-bold">
-                      ${formatPrice(calculatedTotal)}
+                      ${formatPrice(productsPriceTotal)}
                     </div>
                   </div>
                   <div className="flex justify-between items-center">

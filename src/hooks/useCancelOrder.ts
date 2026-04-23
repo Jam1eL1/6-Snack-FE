@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { cancelOrder } from "@/lib/api/cancelOrder.api";
+import { cancelOrder } from "@/lib/api/orderHistory.api";
 
-export const useCancelOrder = (onSuccessCallback: (orderId: number) => void) => {
+export const useCancelOrder = (onSuccessCallback: (orderId: string) => void) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (orderId: number) => cancelOrder(orderId),
+    mutationFn: (orderId: string) => cancelOrder(orderId),
     onSuccess: (_, orderId) => {
       onSuccessCallback(orderId);
       queryClient.invalidateQueries({ queryKey: ["my-orders"] });

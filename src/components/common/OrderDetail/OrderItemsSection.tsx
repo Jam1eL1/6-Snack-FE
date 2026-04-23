@@ -26,24 +26,21 @@ type TOrderItemsSectionProps = {
   products?: TProduct[];
   receipts?: TReceipt[];
   title?: string;
-  shippingFee?: number;
+  productsPriceTotal: number;
+  shippingFee: number;
 };
 
-export default function OrderItemsSection({ 
-  products, 
-  receipts, 
+export default function OrderItemsSection({
+  products,
+  receipts,
   title = "구매 품목",
-  shippingFee = 5 
+  productsPriceTotal,
+  shippingFee,
 }: TOrderItemsSectionProps) {
   const [isItemsExpanded, setIsItemsExpanded] = useState<boolean>(true);
 
-  // products 또는 receipts 중 존재하는 데이터 사용
   const items = products || receipts || [];
-  
-  const calculatedTotal: number = items.reduce((sum: number, item: TProduct | TReceipt) => 
-    sum + item.price * item.quantity, 0
-  );
-  const finalTotal: number = calculatedTotal + shippingFee;
+  const finalTotal: number = productsPriceTotal + shippingFee;
 
   return (
     <div className="self-stretch flex flex-col justify-start items-start gap-10">
@@ -116,7 +113,7 @@ export default function OrderItemsSection({
                   주문금액
                 </div>
                 <div className="text-center justify-center text-primary-700 text-sm sm:text-base font-bold">
-                  {formatPrice(calculatedTotal)}원
+                  {formatPrice(productsPriceTotal)}원
                 </div>
               </div>
               <div className="flex justify-between items-center">

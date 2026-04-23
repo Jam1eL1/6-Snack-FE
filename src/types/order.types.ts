@@ -16,9 +16,9 @@ type TBudget = {
 export type TOrderBase = {
   id: string;
   userId: string;
-  approver: null;
-  adminMessage: string;
-  requestMessage: string;
+  approver: string | null;
+  adminMessage: string | null;
+  requestMessage: string | null;
   deliveryFee: number;
   productsPriceTotal: number;
   createdAt: string;
@@ -47,34 +47,39 @@ export type TOrderNowBody = {
 
 export type TOrderNowResponse = {
   message: string;
-  data: {
-    id: number;
-    userId: string;
-    approver: string;
-    adminMessage: string | null;
-    requestMessage: string | null;
-    totalPrice: number;
-    createdAt: string;
-    updatedAt: string;
-    status: string;
-  };
+  data: TUpdateOrderStatusResponse;
+};
+
+export type TPendingOrderResponse = {
+  orders: TOrderSummary[];
+  meta: { totalCount: number; itemsPerPage: number; currentPage: number; totalPages: number };
+};
+
+export type TAdminOrdersResponse = TPendingOrderResponse;
+
+export type TUpdateOrderStatusRequest = {
+  orderId: string;
+  status: "APPROVED" | "REJECTED";
+  adminMessage?: string;
+};
+
+export type TUpdateOrderStatusResponse = {
+  id: string;
+  companyId: number;
+  userId: string;
+  approver: string | null;
+  adminMessage: string | null;
+  requestMessage: string | null;
+  deliveryFee: number;
+  productsPriceTotal: number;
+  createdAt: string;
+  updatedAt: string;
+  status: "PENDING" | "APPROVED" | "REJECTED" | "CANCELED" | "INSTANT_APPROVED";
 };
 
 export type TOrderResponse = TOrderBase & {
   companyId: number;
   requester: string;
-  user: {
-    id: string;
-    email: string;
-    name: string;
-    password: string;
-    companyId: number;
-    createdAt: string;
-    updatedAt: string;
-    deletedAt: string | null;
-    hashedRefreshToken: string;
-    role: string;
-  };
   products: (TProducts[number] & {
     productId: number;
     orderId: string;
@@ -83,36 +88,4 @@ export type TOrderResponse = TOrderBase & {
   budget: TBudget;
 };
 
-export type TOrderWithoutStatus = {
-  id: string;
-  companyId: number;
-  userId: string;
-  approver: string | null;
-  adminMessage: string;
-  requestMessage: string;
-  deliveryFee: number;
-  productsPriceTotal: number;
-  createdAt: string;
-  updatedAt: string;
-  status: string;
-  user: {
-    id: string;
-    email: string;
-    name: string;
-    companyId: number;
-    createdAt: string;
-    updatedAt: string;
-    deletedAt: string | null;
-    role: string;
-  };
-  receipts: {
-    id: number;
-    productId: number;
-    orderId: string;
-    productName: string;
-    price: number;
-    imageUrl: string;
-    quantity: number;
-    createdAt: string;
-  }[];
-};
+export type TOrderWithoutStatus = TOrderResponse;

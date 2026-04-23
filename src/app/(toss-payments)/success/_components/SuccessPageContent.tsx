@@ -4,7 +4,7 @@ import React, { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchOrderWithoutStatus } from "@/lib/api/orderManage.api";
+import { getOrderDetailWithoutStatus } from "@/lib/api/orderManage.api";
 import CheckIconSvg from "@/components/svg/CheckIconSvg";
 
 type TSuccessPageContentProps = {
@@ -20,19 +20,19 @@ export default function SuccessPageContent({ orderId, amount, paymentKey }: TSuc
 
   const { data: order, isPending } = useQuery({
     queryKey: ["order", orderId],
-    queryFn: () => fetchOrderWithoutStatus(orderId ?? ""),
+    queryFn: () => getOrderDetailWithoutStatus(orderId ?? ""),
     enabled: !!orderId,
   });
 
   const hasConfirmed = useRef<boolean>(false);
 
   useEffect(() => {
-    // 이미 요청을 보냈는지 판단하는 로직
+    // Prevent duplicate confirmation requests.
     if (hasConfirmed.current) return;
 
     if (!order) return;
 
-    // 쿼리 파라미터 값과 DB의 amount 비교 (조작 방지)
+    // Compare the query param amount with the DB amount to prevent tampering.
     if (String(order.productsPriceTotal + order.deliveryFee) !== amount) {
       router.push("/fail?message=가격 정보가 일치하지 않습니다.&code=400");
       return;
@@ -45,7 +45,7 @@ export default function SuccessPageContent({ orderId, amount, paymentKey }: TSuc
     };
 
     async function confirm() {
-      hasConfirmed.current = true; // ✅ 중복 방지
+      hasConfirmed.current = true; // Prevent duplicate submission.
 
       const response = await fetch(`${apiBaseUrl}/payments/confirm`, {
         method: "POST",

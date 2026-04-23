@@ -10,22 +10,22 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getStatusText, formatDate } from "@/components/common/OrderDetail";
 import DogSpinner from "@/components/common/DogSpinner";
 
-// Lazy loading으로 컴포넌트 분리 - 더 세밀한 코드 분할
+// Lazy-load the detail sections for finer-grained code splitting.
 const OrderItemsSection = lazy(() => import("@/components/common/OrderDetail/OrderItemsSection"));
 const RequestInfoSection = lazy(() => import("@/components/common/OrderDetail/RequestInfoSection"));
 const ApprovalInfoSection = lazy(() => import("@/components/common/OrderDetail/ApprovalInfoSection"));
 
-// 타입 정의
+// Type definitions
 type TMyOrderDetailPageProps = Record<string, never>;
 
-// 간단한 로딩 컴포넌트
+// Simple loading component
 const LoadingComponent = () => (
   <div className="flex justify-center items-center h-[80vh] md:h-[60vh]">
     <DogSpinner />
   </div>
 );
 
-// 최적화된 에러 컴포넌트
+// Optimized error component
 const ErrorComponent = memo(({ error }: { error: string | null }) => (
   <div className="min-h-screen bg-white flex items-center justify-center">
     <div className="text-lg text-red-600">{error || "주문 내역을 찾을 수 없습니다."}</div>
@@ -34,7 +34,7 @@ const ErrorComponent = memo(({ error }: { error: string | null }) => (
 
 ErrorComponent.displayName = "ErrorComponent";
 
-// 최적화된 액션 버튼 컴포넌트
+// Optimized action button component
 const ActionButtons = memo(
   ({
     onBackToList,
@@ -90,16 +90,16 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // 메모이제이션된 fetchOrderDetail 함수 - 더 효율적인 비동기 처리
+  // Memoized fetchOrderDetail for a lighter async flow.
   const fetchOrderDetail = useCallback(async (): Promise<void> => {
     try {
       setIsLoading(true);
       setError(null);
 
-      // 비동기 작업을 별도로 처리하여 메인 스레드 블로킹 방지
+      // Keep the async work separate to avoid blocking the main thread.
       const data: TMyOrderDetail = await getMyOrderDetail(orderId);
 
-      // 상태 업데이트를 즉시 실행하여 LCP 개선
+      // Update state immediately after the fetch to help LCP.
       setOrderData(data);
       setIsLoading(false);
     } catch {
@@ -110,12 +110,12 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
 
   useEffect(() => {
     if (orderId) {
-      // 즉시 실행하여 FCP 개선
+      // Start immediately to help FCP.
       fetchOrderDetail();
     }
   }, [orderId, fetchOrderDetail]);
 
-  // 타이머 언마운트 시 클린업
+  // Clear the timer on unmount.
   useEffect(() => {
     return () => {
       if (timerRef.current) {
@@ -124,12 +124,12 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
     };
   }, []);
 
-  // 목록으로 돌아가기 - 메모이제이션
+  // Memoized back-to-list handler
   const handleBackToList = useCallback(() => {
     router.push("/my/order-list");
   }, [router]);
 
-  // Toast 표시 함수 - 메모이제이션
+  // Memoized toast helper
   const showToast = useCallback((text: string, variant: "success" | "error" = "error") => {
     setToast({
       isVisible: true,
@@ -137,18 +137,18 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
       variant,
     });
 
-    // 기존 타이머가 있다면 정리
+    // Clear the existing timer if one is already running.
     if (timerRef.current) {
       clearTimeout(timerRef.current);
     }
 
-    // 3초 후 자동으로 숨기기
+    // Hide the toast automatically after 3 seconds.
     timerRef.current = setTimeout(() => {
       setToast((prev) => ({ ...prev, isVisible: false }));
     }, 3000);
   }, []);
 
-  // 장바구니에 상품 추가하는 API 함수 - 메모이제이션
+  // Memoized helper for adding items back to the cart.
   const addToCart = useCallback(async (productId: number, quantity: number): Promise<void> => {
     try {
       await cookieFetch("/cart", {
@@ -163,18 +163,18 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
     }
   }, []);
 
-  // 장바구니 추가 mutation
+  // Add-to-cart mutation
   const { mutate: addToCartMutation, isPending: isAddingToCart } = useMutation({
     mutationFn: async () => {
       if (!orderData || !orderData.receipts) return;
 
-      // 주문 내역의 각 상품을 개별적으로 장바구니에 추가
+      // Re-add each item from the order to the cart one by one.
       for (const item of orderData.receipts) {
         await addToCart(item.productId, item.quantity);
       }
     },
     onSuccess: () => {
-      // cartItems queryKey로 캐시 무효화
+      // Invalidate the cartItems query cache.
       queryClient.invalidateQueries({ queryKey: ["cartItems"] });
       showToast("장바구니에 상품이 추가되었습니다.", "success");
     },
@@ -183,13 +183,13 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
     },
   });
 
-  // 장바구니에 다시 담기 - 메모이제이션
+  // Memoized handler for re-adding items to the cart.
   const handleAddToCart = useCallback(() => {
     if (!orderData || !orderData.receipts) return;
     addToCartMutation();
   }, [orderData, addToCartMutation]);
 
-  // 페이지 제목 메모이제이션
+  // Memoized page title
   const pageTitle = useMemo(() => {
     if (orderData) {
       return `구매 요청 내역 - ${orderData.receipts?.length || 0}개 상품`;
@@ -197,7 +197,7 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
     return "구매 요청 내역";
   }, [orderData]);
 
-  // 메인 컨텐츠 메모이제이션
+  // Memoized main content
   const mainContent = useMemo(() => {
     if (!orderData) return null;
 
@@ -210,7 +210,12 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
           <Suspense
             fallback={<div className="w-full h-32 bg-primary-100 rounded" style={{ minHeight: "128px" }}></div>}
           >
-            <OrderItemsSection receipts={orderData.receipts} title="요청 품목" />
+            <OrderItemsSection
+              receipts={orderData.receipts}
+              title="요청 품목"
+              productsPriceTotal={orderData.productsPriceTotal}
+              shippingFee={orderData.deliveryFee}
+            />
           </Suspense>
 
           <Suspense
@@ -248,7 +253,7 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
     );
   }, [orderData, toast, handleBackToList, handleAddToCart, isAddingToCart]);
 
-  // Critical CSS 최적화 - 더 가벼운 스타일
+  // Lightweight critical CSS
   const criticalCSS = `
     .min-h-screen { min-height: 100vh; }
     .bg-white { background-color: #ffffff; }
@@ -270,7 +275,7 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
     .min-h-\[128px\] { min-height: 8rem; }
   `;
 
-  // 메인 페이지 렌더링 최적화
+  // Optimized main-page rendering
   if (isLoading) {
     return (
       <>
@@ -279,16 +284,16 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
           <meta name="description" content="구매 요청 내역을 불러오는 중입니다." />
           <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
-          {/* Preconnect 최적화 - LCP 개선 */}
+          {/* Preconnect hints to help LCP. */}
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
           <link rel="dns-prefetch" href="//fonts.googleapis.com" />
           <link rel="dns-prefetch" href="//fonts.gstatic.com" />
 
-          {/* 외부 API preconnect - 라이트하우스 권장사항 */}
+          {/* Preconnect to the external API per Lighthouse guidance. */}
           <link rel="preconnect" href="http://localhost:8080" />
 
-          {/* Critical CSS 인라인화 - 최적화된 버전 */}
+          {/* Inline optimized critical CSS. */}
           <style dangerouslySetInnerHTML={{ __html: criticalCSS }} />
         </Head>
         <LoadingComponent />
@@ -319,19 +324,19 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
         />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
-        {/* Preconnect 최적화 - LCP 개선 */}
+        {/* Preconnect hints to help LCP. */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="dns-prefetch" href="//fonts.gstatic.com" />
 
-        {/* 외부 API preconnect - 라이트하우스 권장사항 */}
+        {/* Preconnect to the external API per Lighthouse guidance. */}
         <link rel="preconnect" href="http://localhost:8080" />
 
-        {/* 폰트 preload - LCP 개선 */}
+        {/* Preload the font to help LCP. */}
         <link rel="preload" href="/fonts/suit.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
 
-        {/* Critical CSS 인라인화 - 최적화된 버전 */}
+        {/* Inline optimized critical CSS. */}
         <style dangerouslySetInnerHTML={{ __html: criticalCSS }} />
       </Head>
       {mainContent}
