@@ -79,8 +79,13 @@ export type TCancelOrderResponse = {
   data: TCancelOrderData;
 };
 
+export type TGetMyOrdersResponse = {
+  message: string;
+  data: TOrderItem[];
+};
+
 export const getMyOrders = async (): Promise<TOrderItem[]> => {
-  const response = await cookieFetch<{ data: TOrderItem[] }>("/orders");
+  const response = await cookieFetch<TGetMyOrdersResponse>("/orders");
   return response.data;
 };
 
