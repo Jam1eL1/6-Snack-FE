@@ -4,7 +4,7 @@ import { cookieFetch } from "./fetchClient.api";
 export type TReceipt = {
   id: number;
   productId: number;
-  orderId: number;
+  orderId: string;
   productName: string;
   price: number;
   imageUrl: string;
@@ -12,29 +12,19 @@ export type TReceipt = {
   createdAt: string;
 };
 
-export type TOrderedItem = {
-  id: number;
-  orderId: number;
-  receiptId: number;
-  productId: number;
-  receipt: TReceipt;
-};
-
 export type TOrderUser = {
   id: string;
   email: string;
   name: string;
-  password: string;
   companyId: number;
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
-  hashedRefreshToken: string;
   role: string;
 };
 
 export type TMyOrderDetail = {
-  id: number;
+  id: string;
   companyId: number;
   userId: string;
   approver: string | null;
@@ -45,7 +35,7 @@ export type TMyOrderDetail = {
   deliveryFee: number;
   createdAt: string;
   updatedAt: string;
-  status: "PENDING" | "APPROVED" | "REJECTED" | "CANCELED";
+  status: "PENDING" | "APPROVED" | "REJECTED" | "CANCELED" | "INSTANT_APPROVED";
   user: TOrderUser;
   receipts: TReceipt[];
 };
@@ -60,6 +50,34 @@ export type TBudget = {
   currentMonthExpense: number | null;
 };
 
+export type TCancelOrderReceipt = {
+  id: number;
+  productName: string;
+  price: number;
+  imageUrl: string;
+  quantity: number;
+};
+
+export type TCancelOrderData = {
+  id: string;
+  companyId: number;
+  userId: string;
+  approver: string | null;
+  adminMessage: string | null;
+  requestMessage: string | null;
+  deliveryFee: number;
+  productsPriceTotal: number;
+  createdAt: string;
+  updatedAt: string;
+  status: "CANCELED";
+  receipts: TCancelOrderReceipt[];
+};
+
+export type TCancelOrderResponse = {
+  message: string;
+  data: TCancelOrderData;
+};
+
 // Fetch my order request details
 export const getMyOrderDetail = async (orderId: string): Promise<TMyOrderDetail> => {
   const response = await cookieFetch<TMyOrderDetailResponse>(`/orders/${orderId}`);
@@ -67,11 +85,13 @@ export const getMyOrderDetail = async (orderId: string): Promise<TMyOrderDetail>
 };
 
 // Cancel Order Request
-export const cancelOrder = (orderId: string): Promise<void> => {
-  return cookieFetch<void>(`/orders/${orderId}`, {
+export const cancelOrder = async (orderId: string): Promise<TCancelOrderData> => {
+  const response = await cookieFetch<TCancelOrderResponse>(`/orders/${orderId}`, {
     method: "PATCH",
     body: JSON.stringify({
       status: "CANCELED",
     }),
   });
+
+  return response.data;
 };
