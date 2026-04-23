@@ -7,24 +7,24 @@ import { getOrderDetail, TAdminOrderDetail } from "@/lib/api/orderDetail.api";
 import { getStatusText, formatDate } from "@/components/common/OrderDetail";
 import DogSpinner from "@/components/common/DogSpinner";
 
-// Lazy loading으로 컴포넌트 분리 - 더 세밀한 분리
+// Lazy-load the detail sections for finer-grained code splitting.
 const OrderItemsSection = lazy(() => import("@/components/common/OrderDetail/OrderItemsSection"));
 const RequestInfoSection = lazy(() => import("@/components/common/OrderDetail/RequestInfoSection"));
 const ApprovalInfoSection = lazy(() => import("@/components/common/OrderDetail/ApprovalInfoSection"));
 
-// 타입 정의
+// Type definitions
 type TOrderStatus = "pending" | "approved" | null;
 
 type TOrderHistoryDetailPageProps = Record<string, never>;
 
-// 간단한 로딩 컴포넌트
+// Simple loading component
 const LoadingComponent = () => (
   <div className="flex justify-center items-center h-[80vh] md:h-[60vh]">
     <DogSpinner />
   </div>
 );
 
-// 최적화된 에러 컴포넌트
+// Optimized error component
 const ErrorComponent = ({ error }: { error: string | null }) => (
   <div className="min-h-screen bg-white flex items-center justify-center">
     <div className="text-lg text-red-600">{error || "주문 내역을 찾을 수 없습니다."}</div>
@@ -42,7 +42,7 @@ export default function OrderHistoryDetailPage({}: TOrderHistoryDetailPageProps)
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // 메모이제이션된 네비게이션 핸들러
+  // Memoized navigation handlers
   const handleGoHome = useCallback(() => {
     router.push("/products");
   }, [router]);
@@ -51,16 +51,16 @@ export default function OrderHistoryDetailPage({}: TOrderHistoryDetailPageProps)
     router.push("/order-history");
   }, [router]);
 
-  // 메모이제이션된 fetchOrderDetail 함수 - 메인 스레드 최적화
+  // Memoized fetchOrderDetail to keep main-thread work lighter.
   const fetchOrderDetail = useCallback(async (): Promise<void> => {
     try {
       setIsLoading(true);
       setError(null);
 
-      // 비동기 작업을 별도로 처리하여 메인 스레드 블로킹 방지
+      // Keep the async work separate to avoid blocking the main thread.
       const data: TAdminOrderDetail = await getOrderDetail(orderId, status || undefined);
 
-      // 상태 업데이트를 requestAnimationFrame으로 지연시켜 렌더링 최적화
+      // Defer state updates with requestAnimationFrame for smoother rendering.
       requestAnimationFrame(() => {
         setOrderData(data);
         setIsLoading(false);
@@ -75,7 +75,7 @@ export default function OrderHistoryDetailPage({}: TOrderHistoryDetailPageProps)
 
   useEffect(() => {
     if (orderId) {
-      // 초기 로딩을 지연시켜 FCP 개선
+      // Slightly defer the initial load to help FCP.
       const timer = setTimeout(() => {
         fetchOrderDetail();
       }, 0);
@@ -84,7 +84,7 @@ export default function OrderHistoryDetailPage({}: TOrderHistoryDetailPageProps)
     }
   }, [orderId, fetchOrderDetail]);
 
-  // 페이지 제목 메모이제이션
+  // Memoized page title
   const pageTitle = useMemo(() => {
     if (orderData) {
       return `구매 내역 상세 - ${orderData.products?.length || 0}개 상품`;
@@ -92,7 +92,7 @@ export default function OrderHistoryDetailPage({}: TOrderHistoryDetailPageProps)
     return "구매 내역 상세";
   }, [orderData]);
 
-  // 메인 컨텐츠 메모이제이션 - 레이아웃 시프트 방지
+  // Memoized main content to reduce layout shift.
   const mainContent = useMemo(() => {
     if (!orderData) return null;
 
@@ -140,7 +140,7 @@ export default function OrderHistoryDetailPage({}: TOrderHistoryDetailPageProps)
               getStatusText={getStatusText}
             />
           </Suspense>
-          {/* 하단 버튼 */}
+          {/* Bottom action buttons */}
           <div className="self-stretch h-16 inline-flex justify-start md:justify-center items-center gap-5 mt-8">
             <button
               className="flex-1 md:flex-none md:w-[260px] h-16 px-4 py-3 bg-white rounded-[2px] outline-1 outline-offset-[-1px] outline-zinc-400 flex justify-center items-center text-lg font-semibold cursor-pointer hover:bg-primary-50 transition-colors duration-200"
@@ -173,7 +173,7 @@ export default function OrderHistoryDetailPage({}: TOrderHistoryDetailPageProps)
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
           <link rel="dns-prefetch" href="//fonts.googleapis.com" />
           <link rel="dns-prefetch" href="//fonts.gstatic.com" />
-          {/* Critical CSS 인라인화 */}
+          {/* Inline critical CSS. */}
           <style
             dangerouslySetInnerHTML={{
               __html: `
@@ -225,7 +225,7 @@ export default function OrderHistoryDetailPage({}: TOrderHistoryDetailPageProps)
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="dns-prefetch" href="//fonts.gstatic.com" />
         <link rel="preload" href="/fonts/suit.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
-        {/* Critical CSS 인라인화 */}
+        {/* Inline critical CSS. */}
         <style
           dangerouslySetInnerHTML={{
             __html: `

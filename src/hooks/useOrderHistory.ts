@@ -23,17 +23,17 @@ export const useOrderHistory = (sortByDefault: string = "latest", itemsPerPage: 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  // 예산 데이터 패칭
+  // Fetch budget data.
   const { data: budgetData, isLoading: budgetLoading, isError: budgetIsError, error: budgetErrorObj } = useBudgets();
   const budgetError = budgetIsError ? (budgetErrorObj as Error)?.message || "예산 데이터를 불러오지 못했습니다." : null;
 
-  // 구매내역 데이터 패칭 (승인완료만) - 모든 데이터를 한 번에 가져와서 캐시 활용
+  // Fetch approved purchase history and cache the full dataset client-side.
   const {
     data: approvedData,
     isLoading: approvedLoading,
     isError: approvedIsError,
     error: approvedErrorObj,
-  } = useAdminOrders({ status: "approved" }); // offset, limit, orderBy 제거
+  } = useAdminOrders({ status: "approved" }); // offset, limit, and orderBy are handled outside this hook.
 
   const purchaseListLoading = approvedLoading;
   const purchaseListError = approvedIsError ? (approvedErrorObj as Error)?.message : null;
@@ -79,12 +79,12 @@ export const useOrderHistory = (sortByDefault: string = "latest", itemsPerPage: 
     productName: item.productName,
   });
 
-  // 모든 아이템을 파싱
+  // Parse all items into the UI-facing shape.
   const allPurchaseItems: TPurchaseItem[] = ((approvedData as { orders?: TOrderItem[] })?.orders || []).map(
     (item: TOrderItem) => parse(item),
   );
 
-  // 클라이언트 사이드에서 정렬 처리
+  // Handle sorting on the client.
   const sortedItems = useCallback(() => {
     const items = [...allPurchaseItems];
 
@@ -93,19 +93,19 @@ export const useOrderHistory = (sortByDefault: string = "latest", itemsPerPage: 
         return items.sort((a, b) => {
           const dateA = new Date(a.approvalDate).getTime();
           const dateB = new Date(b.approvalDate).getTime();
-          return dateB - dateA; // 최신순 (승인일 기준 내림차순)
+          return dateB - dateA; // Latest first, based on approval date.
         });
       case "priceLow":
         return items.sort((a, b) => {
           const priceA = parseFloat(a.amount.replace(/[^0-9]/g, "")) || 0;
           const priceB = parseFloat(b.amount.replace(/[^0-9]/g, "")) || 0;
-          return priceA - priceB; // 낮은 가격순 (오름차순)
+          return priceA - priceB; // Lowest price first.
         });
       case "priceHigh":
         return items.sort((a, b) => {
           const priceA = parseFloat(a.amount.replace(/[^0-9]/g, "")) || 0;
           const priceB = parseFloat(b.amount.replace(/[^0-9]/g, "")) || 0;
-          return priceB - priceA; // 높은 가격순 (내림차순)
+          return priceB - priceA; // Highest price first.
         });
       default:
         return items;
@@ -114,13 +114,13 @@ export const useOrderHistory = (sortByDefault: string = "latest", itemsPerPage: 
 
   const sortedPurchaseItems = sortedItems();
 
-  // 클라이언트 사이드에서 페이지네이션 처리
+  // Handle pagination on the client.
   const totalCount = sortedPurchaseItems.length;
   const totalPages = Math.ceil(totalCount / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentItems: TPurchaseItem[] = sortedPurchaseItems.slice(startIndex, startIndex + itemsPerPage);
 
-  // 정렬이 변경될 때 첫 페이지로 이동
+  // Reset to page 1 whenever the sort order changes.
   useEffect(() => {
     setCurrentPage(1);
   }, [sortBy]);
@@ -134,7 +134,7 @@ export const useOrderHistory = (sortByDefault: string = "latest", itemsPerPage: 
     [totalPages],
   );
 
-  // 드롭다운 외부 클릭 감지
+  // Close the dropdown when clicking outside of it.
   useEffect(() => {
     if (!dropdownOpen) return;
     const handleClickOutside = (e: MouseEvent) => {
@@ -147,27 +147,27 @@ export const useOrderHistory = (sortByDefault: string = "latest", itemsPerPage: 
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [dropdownOpen]);
 
-  // 숫자 포맷 유틸
+  // Number formatting helper
   const formatNumber = (num: number | undefined) => (typeof num === "number" ? "$" + formatPrice(num) : "-");
 
   return {
-    // 예산 관련
+    // Budget state
     budgetData,
     budgetLoading,
     budgetError,
-    // 구매내역 관련
+    // Purchase history state
     purchaseListLoading,
     purchaseListError,
     currentItems,
     totalPages,
     currentPage,
     handlePageChange,
-    // 정렬 관련
+    // Sorting state
     sortBy,
     setSortBy,
     dropdownOpen,
     setDropdownOpen,
-    // 유틸
+    // Helpers
     formatNumber,
   };
 };
