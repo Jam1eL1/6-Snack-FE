@@ -1,5 +1,5 @@
 import { cookieFetch } from "@/lib/api/fetchClient.api";
-import { TMemberItem } from "@/types/meberList.types";
+import { TMemberItem } from "@/types/memberList.types";
 
 type TFetchUsersParams = {
   name?: string;

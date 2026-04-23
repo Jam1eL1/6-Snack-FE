@@ -1,5 +1,5 @@
 import { useModal } from "@/providers/ModalProvider";
-import { TMemberItem } from "@/types/meberList.types";
+import { TMemberItem } from "@/types/memberList.types";
 import Badge from "../ui/Badge";
 import DeleteAccountConfirmModal from "./DeleteAccountConfirmModal";
 import InviteMemberModal from "./InviteMemberModal";
