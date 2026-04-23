@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useProductDetail } from "@/hooks/useProductDetail";
-import { addToCart } from "@/lib/api/addToCart.api";
+import { addToCart } from "@/lib/api/cart.api";
 import CategoryNavigation from "./ProductDetail/CategoryNavigation";
 import ProductImage from "./ProductDetail/ProductImage";
 import ProductBasicInfo from "./ProductDetail/ProductBasicInfo";

@@ -1,5 +1,12 @@
-import { TGetCartItemsParams, TGetCartItemsResponse } from "@/types/cart.types";
+import { TAddToCartResponse, TGetCartItemsParams, TGetCartItemsResponse } from "@/types/cart.types";
 import { cookieFetch } from "./fetchClient.api";
+
+export const addToCart = (productId: number, quantity: number): Promise<TAddToCartResponse> => {
+  return cookieFetch<TAddToCartResponse>("/cart", {
+    method: "POST",
+    body: JSON.stringify({ productId, quantity }),
+  });
+};
 
 // 장바구니 조회
 export const getCartItems = async (params: TGetCartItemsParams = {}): Promise<TGetCartItemsResponse> => {
