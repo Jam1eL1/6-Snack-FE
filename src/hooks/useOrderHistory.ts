@@ -8,7 +8,7 @@ export type TPurchaseItem = {
   id: string;
   requestDate: string;
   requester: string;
-  status: "요청" | "승인" | "INSTANT_APPROVED";
+  status?: "PENDING" | "APPROVED" | "REJECTED" | "CANCELED" | "INSTANT_APPROVED";
   item: string;
   amount: string;
   approvalDate: string;
@@ -38,13 +38,15 @@ export const useOrderHistory = (sortByDefault: string = "latest", itemsPerPage: 
   const purchaseListLoading = approvedLoading;
   const purchaseListError = approvedIsError ? (approvedErrorObj as Error)?.message : null;
 
+  type TOrderStatus = "PENDING" | "APPROVED" | "REJECTED" | "CANCELED" | "INSTANT_APPROVED";
+
   type TOrderItem = {
     id: number | string;
     requestDate?: string;
     createdAt?: string;
     requesterName?: string;
     requester?: string;
-    status?: "요청" | "승인" | "INSTANT_APPROVED";
+    status?: TOrderStatus;
     productName?: string;
     itemSummary?: string;
     item?: string;
@@ -64,7 +66,7 @@ export const useOrderHistory = (sortByDefault: string = "latest", itemsPerPage: 
     id: String(item.id),
     requestDate: item.requestDate ? formatDate(item.requestDate) : item.createdAt ? formatDate(item.createdAt) : "-",
     requester: item.requesterName || item.requester || "-",
-    status: item.status as "요청" | "승인" | "INSTANT_APPROVED",
+    status: item.status,
     item: item.productName || item.itemSummary || item.item || "-",
     amount:
       typeof item.productsPriceTotal === "number" && typeof item.deliveryFee === "number"
@@ -146,7 +148,7 @@ export const useOrderHistory = (sortByDefault: string = "latest", itemsPerPage: 
   }, [dropdownOpen]);
 
   // 숫자 포맷 유틸
-  const formatNumber = (num: number | undefined) => (typeof num === "number" ? formatPrice(num) + "원" : "-");
+  const formatNumber = (num: number | undefined) => (typeof num === "number" ? "$" + formatPrice(num) : "-");
 
   return {
     // 예산 관련
