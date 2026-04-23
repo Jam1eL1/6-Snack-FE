@@ -7,7 +7,7 @@ import Image from "next/image";
 import Dropdown from "@/components/common/DropDown";
 import Pagination from "@/components/common/Pagination";
 import MyRequestList from "@/components/common/MyRequestList";
-import { fetchMyOrders } from "@/lib/api/myOrderList.api";
+import { getMyOrders } from "@/lib/api/orderHistory.api";
 import { TOrderItem } from "@/types/myOrderList.types";
 import { formatDate } from "@/lib/utils/formatDate.util";
 import { convertStatus } from "@/lib/utils/convertStatus.util";
@@ -38,7 +38,7 @@ export default function MyOrderListPage() {
     const loadData = async () => {
       try {
         setIsLoading(true);
-        const data = await fetchMyOrders();
+        const data = await getMyOrders();
         const filtered = data.filter((item) => item.status !== "CANCELED");
         setRequests(filtered);
       } catch (error) {

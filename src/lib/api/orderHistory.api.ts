@@ -1,3 +1,4 @@
+import { TOrderItem } from "@/types/myOrderList.types";
 import { cookieFetch } from "./fetchClient.api";
 
 // Type for fetching my order request details (actual API response shape)
@@ -76,6 +77,11 @@ export type TCancelOrderData = {
 export type TCancelOrderResponse = {
   message: string;
   data: TCancelOrderData;
+};
+
+export const getMyOrders = async (): Promise<TOrderItem[]> => {
+  const response = await cookieFetch<{ data: TOrderItem[] }>("/orders");
+  return response.data;
 };
 
 // Fetch my order request details
