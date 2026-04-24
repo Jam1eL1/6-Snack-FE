@@ -35,9 +35,7 @@ export const getProducts = async (params?: {
   const queryString = searchParams.toString();
   const url = queryString ? `/products?${queryString}` : "/products";
 
-  // response 타입 지정해줘야함? -권장
-  const response = await cookieFetch<TGetProductsResponse>(url);
-  return response;
+  return cookieFetch<TGetProductsResponse>(url);
 };
 
 // 내가 등록한 상품 조회
@@ -48,11 +46,9 @@ export const getMyProducts = async (params: TMyProductsParams): Promise<TMyProdu
 };
 
 // 상품 생성
-export const createProduct = async (formData: FormData): Promise<TCreateProductResponse> => {
-  const response = await cookieFetch<TCreateProductResponse>("/products", {
+export const createProduct = (formData: FormData): Promise<TCreateProductResponse> => {
+  return cookieFetch<TCreateProductResponse>("/products", {
     method: "POST",
     body: formData,
   });
-
-  return response;
 };

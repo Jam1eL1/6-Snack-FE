@@ -30,19 +30,17 @@ type TSuperAdminSignUpResponse = {
   };
 };
 
-export const deleteUserById = async (userId: string): Promise<TDeleteUserResponse> => {
-  const res = await cookieFetch<TDeleteUserResponse>(`/super-admin/users/${userId}`, {
+export const deleteUserById = (userId: string): Promise<TDeleteUserResponse> => {
+  return cookieFetch<TDeleteUserResponse>(`/super-admin/users/${userId}`, {
     method: "DELETE",
   });
-  return res;
 };
 
-export const updateUserRole = async (userId: string, role: TUserRole): Promise<TUpdateUserRoleResponse> => {
-  const res = await cookieFetch<TUpdateUserRoleResponse>(`/super-admin/users/${userId}/role`, {
+export const updateUserRole = (userId: string, role: TUserRole): Promise<TUpdateUserRoleResponse> => {
+  return cookieFetch<TUpdateUserRoleResponse>(`/super-admin/users/${userId}/role`, {
     method: "PATCH",
     body: JSON.stringify({ role }),
   });
-  return res;
 };
 
 export const superAdminSignUp = async (data: {
