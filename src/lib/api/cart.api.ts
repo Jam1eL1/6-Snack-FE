@@ -8,14 +8,14 @@ export const addToCart = (productId: number, quantity: number): Promise<TAddToCa
   });
 };
 
-// 장바구니 조회
+// Fetch cart items
 export const getCartItems = async (params: TGetCartItemsParams = {}): Promise<TGetCartItemsResponse> => {
   const queryString = new URLSearchParams(params);
 
   return cookieFetch<TGetCartItemsResponse>(`/cart?${queryString.toString()}`);
 };
 
-// 장바구니 상품 선택 / 해제
+// Select or deselect a cart item
 export const toggleCheckItem = async (cartItemId: number, isChecked: boolean): Promise<void> => {
   return cookieFetch<void>(`/cart/${cartItemId}/check`, {
     method: "PATCH",
@@ -23,7 +23,7 @@ export const toggleCheckItem = async (cartItemId: number, isChecked: boolean): P
   });
 };
 
-// 장바구니 전체 선택 / 전체 해제
+// Select or deselect all cart items
 export const toggleCheckAllItems = async (isChecked: boolean): Promise<void> => {
   return cookieFetch<void>("/cart/check", {
     method: "PATCH",
@@ -31,7 +31,7 @@ export const toggleCheckAllItems = async (isChecked: boolean): Promise<void> => 
   });
 };
 
-// 장바구니 선택된 상품 삭제
+// Delete selected cart items
 export const deleteSelectedItems = async (cartItemIds: number[]): Promise<void> => {
   return cookieFetch<void>("/cart", {
     method: "DELETE",
@@ -39,7 +39,7 @@ export const deleteSelectedItems = async (cartItemIds: number[]): Promise<void> 
   });
 };
 
-// 장바구니 수량 선택
+// Update cart item quantity
 export const updateItemQuantity = async (cartItemId: number, quantity: number): Promise<void> => {
   return cookieFetch<void>(`/cart/${cartItemId}/quantity`, {
     method: "PATCH",

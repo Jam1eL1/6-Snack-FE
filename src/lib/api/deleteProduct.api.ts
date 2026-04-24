@@ -1,13 +1,13 @@
 import { cookieFetch } from "./fetchClient.api";
 
-// 일반 유저 삭제
+// Delete product as a regular user
 export const deleteProduct = async (productId: number): Promise<void> => {
   return cookieFetch<void>(`/products/${productId}`, {
     method: "DELETE",
   });
 };
 
-// 관리자 삭제
+// Delete product as an admin
 export const deleteProductAsAdmin = async (productId: number): Promise<void> => {
   return cookieFetch<void>(`/admin/products/${productId}`, {
     method: "DELETE",

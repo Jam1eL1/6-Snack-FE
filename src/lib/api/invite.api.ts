@@ -9,7 +9,7 @@ export type TInviteInfo = {
   isUsed: boolean;
 };
 
-// 초대 정보 조회
+// Fetch invite information
 export const getInvite = async (inviteId: string): Promise<TInviteInfo> => {
   return cookieFetch<TInviteInfo>(`/invite/${inviteId}`);
 };

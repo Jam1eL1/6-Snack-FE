@@ -18,7 +18,7 @@ type TCreateProductResponse = {
   updatedAt: string;
 };
 
-// 상품 목록 조회
+// Fetch product list
 export const getProducts = async (params?: {
   category?: number;
   sort?: "latest" | "popular" | "low" | "high";
@@ -38,14 +38,14 @@ export const getProducts = async (params?: {
   return cookieFetch<TGetProductsResponse>(url);
 };
 
-// 내가 등록한 상품 조회
+// Fetch products created by the current user
 export const getMyProducts = async (params: TMyProductsParams): Promise<TMyProductsResponse> => {
   const queryString = new URLSearchParams(params);
 
   return cookieFetch<TMyProductsResponse>(`/my/products?${queryString.toString()}`);
 };
 
-// 상품 생성
+// Create a product
 export const createProduct = (formData: FormData): Promise<TCreateProductResponse> => {
   return cookieFetch<TCreateProductResponse>("/products", {
     method: "POST",

@@ -3,7 +3,7 @@ import { cookieFetch } from "./fetchClient.api";
 
 /**
  * @JJOBO
- * 1. product.api.ts로 통합하기(의견)
+ * 1. Consider consolidating this into product.api.ts
  */
 
 export async function getProductById(productId: number): Promise<TProduct> {
