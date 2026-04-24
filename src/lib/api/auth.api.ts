@@ -16,6 +16,14 @@ export type TLoginResponse = {
   user: TUser;
 };
 
+type TLogoutResponse = {
+  message: string;
+};
+
+type TRefreshAccessTokenResponse = {
+  message: string;
+};
+
 export const login = async (email: string, password: string): Promise<TUser> => {
   const response = await cookieFetch<TLoginResponse>("/auth/login", {
     method: "POST",
@@ -26,14 +34,14 @@ export const login = async (email: string, password: string): Promise<TUser> => 
 };
 
 export const logout = async (): Promise<void> => {
-  return cookieFetch("/auth/logout", {
+  await cookieFetch<TLogoutResponse>("/auth/logout", {
     method: "POST",
     shouldRefreshOn401: false,
   });
 };
 
-export const refreshAccessToken = async () => {
-  return cookieFetch("/auth/refresh-token", {
+export const refreshAccessToken = async (): Promise<TRefreshAccessTokenResponse> => {
+  return cookieFetch<TRefreshAccessTokenResponse>("/auth/refresh-token", {
     method: "POST",
   });
 };
@@ -43,7 +51,7 @@ export const signUpWithInvite = async (
   password: string,
   passwordConfirm: string,
 ): Promise<TSignUpWithInviteResponse> => {
-  return cookieFetch(`/auth/signup/${inviteId}`, {
+  return cookieFetch<TSignUpWithInviteResponse>(`/auth/signup/${inviteId}`, {
     method: "POST",
     body: JSON.stringify({
       password,

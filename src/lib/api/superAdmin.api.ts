@@ -9,6 +9,27 @@ type TUpdateUserRoleResponse = {
   message: string;
 };
 
+type TSuperAdminSignUpResponse = {
+  message: string;
+  user: {
+    id: string;
+    email: string;
+    role: string;
+  };
+  company: {
+    id: number;
+    name: string;
+  };
+  monthlyBudget: {
+    id: number;
+    year: number;
+    month: number;
+    currentMonthExpense: number;
+    currentMonthBudget: number;
+    monthlyBudget: number;
+  };
+};
+
 export const deleteUserById = async (userId: string): Promise<TDeleteUserResponse> => {
   const res = await cookieFetch<TDeleteUserResponse>(`/super-admin/users/${userId}`, {
     method: "DELETE",
@@ -31,8 +52,8 @@ export const superAdminSignUp = async (data: {
   bizNumber: string;
   password: string;
   passwordConfirm: string;
-}) => {
-  return cookieFetch("/auth/signup", {
+}): Promise<TSuperAdminSignUpResponse> => {
+  return cookieFetch<TSuperAdminSignUpResponse>("/auth/signup", {
     method: "POST",
     body: JSON.stringify(data),
   });

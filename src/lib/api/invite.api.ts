@@ -11,7 +11,7 @@ export type TInviteInfo = {
 
 // 초대 정보 조회
 export const getInvite = async (inviteId: string): Promise<TInviteInfo> => {
-  return cookieFetch(`/invite/${inviteId}`);
+  return cookieFetch<TInviteInfo>(`/invite/${inviteId}`);
 };
 
 export type TInviteRequestData = {
@@ -33,7 +33,7 @@ export type TInviteResponse = {
 };
 
 export const sendInvite = async (data: TInviteRequestData): Promise<TInviteResponse> => {
-  return cookieFetch(`/invite`, {
+  return cookieFetch<TInviteResponse>(`/invite`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

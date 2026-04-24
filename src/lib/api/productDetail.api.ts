@@ -7,5 +7,5 @@ import { cookieFetch } from "./fetchClient.api";
  */
 
 export async function getProductById(productId: number): Promise<TProduct> {
-  return cookieFetch(`/products/${productId}`);
+  return cookieFetch<TProduct>(`/products/${productId}`);
 }

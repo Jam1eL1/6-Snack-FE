@@ -44,7 +44,7 @@ export const getProducts = async (params?: {
 export const getMyProducts = async (params: TMyProductsParams): Promise<TMyProductsResponse> => {
   const queryString = new URLSearchParams(params);
 
-  return cookieFetch(`/my/products?${queryString.toString()}`);
+  return cookieFetch<TMyProductsResponse>(`/my/products?${queryString.toString()}`);
 };
 
 // 상품 생성
