@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteProduct, deleteProductAsAdmin } from "@/lib/api/deleteProduct.api";
+import { deleteProduct, deleteProductAsAdmin } from "@/lib/api/product.api";
 import { useAuth } from "@/providers/AuthProvider";
 
 export const useDeleteProduct = () => {

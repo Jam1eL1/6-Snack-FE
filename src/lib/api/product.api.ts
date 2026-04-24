@@ -1,4 +1,5 @@
 import { TMyProductsParams, TMyProductsResponse, TProduct } from "@/types/product.types";
+import type { TProduct as TProductDetail } from "@/types/productDetail.types";
 import { cookieFetch } from "./fetchClient.api";
 
 type TGetProductsResponse = {
@@ -50,5 +51,24 @@ export const createProduct = (formData: FormData): Promise<TCreateProductRespons
   return cookieFetch<TCreateProductResponse>("/products", {
     method: "POST",
     body: formData,
+  });
+};
+
+// Fetch product details
+export const getProductById = (productId: number): Promise<TProductDetail> => {
+  return cookieFetch<TProductDetail>(`/products/${productId}`);
+};
+
+// Delete product as a regular user
+export const deleteProduct = (productId: number): Promise<void> => {
+  return cookieFetch<void>(`/products/${productId}`, {
+    method: "DELETE",
+  });
+};
+
+// Delete product as an admin
+export const deleteProductAsAdmin = (productId: number): Promise<void> => {
+  return cookieFetch<void>(`/admin/products/${productId}`, {
+    method: "DELETE",
   });
 };
