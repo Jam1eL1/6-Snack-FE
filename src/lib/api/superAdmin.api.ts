@@ -9,6 +9,15 @@ type TUpdateUserRoleResponse = {
   message: string;
 };
 
+type TSuperAdminSignUpRequest = {
+  email: string;
+  name: string;
+  companyName: string;
+  bizNumber: string;
+  password: string;
+  passwordConfirm: string;
+};
+
 type TSuperAdminSignUpResponse = {
   message: string;
   user: {
@@ -43,14 +52,7 @@ export const updateUserRole = (userId: string, role: TUserRole): Promise<TUpdate
   });
 };
 
-export const superAdminSignUp = async (data: {
-  email: string;
-  name: string;
-  companyName: string;
-  bizNumber: string;
-  password: string;
-  passwordConfirm: string;
-}): Promise<TSuperAdminSignUpResponse> => {
+export const superAdminSignUp = async (data: TSuperAdminSignUpRequest): Promise<TSuperAdminSignUpResponse> => {
   return cookieFetch<TSuperAdminSignUpResponse>("/auth/signup", {
     method: "POST",
     body: JSON.stringify(data),
