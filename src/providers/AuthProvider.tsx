@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { getUser } from "@/lib/api/user.api";
 import { login, logout } from "@/lib/api/auth.api";
 import { usePathname, useRouter } from "next/navigation";
@@ -23,16 +23,21 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   const pathname = usePathname();
   const router = useRouter();
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = useCallback(async (email: string, password: string) => {
     const userData = await login(email, password);
     setUser(userData);
-  };
+  }, []);
 
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     await logout();
     setUser(null);
     router.push("/");
-  };
+  }, [router]);
+
+  const handleSessionExpired = useCallback(() => {
+    setUser(null);
+    router.push("/signin");
+  }, [router]);
   // Re-check auth state on route changes except for public routes.
   useEffect(() => {
     const shouldSkipAuthCheck = excludedRoutes.some((route) =>
@@ -46,8 +51,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         setUser(userData);
       } catch (error) {
         if (error instanceof SessionExpiredError) {
-          setUser(null);
-          router.push("/signin");
+          handleSessionExpired();
           return;
         }
         setUser(null);
@@ -57,7 +61,9 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
     console.log("Checking authentication state:", pathname);
     loadUser();
-  }, [pathname, router]);
+  }, [pathname, router, handleSessionExpired]);
 
-  return <AuthContext.Provider value={{ user, signIn, signOut }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ user, signIn, signOut, handleSessionExpired }}>{children}</AuthContext.Provider>
+  );
 }
