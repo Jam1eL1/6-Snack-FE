@@ -61,7 +61,7 @@ export default function ProductDetail({ productId }: TProductDetailProps) {
     onError: (error) => {
       if (error instanceof SessionExpiredError) return;
 
-      alert("Failed to add item to cart.");
+      showToast("Failed to add item to cart.", "error");
     },
   });
 
