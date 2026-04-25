@@ -12,7 +12,7 @@ type TCartAndLikeButtonsProps = {
 export default function CartAndLikeButtons({ onAddToCart, isFavorite, onToggleFavorite }: TCartAndLikeButtonsProps) {
   return (
     <div className="flex gap-4 w-full">
-      <Button type="primary" label="장바구니 담기" className="w-full h-16 font-bold" onClick={onAddToCart} />
+      <Button type="primary" label="Add to Cart" className="w-full h-16 font-bold" onClick={onAddToCart} />
 
       <div
         className="w-16 h-16 border border-primary-300 rounded flex items-center justify-center cursor-pointer"

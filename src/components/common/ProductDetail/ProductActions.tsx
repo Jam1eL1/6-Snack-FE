@@ -36,12 +36,12 @@ export default function ProductActions({
   const handleDelete = () => {
     deleteProduct(productId, {
       onSuccess: () => {
-        setFlash("상품이 삭제되었습니다.", "success");
+        setFlash("Product deleted.", "success");
         closeModal();
-        router.push("/products"); // 즉시 이동
+        router.push("/products");
       },
       onError: () => {
-        showToast("상품 삭제 실패", "error"); // 현재 페이지에서 실패만 즉시 표시
+        showToast("Failed to delete product.", "error");
       },
     });
   };
@@ -53,10 +53,10 @@ export default function ProductActions({
         onCancel={closeModal}
         onDelete={handleDelete}
         productName={productName}
-        modalTitle="상품을 삭제하시겠어요?"
-        modalDescription="삭제 후에는 복구할 수 없습니다."
-        confirmButtonText="상품 삭제"
-        cancelButtonText="더 생각해볼게요"
+        modalTitle="Delete this product?"
+        modalDescription="This action cannot be undone."
+        confirmButtonText="Delete Product"
+        cancelButtonText="Cancel"
       />,
     );
   };
@@ -69,7 +69,7 @@ export default function ProductActions({
 
   return (
     <div className="flex items-center">
-      <span className="min-w-[32px] whitespace-nowrap px-4 text-[16px] sm:text-base">수량</span>
+      <span className="min-w-[32px] whitespace-nowrap px-4 text-[16px] sm:text-base">Quantity</span>
       <QuantityDropdown
         value={selectedQuantity === 0 ? 1 : selectedQuantity}
         onClick={onQuantityChange}

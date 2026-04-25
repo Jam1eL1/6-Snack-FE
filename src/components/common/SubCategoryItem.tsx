@@ -60,7 +60,7 @@ export default function SubCategoryItem({ categories }: TSubCategoryItemProps) {
   return (
     <>
       <div className="flex justify-between items-center w-[180px] h-[42px] py-[10px] px-[14px] mb-[10px]">
-        <span className="font-bold text-[18px]/[22px] tracking-tight text-primary-950">카테고리</span>
+        <span className="font-bold text-[18px]/[22px] tracking-tight text-primary-950">Categories</span>
         <button
           onClick={() => {
             clearSelectedCategory();
@@ -69,7 +69,7 @@ export default function SubCategoryItem({ categories }: TSubCategoryItemProps) {
             setIsActiveChildrenCategory("");
           }}
           className="group hover:bg-primary-50/50 transition-colors duration-200 p-1 rounded-full"
-          aria-label="카테고리 필터 초기화"
+          aria-label="Reset category filter"
         >
           <ResetIconSvg className="w-5 h-5 text-primary-300 group-hover:text-secondary-500 transition-colors duration-200" />
         </button>
