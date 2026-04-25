@@ -18,6 +18,7 @@ import { useToggleFavorite } from "@/hooks/useToggleFavorite";
 import DogSpinner from "@/components/common/DogSpinner";
 import icNoOrder from "@/assets/icons/ic_no_order.svg";
 import Image from "next/image";
+import { SessionExpiredError } from "@/lib/api/auth.errors";
 
 type TProductDetailProps = {
   productId: number;
@@ -57,7 +58,9 @@ export default function ProductDetail({ productId }: TProductDetailProps) {
       await queryClient.invalidateQueries({ queryKey: ["cartItems"] });
       router.push("/cart");
     },
-    onError: () => {
+    onError: (error) => {
+      if (error instanceof SessionExpiredError) return;
+
       alert("Failed to add item to cart.");
     },
   });
