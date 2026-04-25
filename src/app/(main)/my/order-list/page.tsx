@@ -15,6 +15,7 @@ import { useCancelOrder } from "@/hooks/useCancelOrder";
 import Toast from "@/components/common/Toast";
 import DogSpinner from "@/components/common/DogSpinner";
 import icNoOrder from "@/assets/icons/ic_no_order.svg";
+import { SessionExpiredError } from "@/lib/api/auth.errors";
 
 const PAGE_SIZE = 5;
 
@@ -22,16 +23,30 @@ export default function MyOrderListPage() {
   const [requests, setRequests] = useState<TOrderItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOption, setSortOption] = useState("Newest");
-  const [toastVisible, setToastVisible] = useState(false);
+  const [toast, setToast] = useState({
+    isVisible: false,
+    text: "",
+    variant: "success" as "success" | "error",
+  });
+  const showToast = (text: string, variant: "success" | "error" = "success") => {
+    setToast({ isVisible: true, text, variant });
+    setTimeout(() => setToast((prev) => ({ ...prev, isVisible: false })), 3000);
+  };
 
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const router = useRouter();
 
-  const cancelOrder = useCancelOrder((orderId: string) => {
-    setRequests((prev) => prev.filter((item) => item.id !== orderId));
-    setToastVisible(true);
-    setTimeout(() => setToastVisible(false), 3000);
+  const cancelOrder = useCancelOrder({
+    onSuccess: (orderId: string) => {
+      setRequests((prev) => prev.filter((item) => item.id !== orderId));
+      showToast("Your request has been canceled.", "success");
+    },
+    onError: (error) => {
+      if (error instanceof SessionExpiredError) return;
+
+      showToast("Failed to cancel request.", "error");
+    },
   });
 
   useEffect(() => {
@@ -155,7 +170,7 @@ export default function MyOrderListPage() {
         />
       </div>
 
-      {toastVisible && <Toast text="Your request has been canceled." variant="success" isVisible={toastVisible} />}
+      {toast.isVisible && <Toast text={toast.text} variant={toast.variant} isVisible={toast.isVisible} />}
     </main>
   );
 }
