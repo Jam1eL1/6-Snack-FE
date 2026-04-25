@@ -8,6 +8,7 @@ import { useModal } from "@/providers/ModalProvider";
 import { useEffect } from "react";
 import { useDeleteProduct } from "@/hooks/useDeleteProduct";
 import { useFlashToast } from "@/stores/flashToast";
+import { SessionExpiredError } from "@/lib/api/auth.errors";
 
 type TProductActionsProps = {
   selectedQuantity: number;
@@ -40,7 +41,9 @@ export default function ProductActions({
         closeModal();
         router.push("/products");
       },
-      onError: () => {
+      onError: (error) => {
+        if (error instanceof SessionExpiredError) return;
+
         showToast("Failed to delete product.", "error");
       },
     });

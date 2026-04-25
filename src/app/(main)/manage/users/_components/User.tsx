@@ -16,6 +16,7 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useMemo, useState, useRef, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import DogSpinner from "@/components/common/DogSpinner";
+import { SessionExpiredError } from "@/lib/api/auth.errors";
 
 export default function User() {
   const [currentPaginationPage, setCurrentPaginationPage] = useState<number>(1);
@@ -85,6 +86,8 @@ export default function User() {
       queryClient.invalidateQueries({ queryKey: ["companyUsers"] });
     },
     onError: (error) => {
+      if (error instanceof SessionExpiredError) return;
+
       showToast("Failed to delete user.", "error");
       console.error(error);
     },
@@ -116,6 +119,8 @@ export default function User() {
       queryClient.invalidateQueries({ queryKey: ["companyUsers"] });
     },
     onError: (error) => {
+      if (error instanceof SessionExpiredError) return;
+
       const message: string = (error as Error).message || "";
       const isConflict =
         /Unique constraint/i.test(message) ||

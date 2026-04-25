@@ -1,23 +1,26 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createProduct, getProducts } from "@/lib/api/product.api";
+import { SessionExpiredError } from "@/lib/api/auth.errors";
 
-// 상품 생성 Mutation
+// Product creation mutation
 export const useCreateProduct = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: createProduct,
     onSuccess: () => {
-      // 상품 목록 쿼리 무효화 (새로고침)
+      // Invalidate the product list query so it refetches.
       queryClient.invalidateQueries({ queryKey: ["products"] });
     },
     onError: (error) => {
-      console.error("상품 생성 실패:", error);
+      if (error instanceof SessionExpiredError) return;
+
+      console.error("Failed to create product:", error);
     },
   });
 };
 
-// 상품 목록 조회 Query
+// Product list query
 export const useGetProducts = (params?: {
   category?: number;
   sort?: "latest" | "popular" | "low" | "high";
@@ -27,7 +30,7 @@ export const useGetProducts = (params?: {
   return useQuery({
     queryKey: ["products", params],
     queryFn: () => getProducts(params),
-    staleTime: 5 * 60 * 1000, // 5분
-    gcTime: 10 * 60 * 1000, // 10분 (이전 cacheTime)
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 };
