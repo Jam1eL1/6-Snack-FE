@@ -17,6 +17,7 @@ import ProfileInfoField from "./ProfileInfoField";
 import ProfilePasswordFields from "./ProfilePasswordFields";
 import ProfileSubmitButton from "./ProfileSubmitButton";
 import Toast from "@/components/common/Toast";
+import { SessionExpiredError } from "@/lib/api/auth.errors";
 
 export default function ProfileForm() {
   const { user } = useAuth();
@@ -123,6 +124,7 @@ export default function ProfileForm() {
       queryClient.invalidateQueries({ queryKey: ["user"] });
     },
     onError: (error: Error) => {
+      if (error instanceof SessionExpiredError) return;
       const errorMessage = error.message || "Update failed.";
       showToast(errorMessage, "error");
     },

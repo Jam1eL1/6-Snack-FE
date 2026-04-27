@@ -21,10 +21,10 @@ export default function ProductBasicInfo({ product }: TProductBasicInfoProps) {
           {product.name}
         </div>
         <div className="text-secondary-500 min-w-[50px] text-sm/[17px] font-bold tracking-tight">
-          {product.cumulativeSales}회 구매
+          {product.cumulativeSales} sold
         </div>
       </div>
-      <div className="text-black text-lg/[22px] font-extrabold tracking-tight">{formatPrice(product.price)}원</div>
+      <div className="text-black text-lg/[22px] font-extrabold tracking-tight">₩{formatPrice(product.price)}</div>
     </div>
   );
 }

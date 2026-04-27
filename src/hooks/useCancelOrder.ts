@@ -1,17 +1,23 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { cancelOrder } from "@/lib/api/orderHistory.api";
 
-export const useCancelOrder = (onSuccessCallback: (orderId: string) => void) => {
+export const useCancelOrder = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess: (orderId: string) => void;
+  onError?: (error: Error) => void;
+}) => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (orderId: string) => cancelOrder(orderId),
     onSuccess: (_, orderId) => {
-      onSuccessCallback(orderId);
+      onSuccess(orderId);
       queryClient.invalidateQueries({ queryKey: ["my-orders"] });
     },
-    onError: () => {
-      alert("요청 취소 실패");
+    onError: (error) => {
+      onError?.(error);
     },
   });
 };

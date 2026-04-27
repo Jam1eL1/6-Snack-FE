@@ -19,4 +19,5 @@ export type TAuthContextType = {
   user: TUser | null;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  handleSessionExpired: () => void;
 };

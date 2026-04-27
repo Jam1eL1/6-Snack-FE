@@ -64,7 +64,7 @@ export default function MobileCategoryMenu({
             <div
               className={`justify-start text-base font-bold transition-all duration-200 ${isCategoryNotSelected ? "text-primary-950" : "text-primary-400 group-hover:text-primary-700"}`}
             >
-              전체
+              All
             </div>
           </div>
         )}

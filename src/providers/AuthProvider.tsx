@@ -1,11 +1,12 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { getUser } from "@/lib/api/user.api";
 import { login, logout } from "@/lib/api/auth.api";
 import { usePathname, useRouter } from "next/navigation";
 import { TUser, TAuthContextType } from "@/types/auth.types";
 import { SessionExpiredError } from "@/lib/api/auth.errors";
+import { useFlashToast } from "@/stores/flashToast";
 
 const AuthContext = createContext<TAuthContextType | undefined>(undefined);
 const excludedRoutes = ["/", "/signin", "/signup"];
@@ -22,17 +23,24 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   const [user, setUser] = useState<TUser | null>(null);
   const pathname = usePathname();
   const router = useRouter();
+  const setFlash = useFlashToast((state) => state.setFlash);
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = useCallback(async (email: string, password: string) => {
     const userData = await login(email, password);
     setUser(userData);
-  };
+  }, []);
 
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     await logout();
     setUser(null);
     router.push("/");
-  };
+  }, [router]);
+
+  const handleSessionExpired = useCallback(() => {
+    setUser(null);
+    setFlash("Your session has expired. Please sign in again.", "error");
+    router.push("/signin");
+  }, [router, setFlash]);
   // Re-check auth state on route changes except for public routes.
   useEffect(() => {
     const shouldSkipAuthCheck = excludedRoutes.some((route) =>
@@ -46,8 +54,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         setUser(userData);
       } catch (error) {
         if (error instanceof SessionExpiredError) {
-          setUser(null);
-          router.push("/signin");
+          handleSessionExpired();
           return;
         }
         setUser(null);
@@ -57,7 +64,9 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
     console.log("Checking authentication state:", pathname);
     loadUser();
-  }, [pathname, router]);
+  }, [pathname, router, handleSessionExpired]);
 
-  return <AuthContext.Provider value={{ user, signIn, signOut }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ user, signIn, signOut, handleSessionExpired }}>{children}</AuthContext.Provider>
+  );
 }

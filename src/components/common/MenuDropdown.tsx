@@ -23,10 +23,10 @@ export default function MenuDropdown({ menuType, onEdit, onDelete, className = "
     setShowDropdown(false);
   };
 
-  const editLabel = menuType === "product" ? "상품 수정" : "권한 수정";
-  const deleteLabel = menuType === "product" ? "상품 삭제" : "계정 탈퇴";
+  const editLabel = menuType === "product" ? "Edit Product" : "Edit Permissions";
+  const deleteLabel = menuType === "product" ? "Delete Product" : "Remove Account";
 
-  // 외부 클릭 시 드롭다운 닫기
+  // Close the dropdown when clicking outside.
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -46,7 +46,7 @@ export default function MenuDropdown({ menuType, onEdit, onDelete, className = "
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>
       <div className="w-6 h-6 relative cursor-pointer" onClick={() => setShowDropdown(!showDropdown)}>
-        <Image src={ic_menu} alt="더보기 메뉴" fill className="object-contain" />
+        <Image src={ic_menu} alt="More options" fill className="object-contain" />
       </div>
 
       {showDropdown && (

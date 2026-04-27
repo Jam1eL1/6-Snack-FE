@@ -18,6 +18,7 @@ import { useToggleFavorite } from "@/hooks/useToggleFavorite";
 import DogSpinner from "@/components/common/DogSpinner";
 import icNoOrder from "@/assets/icons/ic_no_order.svg";
 import Image from "next/image";
+import { SessionExpiredError } from "@/lib/api/auth.errors";
 
 type TProductDetailProps = {
   productId: number;
@@ -50,15 +51,17 @@ export default function ProductDetail({ productId }: TProductDetailProps) {
 
   const { mutate: mutateAddToCart } = useMutation({
     mutationFn: () => {
-      if (!product) throw new Error("상품 정보가 없습니다.");
+      if (!product) throw new Error("Product information is unavailable.");
       return addToCart(product.id, selectedQuantity);
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["cartItems"] });
       router.push("/cart");
     },
-    onError: () => {
-      alert("장바구니 추가 실패");
+    onError: (error) => {
+      if (error instanceof SessionExpiredError) return;
+
+      showToast("Failed to add item to cart.", "error");
     },
   });
 
@@ -87,26 +90,26 @@ export default function ProductDetail({ productId }: TProductDetailProps) {
   }
   if (isError || !product)
     return (
-      <section className="flex flex-1 justify-center min-h-screen" role="status" aria-label="빈 상태">
+      <section className="flex flex-1 justify-center min-h-screen" role="status" aria-label="Empty state">
         <div className="sm:w-80 inline-flex flex-col justify-start items-center gap-7 py-12 mt-[142px] sm:mt-[222px] md:mt-[191px]">
-          <div className="w-24 h-24 relative" role="img" aria-label="주문 내역 없음 아이콘">
-            <Image src={icNoOrder} alt="주문 내역 없음" fill className="object-contain" />
+          <div className="w-24 h-24 relative" role="img" aria-label="No product found icon">
+            <Image src={icNoOrder} alt="No product found" fill className="object-contain" />
           </div>
           <div className="self-stretch flex flex-col justify-start items-center gap-12">
             <div className="w-72 flex flex-col justify-start items-center gap-2.5">
-              <h2 className="self-stretch text-center text-neutral-800 text-2xl font-extrabold">상품 내역이 없어요</h2>
+              <h2 className="self-stretch text-center text-neutral-800 text-2xl font-extrabold">No product found</h2>
               <p className="self-stretch text-center text-neutral-700 text-base leading-relaxed">
-                원하는 상품을
+                Add the product you want
                 <br />
-                상품리스트에 추가해보세요.
+                from the product list.
               </p>
             </div>
             <button
               className="self-stretch h-16 px-4 py-3 bg-neutral-800 rounded-sm inline-flex justify-center items-center cursor-pointer"
               onClick={() => router.push("/products")}
-              aria-label="상품 리스트 페이지로 이동"
+              aria-label="Go to product list"
             >
-              <span className="text-white text-base font-bold">상품 리스트로 이동</span>
+              <span className="text-white text-base font-bold">Go to Product List</span>
             </button>
           </div>
         </div>
@@ -115,7 +118,7 @@ export default function ProductDetail({ productId }: TProductDetailProps) {
 
   const handleAddToCart = () => {
     if (selectedQuantity < 1) {
-      alert("상품의 수량을 1개 이상 선택해주세요.");
+      alert("Please choose at least one item.");
       return;
     }
 
@@ -132,7 +135,7 @@ export default function ProductDetail({ productId }: TProductDetailProps) {
     <div className="w-full flex flex-col justify-center items-center sm:max-w-[1180px]">
       <div className="w-full flex flex-col justify-center items-start gap-7.5">
         <CategoryNavigation
-          parentCategory={product.category.parent?.name ?? "기타"}
+          parentCategory={product.category.parent?.name ?? "Other"}
           childCategory={product.category.name}
         />
         <div className="w-full flex flex-col md:flex-row md:gap-10 ">

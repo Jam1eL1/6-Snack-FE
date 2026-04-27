@@ -12,7 +12,7 @@ type TRequestListItemProps = {
   productName: string;
   price: number;
   status: "Pending" | "Request Rejected" | "Request Complete" | "Request Cancelled";
-  orderId: number;
+  orderId: string;
   onRequestCancel?: () => void;
 };
 

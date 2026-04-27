@@ -9,6 +9,7 @@ import Toast from "@/components/common/Toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getStatusText, formatDate } from "@/components/common/OrderDetail";
 import DogSpinner from "@/components/common/DogSpinner";
+import { SessionExpiredError } from "@/lib/api/auth.errors";
 
 // Lazy-load the detail sections for finer-grained code splitting.
 const OrderItemsSection = lazy(() => import("@/components/common/OrderDetail/OrderItemsSection"));
@@ -28,7 +29,7 @@ const LoadingComponent = () => (
 // Optimized error component
 const ErrorComponent = memo(({ error }: { error: string | null }) => (
   <div className="min-h-screen bg-white flex items-center justify-center">
-    <div className="text-lg text-red-600">{error || "주문 내역을 찾을 수 없습니다."}</div>
+    <div className="text-lg text-red-600">{error || "Order history not found."}</div>
   </div>
 ));
 
@@ -51,7 +52,7 @@ const ActionButtons = memo(
         onClick={onBackToList}
         type="button"
       >
-        <div className="text-center justify-center text-primary-800 text-base font-bold">목록 보기</div>
+        <div className="text-center justify-center text-primary-800 text-base font-bold">View List</div>
       </button>
       <button
         className="w-[155.5px] sm:w-[338px] md:w-[300px] h-16 px-4 py-3 bg-primary-800 rounded-[2px] inline-flex justify-center items-center cursor-pointer hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
@@ -60,7 +61,7 @@ const ActionButtons = memo(
         type="button"
       >
         <div className="text-center justify-center text-white text-base font-bold">
-          {isAddingToCart ? "처리 중..." : "장바구니 다시 담기"}
+          {isAddingToCart ? "Processing..." : "Add to Cart Again"}
         </div>
       </button>
     </div>
@@ -103,7 +104,7 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
       setOrderData(data);
       setIsLoading(false);
     } catch {
-      setError("주문 내역을 불러오는데 실패했습니다.");
+      setError("Failed to load order history.");
       setIsLoading(false);
     }
   }, [orderId]);
@@ -176,10 +177,11 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
     onSuccess: () => {
       // Invalidate the cartItems query cache.
       queryClient.invalidateQueries({ queryKey: ["cartItems"] });
-      showToast("장바구니에 상품이 추가되었습니다.", "success");
+      showToast("Items added to cart.", "success");
     },
-    onError: () => {
-      showToast("장바구니에 상품을 추가하는데 실패했습니다.", "error");
+    onError: (error) => {
+      if (error instanceof SessionExpiredError) return;
+      showToast("Failed to add items to cart.", "error");
     },
   });
 
@@ -192,9 +194,9 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
   // Memoized page title
   const pageTitle = useMemo(() => {
     if (orderData) {
-      return `구매 요청 내역 - ${orderData.receipts?.length || 0}개 상품`;
+      return `Purchase Request History - ${orderData.receipts?.length || 0} items`;
     }
-    return "구매 요청 내역";
+    return "Purchase Request History";
   }, [orderData]);
 
   // Memoized main content
@@ -205,14 +207,14 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
       <div className="min-h-screen bg-white">
         <Toast text={toast.text} variant={toast.variant} isVisible={toast.isVisible} />
         <div className="w-full max-w-7xl mx-auto pt-[30px] flex flex-col justify-start items-start gap-[23px]">
-          <div className="self-stretch justify-center text-primary-950 text-lg font-bold">구매 요청 내역</div>
+          <div className="self-stretch justify-center text-primary-950 text-lg font-bold">Purchase Request History</div>
 
           <Suspense
             fallback={<div className="w-full h-32 bg-primary-100 rounded" style={{ minHeight: "128px" }}></div>}
           >
             <OrderItemsSection
               receipts={orderData.receipts}
-              title="요청 품목"
+              title="Requested Items"
               productsPriceTotal={orderData.productsPriceTotal}
               shippingFee={orderData.deliveryFee}
             />
@@ -280,8 +282,8 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
     return (
       <>
         <Head>
-          <title>구매 요청 내역 - 로딩 중</title>
-          <meta name="description" content="구매 요청 내역을 불러오는 중입니다." />
+          <title>Purchase Request History - Loading</title>
+          <meta name="description" content="Loading purchase request history." />
           <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
           {/* Preconnect hints to help LCP. */}
@@ -305,8 +307,8 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
     return (
       <>
         <Head>
-          <title>구매 요청 내역 - 오류</title>
-          <meta name="description" content="구매 요청 내역을 불러오는데 실패했습니다." />
+          <title>Purchase Request History - Error</title>
+          <meta name="description" content="Failed to load purchase request history." />
           <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         </Head>
         <ErrorComponent error={error} />
@@ -320,7 +322,7 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
         <title>{pageTitle}</title>
         <meta
           name="description"
-          content={`구매 요청 내역 상세 페이지입니다. ${orderData.receipts?.length || 0}개의 상품이 포함되어 있습니다.`}
+          content={`Purchase request history detail page. Includes ${orderData.receipts?.length || 0} items.`}
         />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 

@@ -8,20 +8,25 @@ export default function ProductInfoSections() {
 
   return (
     <div className="flex flex-col justify-center items-center w-full">
-      <InfoSection title="구매혜택" isOpen={isBenefitOpen} onToggle={() => setIsBenefitOpen(!isBenefitOpen)}>
-        5포인트 적립 예정
+      <InfoSection title="Purchase Benefits" isOpen={isBenefitOpen} onToggle={() => setIsBenefitOpen(!isBenefitOpen)}>
+        Earn 5 points
       </InfoSection>
 
       <InfoSection
-        title="배송 방법"
+        title="Shipping Method"
         isOpen={isDeliveryMethodOpen}
         onToggle={() => setIsDeliveryMethodOpen(!isDeliveryMethodOpen)}
       >
-        택배
+        Parcel delivery
       </InfoSection>
 
-      <InfoSection title="배송비" isOpen={isDeliveryFeeOpen} onToggle={() => setIsDeliveryFeeOpen(!isDeliveryFeeOpen)}>
-        3,000원 (50,000원 이상 무료배송) <span className="text-primary-400">도서산간 배송비 추가</span>
+      <InfoSection
+        title="Shipping Fee"
+        isOpen={isDeliveryFeeOpen}
+        onToggle={() => setIsDeliveryFeeOpen(!isDeliveryFeeOpen)}
+      >
+        $5 flat-rate shipping. Free shipping on orders over $50.{" "}
+        <span className="text-primary-400">Additional fee for remote areas</span>
       </InfoSection>
     </div>
   );

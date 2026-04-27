@@ -24,7 +24,7 @@ export default function CategoryNavigation({ parentCategory, childCategory, clas
           parentCategory ? "text-primary-200" : "text-primary-950"
         }`}
       >
-        {parentCategory || "전체"}
+        {parentCategory || "All"}
       </p>
       <div>
         <ArrowIconSvg direction="right" className="w-3 h-3 sm:w-4 sm:h-4 text-primary-100 cursor-default" />
