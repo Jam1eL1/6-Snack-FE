@@ -6,6 +6,7 @@ import { login, logout } from "@/lib/api/auth.api";
 import { usePathname, useRouter } from "next/navigation";
 import { TUser, TAuthContextType } from "@/types/auth.types";
 import { SessionExpiredError } from "@/lib/api/auth.errors";
+import { useFlashToast } from "@/stores/flashToast";
 
 const AuthContext = createContext<TAuthContextType | undefined>(undefined);
 const excludedRoutes = ["/", "/signin", "/signup"];
@@ -22,6 +23,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   const [user, setUser] = useState<TUser | null>(null);
   const pathname = usePathname();
   const router = useRouter();
+  const setFlash = useFlashToast((state) => state.setFlash);
 
   const signIn = useCallback(async (email: string, password: string) => {
     const userData = await login(email, password);
@@ -36,8 +38,9 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
   const handleSessionExpired = useCallback(() => {
     setUser(null);
+    setFlash("Your session has expired. Please sign in again.", "error");
     router.push("/signin");
-  }, [router]);
+  }, [router, setFlash]);
   // Re-check auth state on route changes except for public routes.
   useEffect(() => {
     const shouldSkipAuthCheck = excludedRoutes.some((route) =>
