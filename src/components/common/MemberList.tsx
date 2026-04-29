@@ -14,7 +14,7 @@ export default function MemberList({ id, name, email, role, onClickDeleteUser, o
   const { openModal, closeModal } = useModal();
   return (
     <>
-      {/* 모바일 전용 레이아웃 */}
+      {/* Mobile layout */}
       <div className="sm:hidden w-full py-4 border-b border-[#e6e6e6] flex justify-between gap-3 hover:bg-primary-25 transition-colors">
         <div className="flex gap-3">
           <div className="w-12 h-12 bg-primary-50 rounded-full flex justify-center items-center text-black text-sm font-medium ">
@@ -59,7 +59,7 @@ export default function MemberList({ id, name, email, role, onClickDeleteUser, o
         />
       </div>
 
-      {/* 데스크탑 & 태블릿 레이아웃 */}
+      {/* Desktop and tablet layout */}
       <div className="hidden sm:inline-flex w-full px-5 h-24 border-b border-[#e6e6e6] justify-start items-center gap-8 hover:bg-primary-25 transition-colors">
         <div className="flex justify-start items-center gap-5">
           <div className="w-8 h-8 relative bg-primary-50 rounded-full overflow-hidden">
@@ -93,7 +93,7 @@ export default function MemberList({ id, name, email, role, onClickDeleteUser, o
               );
             }}
           >
-            <div className="text-center text-primary-900 text-base whitespace-nowrap leading-none">권한 변경</div>
+            <div className="text-center text-primary-900 text-base whitespace-nowrap leading-none">Change Role</div>
           </div>
           <div
             className="w-24 px-5 py-3 bg-red flex justify-center items-center rounded-xs cursor-pointer"
@@ -111,7 +111,7 @@ export default function MemberList({ id, name, email, role, onClickDeleteUser, o
               )
             }
           >
-            <div className="text-white text-base whitespace-nowrap leading-none">계정 탈퇴</div>
+            <div className="text-white text-base whitespace-nowrap leading-none">Remove User</div>
           </div>
         </div>
       </div>
