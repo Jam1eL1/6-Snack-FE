@@ -15,12 +15,11 @@ import { useCancelOrder } from "@/hooks/useCancelOrder";
 import Toast from "@/components/common/Toast";
 import DogSpinner from "@/components/common/DogSpinner";
 import icNoOrder from "@/assets/icons/ic_no_order.svg";
-import { SessionExpiredError } from "@/lib/api/auth.errors";
+import { useQuery } from "@tanstack/react-query";
 
 const PAGE_SIZE = 5;
 
 export default function MyOrderListPage() {
-  const [requests, setRequests] = useState<TOrderItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOption, setSortOption] = useState("Newest");
   const [toast, setToast] = useState({
@@ -33,38 +32,28 @@ export default function MyOrderListPage() {
     setTimeout(() => setToast((prev) => ({ ...prev, isVisible: false })), 3000);
   };
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
   const router = useRouter();
 
   const cancelOrder = useCancelOrder({
     onSuccess: (orderId: string) => {
-      setRequests((prev) => prev.filter((item) => item.id !== orderId));
       showToast("Your request has been canceled.", "success");
     },
     onError: (error) => {
-      if (error instanceof SessionExpiredError) return;
-
       showToast("Failed to cancel request.", "error");
     },
   });
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        setIsLoading(true);
-        const data = await getMyOrders();
-        const filtered = data.filter((item) => item.status !== "CANCELED");
-        setRequests(filtered);
-      } catch (error) {
-        console.error(error);
-        setIsError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadData();
-  }, []);
+  const {
+    data: requests = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["my-orders"],
+    queryFn: async () => {
+      const data = await getMyOrders();
+      return data.filter((item) => item.status !== "CANCELED");
+    },
+  });
 
   const handleCancel = (orderId: string) => {
     cancelOrder.mutate(orderId);
