@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { productRegistrationSchema, type ProductRegistrationFormData } from "@/lib/schemas/product.schema";
 import { CATEGORIES } from "@/lib/constants/categories";
 import { useCreateProduct } from "./useProductMutations";
+import { SessionExpiredError } from "@/lib/api/auth.errors";
 
 type UseProductRegistrationFormProps = {
   onSubmitSuccess?: () => void;
@@ -41,7 +42,7 @@ export const useProductRegistrationForm = ({
   const { watch, setValue, reset, trigger } = form;
   const watchedValues = watch();
 
-  // 초기 데이터 설정
+  // Set initial form data.
   useEffect(() => {
     if (initialData) {
       setValue("productName", initialData.productName);
@@ -54,10 +55,7 @@ export const useProductRegistrationForm = ({
       }
     }
   }, [initialData, setValue]);
-
-
-
-  // 이미지 처리
+  // Handle image selection.
   const handleImageChange = (file: File | null) => {
     if (file) {
       setValue("imageFile", file);
@@ -66,18 +64,18 @@ export const useProductRegistrationForm = ({
       setValue("imageFile", null);
       setImagePreviewUrl(null);
     }
-    // 이미지 필드 유효성 검사 트리거
+    // Revalidate the image field.
     trigger("imageFile");
   };
 
   const handleImageRemove = () => {
     setValue("imageFile", null);
     setImagePreviewUrl(null);
-    // 이미지 필드 유효성 검사 트리거
+    // Revalidate the image field.
     trigger("imageFile");
   };
 
-  // 카테고리 처리
+  // Handle category selection.
   const handleParentCategoryChange = (value: string) => {
     setValue("parentCategory", value);
     setValue("childrenCategory", "");
@@ -87,36 +85,36 @@ export const useProductRegistrationForm = ({
     setValue("childrenCategory", value);
   };
 
-  // 폼 제출
+  // Submit the form.
   const onSubmit = async (data: ProductRegistrationFormData) => {
     try {
-      // 카테고리 ID 매핑
+      // Map selected categories to the backend category id.
       const categoryId = getCategoryId(data.parentCategory, data.childrenCategory);
 
-      // FormData 생성
       const formData = new FormData();
       formData.append("name", data.productName);
       formData.append("price", data.price);
       formData.append("linkUrl", data.productLink);
       formData.append("categoryId", categoryId.toString());
-      // 이미지 파일이 있는 경우에만 추가
+
       if (data.imageFile && data.imageFile.size > 0) {
         formData.append("image", data.imageFile);
       }
 
       await createProductMutation.mutateAsync(formData);
 
-      // 성공 처리
       reset();
       setImagePreviewUrl(null);
       onSubmitSuccess?.();
       onClose?.();
     } catch (error) {
-      console.error("상품 등록 실패:", error);
+      if (error instanceof SessionExpiredError) return;
+
+      console.error("Failed to create product:", error);
     }
   };
 
-  // 카테고리 옵션
+  // Category options.
   const parentCategoryOptions = CATEGORIES.parentCategory.map((category) => category.name);
   const childrenCategoryOptions = watchedValues.parentCategory
     ? CATEGORIES.childrenCategory[watchedValues.parentCategory as keyof typeof CATEGORIES.childrenCategory]?.map(
@@ -138,7 +136,7 @@ export const useProductRegistrationForm = ({
   };
 };
 
-// 카테고리 ID 가져오기 헬퍼 함수
+// Get the backend category id for selected category names.
 const getCategoryId = (mainCategory: string, subCategory: string): number => {
   const parentCategory = CATEGORIES.parentCategory.find((cat) => cat.name === mainCategory);
   if (!parentCategory) return 1;

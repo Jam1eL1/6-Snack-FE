@@ -1,6 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createProduct, getProducts } from "@/lib/api/product.api";
-import { SessionExpiredError } from "@/lib/api/auth.errors";
 
 // Product creation mutation
 export const useCreateProduct = () => {
@@ -11,11 +10,6 @@ export const useCreateProduct = () => {
     onSuccess: () => {
       // Invalidate the product list query so it refetches.
       queryClient.invalidateQueries({ queryKey: ["products"] });
-    },
-    onError: (error) => {
-      if (error instanceof SessionExpiredError) return;
-
-      console.error("Failed to create product:", error);
     },
   });
 };
