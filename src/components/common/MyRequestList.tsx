@@ -11,7 +11,7 @@ type TRequestListItemProps = {
   requestDate: string;
   productName: string;
   price: number;
-  status: "Pending" | "Request Rejected" | "Request Complete" | "Request Cancelled";
+  status: "Pending" | "Request Approved" | "Request Rejected" | "Request Canceled";
   orderId: string;
   onRequestCancel?: () => void;
 };
@@ -30,7 +30,7 @@ export default function RequestListItem({
     switch (status) {
       case "Pending":
         return "pending";
-      case "Request Complete":
+      case "Request Approved":
         return "approved";
       case "Request Rejected":
         return "rejected";
@@ -52,9 +52,9 @@ export default function RequestListItem({
         }}
         productName={productName}
         modalTitle="Do you want to cancel the request?"
-        modalDescription="Once the purchase request is canceled, it cannot be recovered."
+        modalDescription="Once canceled, this purchase request cannot be restored."
         confirmButtonText="Cancel Request"
-        cancelButtonText="Let me think about it"
+        cancelButtonText="Keep Request"
       />,
     );
   };
@@ -65,7 +65,7 @@ export default function RequestListItem({
       <div className="flex flex-col gap-5 py-7 sm:hidden">
         <div className="flex justify-between items-center w-full">
           <div className="text-sm font-bold text-primary-950">{requestDate}</div>
-          <div className="w-16">
+          <div className="flex shrink-0 justify-end">
             <Badge type={getBadgeType()} />
           </div>
         </div>
@@ -93,7 +93,7 @@ export default function RequestListItem({
           {productName}
         </Link>
         <div className="min-w-[90px] text-sm md:text-base text-primary-950">${formatPrice(price)}</div>
-        <div className="flex justify-center w-18">
+        <div className="flex justify-center">
           <Badge type={getBadgeType()} />
         </div>
 

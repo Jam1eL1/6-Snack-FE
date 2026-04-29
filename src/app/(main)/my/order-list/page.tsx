@@ -73,9 +73,9 @@ export default function MyOrderListPage() {
   const sorted = (() => {
     const copy = [...requests];
     switch (sortOption) {
-      case "낮은 가격순":
+      case "Lowest Price":
         return copy.sort((a, b) => a.productsPriceTotal - b.productsPriceTotal);
-      case "높은 가격순":
+      case "Highest Price":
         return copy.sort((a, b) => b.productsPriceTotal - a.productsPriceTotal);
       default:
         return copy.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
@@ -117,7 +117,7 @@ export default function MyOrderListPage() {
                 No purchase requests yet
               </h2>
               <p className="self-stretch text-center text-neutral-700 text-base leading-relaxed">
-                Request the products you want.
+                Submit a request for the products you want.
               </p>
             </div>
             <button
@@ -125,7 +125,7 @@ export default function MyOrderListPage() {
               onClick={() => router.push("/products")}
               aria-label="Go to product list page"
             >
-              <span className="text-white text-base font-bold">Go to Product List</span>
+              <span className="text-white text-base font-bold">Browse Products</span>
             </button>
           </div>
         </div>
@@ -136,17 +136,17 @@ export default function MyOrderListPage() {
   return (
     <main className="flex flex-col items-center md:px-0 pt-10 pb-40 min-h-[calc(100vh-112px)]">
       <div className="w-full max-w-[1400px] py-4 flex justify-between items-center">
-        <h1 className="text-lg font-bold text-primary-950">Purchase Request History</h1>
+        <h1 className="text-lg font-bold text-primary-950">Purchase Requests</h1>
         <Dropdown onChange={setSortOption} options={["Newest", "Lowest Price", "Highest Price"]} />
       </div>
 
       <div className="w-full max-w-[1400px] flex-1">
         <div className="hidden sm:grid grid-cols-[1fr_1.5fr_1fr_1fr_1fr] w-full py-5 border-b border-t border-primary-100 justify-start items-center md:gap-10 lg:gap-20 text-primary-500 text-sm md:text-base">
-          <div className="min-w-[90px]">Request Date</div>
-          <div className="min-w-[140px]">Product Info</div>
+          <div className="min-w-[90px]">Date Requested</div>
+          <div className="min-w-[140px]">Product</div>
           <div className="min-w-[90px]">Order Amount</div>
           <div className="min-w-[90px]">Status</div>
-          <div className="min-w-[78px]">Remarks</div>
+          <div className="min-w-[78px]">Action</div>
         </div>
 
         <div style={{ minHeight: `${6 * 88}px` }} className="flex flex-col">

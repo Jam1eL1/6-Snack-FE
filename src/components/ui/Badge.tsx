@@ -17,32 +17,32 @@ const badgeStyleMap: Record<
 > = {
   request: {
     bg: "bg-blue-50",
-    text: "즉시 요청",
+    text: "Instant Request",
     textColor: "text-blue-500",
   },
   pending: {
     bg: "bg-primary-200",
-    text: "대기 중",
+    text: "Pending",
     textColor: "text-primary-700",
   },
   approved: {
     bg: "bg-sky-100",
-    text: "승인",
+    text: "Approved",
     textColor: "text-sky-500",
   },
   rejected: {
     bg: "bg-red-100",
-    text: "거절",
+    text: "Rejected",
     textColor: "text-red",
   },
   admin: {
     bg: "bg-primary-700",
-    text: "관리자",
+    text: "Admin",
     textColor: "text-white",
   },
   user: {
     bg: "bg-primary-50",
-    text: "일반",
+    text: "User",
     textColor: "text-primary-400",
   },
 };
@@ -59,7 +59,7 @@ export default function Badge({ type }: TBadgeProps) {
         bg,
         SmallBadge
           ? "w-[52px] h-5 px-2.5 py-1 text-xs sm:w-16 sm:h-7 sm:px-2 sm:py-1.5 sm:text-sm"
-          : "w-full h-7 px-2 py-1.5",
+          : "h-7 px-2.5 py-1.5",
       )}
     >
       {type === "rejected" ? (
@@ -76,7 +76,7 @@ export default function Badge({ type }: TBadgeProps) {
         </div>
       ) : iconSrc ? (
         <div className="w-3.5 h-3.5 relative">
-          <Image src={iconSrc} alt={`${text} 아이콘`} fill style={{ objectFit: "contain" }} />
+          <Image src={iconSrc} alt={`${text} icon`} fill style={{ objectFit: "contain" }} />
         </div>
       ) : null}
 

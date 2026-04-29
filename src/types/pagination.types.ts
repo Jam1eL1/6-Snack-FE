@@ -1,17 +1,17 @@
 /**
- * 페이지네이션 컴포넌트 Props 타입
+ * Pagination component props.
  */
 export type TPaginationProps = {
-  /** 현재 페이지 번호 */
+  /** Current page number. */
   currentPage: number;
-  /** 전체 페이지 수 */
+  /** Total page count. */
   totalPages: number;
-  /** 페이지 변경 시 호출되는 콜백 */
+  /** Called when the selected page changes. */
   onPageChange: (page: number) => void;
-  /** 이전 페이지로 이동 시 호출되는 콜백 */
+  /** Called when moving to the previous page. */
   onPrevPage?: () => void;
-  /** 다음 페이지로 이동 시 호출되는 콜백 */
+  /** Called when moving to the next page. */
   onNextPage?: () => void;
-  /** 추가 CSS 클래스 */
+  /** Additional CSS classes. */
   className?: string;
-}; 
+};

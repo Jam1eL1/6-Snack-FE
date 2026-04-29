@@ -57,7 +57,7 @@ export default function Dropdown({
 
   return (
     <div ref={dropdownRef} className={twMerge("relative inline-block min-w-[110px]", className)}>
-      {/* Dropdown button */}
+      {/* Trigger */}
       <div
         className={`${height || "h-11"} w-full px-4 py-2.5 bg-white border border-primary-100 ${
           isOpen ? "border-b-0" : "border"
@@ -68,14 +68,14 @@ export default function Dropdown({
         <div className="w-4 h-4 relative">
           <Image
             src={isOpen ? ChevronUpIcon : ChevronDownIcon}
-            alt="dropdown icon"
+            alt="Toggle sort menu"
             fill
             style={{ objectFit: "contain" }}
           />
         </div>
       </div>
 
-      {/* Dropdown menu */}
+      {/* Menu */}
       {isOpen && (
         <div className="absolute w-full z-20 bg-white border border-primary-100 border-t-0 rounded-b max-h-[300px] overflow-y-auto scrollbar">
           {menuOptions.map((option) => (

@@ -5,13 +5,13 @@ import { TPaginationProps } from "../../types/pagination.types";
 import ArrowIconSvg from "../svg/ArrowIconSvg";
 
 /**
- * 페이지네이션 컴포넌트
+ * Pagination component.
  *
  * @description
- * - 반응형 컴포넌트: 744px 미만에서는 작은 크기, 744px 이상에서는 큰 크기
- * - 첫 페이지에서는 Prev 버튼이 비활성화됩니다
- * - 마지막 페이지에서는 Next 버튼이 비활성화됩니다
- * - onPrevPage, onNextPage가 제공되지 않으면 onPageChange를 사용합니다
+ * - Uses compact sizing below 744px and larger sizing at 744px and above.
+ * - Disables Prev on the first page.
+ * - Disables Next on the last page.
+ * - Falls back to onPageChange when onPrevPage or onNextPage is not provided.
  *
  * @example
  * ```tsx
@@ -23,7 +23,7 @@ import ArrowIconSvg from "../svg/ArrowIconSvg";
  *
  *   const handlePageChange = (page: number) => {
  *     setCurrentPage(page);
- *     // 데이터 로딩 로직
+ *     // Load page data.
  *   };
  *
  *   return (
@@ -83,24 +83,24 @@ export default function Pagination({
   return (
     <div className={`w-full h-10 relative ${className}`}>
       <div className="w-full h-10 inline-flex justify-between items-center py-[11.5px]">
-        {/* Page Info */}
+        {/* Page count */}
         <div
           className={`text-center justify-start text-primary-950 font-normal  ${isTablet ? "text-xl" : "text-lg"}`}
         >
           {currentPage} of {totalPages}
         </div>
 
-        {/* Navigation Buttons */}
+        {/* Navigation */}
         <div className="flex justify-start items-center gap-10">
-          {/* Prev Button */}
+          {/* Previous page */}
           <div
             className={`flex justify-start items-center gap-1.5 ${
               isFirstPage ? "cursor-default opacity-50" : "cursor-pointer hover:opacity-80"
             }`}
             onClick={handlePrevPage}
           >
-            <ArrowIconSvg 
-              direction="left" 
+            <ArrowIconSvg
+              direction="left"
               disabled={isFirstPage}
               className={isFirstPage ? "text-primary-500" : "text-primary-950"}
             />
@@ -111,7 +111,7 @@ export default function Pagination({
             </div>
           </div>
 
-          {/* Next Button */}
+          {/* Next page */}
           <div
             className={`flex justify-start items-center gap-[5px] ${
               isLastPage ? "cursor-default opacity-50" : "cursor-pointer hover:opacity-80"
@@ -123,8 +123,8 @@ export default function Pagination({
             >
               Next
             </div>
-            <ArrowIconSvg 
-              direction="right" 
+            <ArrowIconSvg
+              direction="right"
               disabled={isLastPage}
               className={isLastPage ? "text-primary-500" : "text-primary-950"}
             />
