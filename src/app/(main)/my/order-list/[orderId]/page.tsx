@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback, useMemo, Suspense, lazy, memo } from "react";
+import { useState, useEffect, useRef, Suspense, lazy } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Head from "next/head";
 import { getMyOrderDetail, TMyOrderDetail } from "@/lib/api/orderHistory.api";
@@ -16,59 +16,49 @@ const OrderItemsSection = lazy(() => import("@/components/common/OrderDetail/Ord
 const RequestInfoSection = lazy(() => import("@/components/common/OrderDetail/RequestInfoSection"));
 const ApprovalInfoSection = lazy(() => import("@/components/common/OrderDetail/ApprovalInfoSection"));
 
-// Type definitions
 type TMyOrderDetailPageProps = Record<string, never>;
 
-// Simple loading component
 const LoadingComponent = () => (
   <div className="flex justify-center items-center h-[80vh] md:h-[60vh]">
     <DogSpinner />
   </div>
 );
 
-// Optimized error component
-const ErrorComponent = memo(({ error }: { error: string | null }) => (
+const ErrorComponent = ({ error }: { error: string | null }) => (
   <div className="min-h-screen bg-white flex items-center justify-center">
     <div className="text-lg text-red-600">{error || "Order history not found."}</div>
   </div>
-));
-
-ErrorComponent.displayName = "ErrorComponent";
-
-// Optimized action button component
-const ActionButtons = memo(
-  ({
-    onBackToList,
-    onAddToCart,
-    isAddingToCart,
-  }: {
-    onBackToList: () => void;
-    onAddToCart: () => void;
-    isAddingToCart: boolean;
-  }) => (
-    <div className="self-stretch flex justify-center items-center gap-4 pt-6 sm:pt-8">
-      <button
-        className="w-[155.5px] sm:w-[338px] md:w-[296px] h-16 px-4 py-3 bg-white rounded-[2px] outline outline-1 outline-offset-[-1px] outline-zinc-400 inline-flex justify-center items-center cursor-pointer hover:bg-primary-50 transition-colors duration-200"
-        onClick={onBackToList}
-        type="button"
-      >
-        <div className="text-center justify-center text-primary-800 text-base font-bold">View List</div>
-      </button>
-      <button
-        className="w-[155.5px] sm:w-[338px] md:w-[300px] h-16 px-4 py-3 bg-primary-800 rounded-[2px] inline-flex justify-center items-center cursor-pointer hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-        onClick={onAddToCart}
-        disabled={isAddingToCart}
-        type="button"
-      >
-        <div className="text-center justify-center text-white text-base font-bold">
-          {isAddingToCart ? "Processing..." : "Add to Cart Again"}
-        </div>
-      </button>
-    </div>
-  ),
 );
 
-ActionButtons.displayName = "ActionButtons";
+const ActionButtons = ({
+  onBackToList,
+  onAddToCart,
+  isAddingToCart,
+}: {
+  onBackToList: () => void;
+  onAddToCart: () => void;
+  isAddingToCart: boolean;
+}) => (
+  <div className="self-stretch flex justify-center items-center gap-4 pt-6 sm:pt-8">
+    <button
+      className="w-[155.5px] sm:w-[338px] md:w-[296px] h-16 px-4 py-3 bg-white rounded-[2px] outline outline-1 outline-offset-[-1px] outline-zinc-400 inline-flex justify-center items-center cursor-pointer hover:bg-primary-50 transition-colors duration-200"
+      onClick={onBackToList}
+      type="button"
+    >
+      <div className="text-center justify-center text-primary-800 text-base font-bold">View List</div>
+    </button>
+    <button
+      className="w-[155.5px] sm:w-[338px] md:w-[300px] h-16 px-4 py-3 bg-primary-800 rounded-[2px] inline-flex justify-center items-center cursor-pointer hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+      onClick={onAddToCart}
+      disabled={isAddingToCart}
+      type="button"
+    >
+      <div className="text-center justify-center text-white text-base font-bold">
+        {isAddingToCart ? "Processing..." : "Add to Cart Again"}
+      </div>
+    </button>
+  </div>
+);
 
 export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
   const params = useParams();
@@ -91,30 +81,26 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Memoized fetchOrderDetail for a lighter async flow.
-  const fetchOrderDetail = useCallback(async (): Promise<void> => {
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      // Keep the async work separate to avoid blocking the main thread.
-      const data: TMyOrderDetail = await getMyOrderDetail(orderId);
-
-      // Update state immediately after the fetch to help LCP.
-      setOrderData(data);
-      setIsLoading(false);
-    } catch {
-      setError("Failed to load order history.");
-      setIsLoading(false);
-    }
-  }, [orderId]);
-
   useEffect(() => {
+    const fetchOrderDetail = async (): Promise<void> => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const data: TMyOrderDetail = await getMyOrderDetail(orderId);
+
+        setOrderData(data);
+        setIsLoading(false);
+      } catch {
+        setError("Failed to load order history.");
+        setIsLoading(false);
+      }
+    };
+
     if (orderId) {
-      // Start immediately to help FCP.
       fetchOrderDetail();
     }
-  }, [orderId, fetchOrderDetail]);
+  }, [orderId]);
 
   // Clear the timer on unmount.
   useEffect(() => {
@@ -125,13 +111,11 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
     };
   }, []);
 
-  // Memoized back-to-list handler
-  const handleBackToList = useCallback(() => {
+  const handleBackToList = () => {
     router.push("/my/order-list");
-  }, [router]);
+  };
 
-  // Memoized toast helper
-  const showToast = useCallback((text: string, variant: "success" | "error" = "error") => {
+  const showToast = (text: string, variant: "success" | "error" = "error") => {
     setToast({
       isVisible: true,
       text,
@@ -147,22 +131,17 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
     timerRef.current = setTimeout(() => {
       setToast((prev) => ({ ...prev, isVisible: false }));
     }, 3000);
-  }, []);
+  };
 
-  // Memoized helper for adding items back to the cart.
-  const addToCart = useCallback(async (productId: number, quantity: number): Promise<void> => {
-    try {
-      await cookieFetch("/cart", {
-        method: "POST",
-        body: JSON.stringify({
-          productId,
-          quantity,
-        }),
-      });
-    } catch (error) {
-      throw error;
-    }
-  }, []);
+  const addToCart = async (productId: number, quantity: number): Promise<void> => {
+    await cookieFetch("/cart", {
+      method: "POST",
+      body: JSON.stringify({
+        productId,
+        quantity,
+      }),
+    });
+  };
 
   // Add-to-cart mutation
   const { mutate: addToCartMutation, isPending: isAddingToCart } = useMutation({
@@ -185,75 +164,14 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
     },
   });
 
-  // Memoized handler for re-adding items to the cart.
-  const handleAddToCart = useCallback(() => {
+  const handleAddToCart = () => {
     if (!orderData || !orderData.receipts) return;
     addToCartMutation();
-  }, [orderData, addToCartMutation]);
+  };
 
-  // Memoized page title
-  const pageTitle = useMemo(() => {
-    if (orderData) {
-      return `Purchase Request History - ${orderData.receipts?.length || 0} items`;
-    }
-    return "Purchase Request History";
-  }, [orderData]);
-
-  // Memoized main content
-  const mainContent = useMemo(() => {
-    if (!orderData) return null;
-
-    return (
-      <div className="min-h-screen bg-white">
-        <Toast text={toast.text} variant={toast.variant} isVisible={toast.isVisible} />
-        <div className="w-full max-w-7xl mx-auto pt-[30px] flex flex-col justify-start items-start gap-[23px]">
-          <div className="self-stretch justify-center text-primary-950 text-lg font-bold">Purchase Request History</div>
-
-          <Suspense
-            fallback={<div className="w-full h-32 bg-primary-100 rounded" style={{ minHeight: "128px" }}></div>}
-          >
-            <OrderItemsSection
-              receipts={orderData.receipts}
-              title="Requested Items"
-              productsPriceTotal={orderData.productsPriceTotal}
-              shippingFee={orderData.deliveryFee}
-            />
-          </Suspense>
-
-          <Suspense
-            fallback={<div className="w-full h-32 bg-primary-100 rounded" style={{ minHeight: "128px" }}></div>}
-          >
-            <RequestInfoSection
-              userName={orderData.user?.name}
-              createdAt={orderData.createdAt}
-              requestMessage={orderData.requestMessage}
-              formatDate={formatDate}
-            />
-          </Suspense>
-
-          <Suspense
-            fallback={<div className="w-full h-32 bg-primary-100 rounded" style={{ minHeight: "128px" }}></div>}
-          >
-            <ApprovalInfoSection
-              approver={orderData.approver}
-              updatedAt={orderData.updatedAt}
-              status={orderData.status}
-              adminMessage={orderData.adminMessage}
-              formatDate={formatDate}
-              getStatusText={getStatusText}
-            />
-          </Suspense>
-
-          {/* Bottom Action Buttons */}
-          <ActionButtons
-            onBackToList={handleBackToList}
-            onAddToCart={handleAddToCart}
-            isAddingToCart={isAddingToCart}
-          />
-        </div>
-      </div>
-    );
-  }, [orderData, toast, handleBackToList, handleAddToCart, isAddingToCart]);
+  const pageTitle = orderData
+    ? `Purchase Request History - ${orderData.receipts?.length || 0} items`
+    : "Purchase Request History";
 
   // Lightweight critical CSS
   const criticalCSS = `
@@ -277,7 +195,6 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
     .min-h-\[128px\] { min-height: 8rem; }
   `;
 
-  // Optimized main-page rendering
   if (isLoading) {
     return (
       <>
@@ -341,7 +258,53 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
         {/* Inline optimized critical CSS. */}
         <style dangerouslySetInnerHTML={{ __html: criticalCSS }} />
       </Head>
-      {mainContent}
+      <div className="min-h-screen bg-white">
+        <Toast text={toast.text} variant={toast.variant} isVisible={toast.isVisible} />
+        <div className="w-full max-w-7xl mx-auto pt-[30px] flex flex-col justify-start items-start gap-[23px]">
+          <div className="self-stretch justify-center text-primary-950 text-lg font-bold">Purchase Request History</div>
+
+          <Suspense
+            fallback={<div className="w-full h-32 bg-primary-100 rounded" style={{ minHeight: "128px" }}></div>}
+          >
+            <OrderItemsSection
+              receipts={orderData.receipts}
+              title="Requested Items"
+              productsPriceTotal={orderData.productsPriceTotal}
+              shippingFee={orderData.deliveryFee}
+            />
+          </Suspense>
+
+          <Suspense
+            fallback={<div className="w-full h-32 bg-primary-100 rounded" style={{ minHeight: "128px" }}></div>}
+          >
+            <RequestInfoSection
+              userName={orderData.user?.name}
+              createdAt={orderData.createdAt}
+              requestMessage={orderData.requestMessage}
+              formatDate={formatDate}
+            />
+          </Suspense>
+
+          <Suspense
+            fallback={<div className="w-full h-32 bg-primary-100 rounded" style={{ minHeight: "128px" }}></div>}
+          >
+            <ApprovalInfoSection
+              approver={orderData.approver}
+              updatedAt={orderData.updatedAt}
+              status={orderData.status}
+              adminMessage={orderData.adminMessage}
+              formatDate={formatDate}
+              getStatusText={getStatusText}
+            />
+          </Suspense>
+
+          <ActionButtons
+            onBackToList={handleBackToList}
+            onAddToCart={handleAddToCart}
+            isAddingToCart={isAddingToCart}
+          />
+        </div>
+      </div>
     </>
   );
 }
