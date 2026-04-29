@@ -7,7 +7,6 @@ import Image from "next/image";
 import Dropdown from "@/components/common/DropDown";
 import Pagination from "@/components/common/Pagination";
 import MyRequestList from "@/components/common/MyRequestList";
-import { getMyOrders } from "@/lib/api/orderHistory.api";
 import { TOrderItem } from "@/types/myOrderList.types";
 import { formatDate } from "@/lib/utils/formatDate.util";
 import { convertStatus } from "@/lib/utils/convertStatus.util";
@@ -15,7 +14,8 @@ import { useCancelOrder } from "@/hooks/useCancelOrder";
 import Toast from "@/components/common/Toast";
 import DogSpinner from "@/components/common/DogSpinner";
 import icNoOrder from "@/assets/icons/ic_no_order.svg";
-import { useQuery } from "@tanstack/react-query";
+import { SessionExpiredError } from "@/lib/api/auth.errors";
+import { useMyOrders } from "@/hooks/useMyOrders";
 
 const PAGE_SIZE = 5;
 
@@ -34,32 +34,23 @@ export default function MyOrderListPage() {
 
   const router = useRouter();
 
-  const cancelOrder = useCancelOrder({
-    onSuccess: (orderId: string) => {
+  const cancelOrderMutation = useCancelOrder({
+    onCancelSuccess: () => {
       showToast("Your request has been canceled.", "success");
     },
-    onError: (error) => {
+    onCancelError: (error) => {
+      if (error instanceof SessionExpiredError) return;
+
       showToast("Failed to cancel request.", "error");
     },
   });
 
-  const {
-    data: requests = [],
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["my-orders"],
-    queryFn: async () => {
-      const data = await getMyOrders();
-      return data.filter((item) => item.status !== "CANCELED");
-    },
-  });
-
+  const { data: requests = [], isLoading, isError } = useMyOrders();
   const handleCancel = (orderId: string) => {
-    cancelOrder.mutate(orderId);
+    cancelOrderMutation.mutate(orderId);
   };
 
-  const sorted = (() => {
+  const sortedRequests = (() => {
     const copy = [...requests];
     switch (sortOption) {
       case "Lowest Price":
@@ -77,13 +68,13 @@ export default function MyOrderListPage() {
     return `${receipts[0].productName} and ${receipts.length - 1} more`;
   };
 
-  const paginated = sorted.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const paginatedRequests = sortedRequests.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   useEffect(() => {
-    if (!isLoading && !isError && requests.length > 0 && paginated.length === 0 && currentPage > 1) {
+    if (!isLoading && !isError && requests.length > 0 && paginatedRequests.length === 0 && currentPage > 1) {
       setCurrentPage((p) => p - 1);
     }
-  }, [requests.length, paginated.length, isLoading, isError, currentPage]);
+  }, [requests.length, paginatedRequests.length, isLoading, isError, currentPage]);
 
   if (isLoading) {
     return (
@@ -139,7 +130,7 @@ export default function MyOrderListPage() {
         </div>
 
         <div style={{ minHeight: `${6 * 88}px` }} className="flex flex-col">
-          {paginated.map((item) => (
+          {paginatedRequests.map((item) => (
             <MyRequestList
               key={item.id}
               requestDate={formatDate(item.createdAt)}
