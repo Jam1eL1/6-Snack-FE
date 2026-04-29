@@ -33,7 +33,7 @@ type TOrderItemsSectionProps = {
 export default function OrderItemsSection({
   products,
   receipts,
-  title = "구매 품목",
+  title = "Purchased Items",
   productsPriceTotal,
   shippingFee,
 }: TOrderItemsSectionProps) {
@@ -53,7 +53,7 @@ export default function OrderItemsSection({
             {title}
           </div>
           <div className="justify-center text-primary-950 text-base font-normal">
-            총 {items.length}개
+            {items.length} items
           </div>
           <ArrowIconSvg direction={isItemsExpanded ? "up" : "down"} className="w-5 h-5 text-primary-950 relative z-[110]" />
         </div>
@@ -73,7 +73,7 @@ export default function OrderItemsSection({
                         <div className="relative w-[75%] h-[75%]">
                           <Image
                             src={item.imageUrl}
-                            alt={`${item.productName} 상품 이미지`}
+                            alt={`${item.productName} product image`}
                             fill
                             className="object-contain"
                           />
@@ -86,21 +86,21 @@ export default function OrderItemsSection({
                           {item.productName}
                         </div>
                         <div className="justify-start text-primary-950 text-sm sm:text-base font-bold">
-                          {formatPrice(item.price)}원
+                          ${formatPrice(item.price)}
                         </div>
                       </div>
                       <div className="flex justify-between items-center w-full sm:justify-start sm:flex sm:justify-start">
                         <div className="justify-center text-primary-500 text-[13px] sm:text-base font-bold">
-                          수량 {item.quantity}개
+                          Quantity {item.quantity}
                         </div>
                         <div className="text-center justify-center text-primary-700 text-base font-bold sm:hidden">
-                          {formatPrice(item.price * item.quantity)}원
+                          ${formatPrice(item.price * item.quantity)}
                         </div>
                       </div>
                     </div>
                   </div>
                   <div className="hidden sm:block text-center justify-center text-primary-700 text-[20px] font-extrabold">
-                    {formatPrice(item.price * item.quantity)}원
+                    ${formatPrice(item.price * item.quantity)}
                   </div>
                 </div>
               ))}
@@ -110,26 +110,26 @@ export default function OrderItemsSection({
             <div className="self-stretch flex flex-col gap-3 sm:gap-[7px] sm:px-5">
               <div className="flex justify-between items-center">
                 <div className="text-center justify-center text-primary-700 text-sm sm:text-base font-bold">
-                  주문금액
+                  Order Amount
                 </div>
                 <div className="text-center justify-center text-primary-700 text-sm sm:text-base font-bold">
-                  {formatPrice(productsPriceTotal)}원
+                  ${formatPrice(productsPriceTotal)}
                 </div>
               </div>
               <div className="flex justify-between items-center">
                 <div className="text-center justify-center text-primary-700 text-sm sm:text-base font-bold">
-                  배송비
+                  Shipping Fee
                 </div>
                 <div className="text-center justify-center text-primary-700 text-sm sm:text-base font-bold">
-                  {formatPrice(shippingFee)}원
+                  ${formatPrice(shippingFee)}
                 </div>
               </div>
               <div className="flex justify-between items-center">
                 <div className="text-center justify-center text-primary-950 text-lg sm:text-lg font-bold">
-                  총 주문금액
+                  Total
                 </div>
                 <div className="text-center justify-center text-primary-950 text-lg sm:text-2xl font-bold sm:font-extrabold">
-                  {formatPrice(finalTotal)}원
+                  ${formatPrice(finalTotal)}
                 </div>
               </div>
             </div>

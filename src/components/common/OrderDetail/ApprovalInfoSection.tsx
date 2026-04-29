@@ -21,14 +21,14 @@ export default function ApprovalInfoSection({
     <div className="self-stretch flex flex-col justify-start items-start">
       <div className="self-stretch py-3.5 border-b border-primary-800 inline-flex justify-start items-center gap-2 sm:pl-2">
         <div className="text-center justify-center text-primary-950 text-sm sm:text-base font-extrabold ">
-          승인 정보
+          Approval Info
         </div>
       </div>
       <div className="self-stretch flex flex-col justify-center items-start sm:flex sm:flex-row sm:justify-start sm:items-stretch">
         <div className="self-stretch inline-flex justify-start items-center sm:flex-1">
           <div className="w-36 h-12 p-2 border-r border-b border-primary-200 flex justify-start items-center gap-2">
             <div className="text-center justify-center text-primary-950 text-sm sm:text-base font-normal ">
-              담당자
+              Approver
             </div>
           </div>
           <div className="flex-1 h-12 px-4 py-2 border-b border-primary-200 flex justify-start items-center gap-2 sm:border-r">
@@ -40,7 +40,7 @@ export default function ApprovalInfoSection({
         <div className="self-stretch inline-flex justify-start items-center sm:flex-1">
           <div className="w-36 h-12 p-2 border-r border-b border-primary-200 flex justify-start items-center gap-2">
             <div className="text-center justify-center text-primary-950 text-sm sm:text-base font-normal ">
-              승인 날짜
+              Approval Date
             </div>
           </div>
           <div className="flex-1 h-12 px-4 py-2 border-b border-primary-200 flex justify-start items-center gap-2">
@@ -54,7 +54,7 @@ export default function ApprovalInfoSection({
         <div className="self-stretch inline-flex justify-start items-center sm:flex-1">
           <div className="w-36 h-12 px-2 py-2 border-r border-b border-primary-200 flex justify-start items-center gap-2">
             <div className="text-center justify-center text-primary-950 text-sm sm:text-base font-normal ">
-              상태
+              Status
             </div>
           </div>
           <div className="flex-1 h-12 px-4 py-2 border-b border-primary-200 flex justify-start items-center gap-2 sm:border-r">
@@ -66,7 +66,7 @@ export default function ApprovalInfoSection({
         <div className="self-stretch inline-flex justify-start items-center sm:flex-1">
           <div className="w-36 h-12 px-2 py-2 border-r border-b border-primary-200 flex justify-start items-center gap-2">
             <div className="text-center justify-center text-primary-950 text-sm sm:text-base font-normal ">
-              결과 메시지
+              Result Message
             </div>
           </div>
           <div className="flex-1 h-12 px-4 py-2 border-b border-primary-200 flex justify-start items-center gap-2">
