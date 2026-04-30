@@ -3,20 +3,17 @@
 import { useState, useEffect, useRef, Suspense, lazy } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Head from "next/head";
-import { getMyOrderDetail, TMyOrderDetail } from "@/lib/api/orderHistory.api";
-import { cookieFetch } from "@/lib/api/fetchClient.api";
 import Toast from "@/components/common/Toast";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getStatusText, formatDate } from "@/components/common/OrderDetail";
 import DogSpinner from "@/components/common/DogSpinner";
 import { SessionExpiredError } from "@/lib/api/auth.errors";
+import { useAddToCart } from "@/hooks/useAddToCart";
+import { useMyOrderDetail } from "@/hooks/useOrderDetail";
 
 // Lazy-load the detail sections for finer-grained code splitting.
 const OrderItemsSection = lazy(() => import("@/components/common/OrderDetail/OrderItemsSection"));
 const RequestInfoSection = lazy(() => import("@/components/common/OrderDetail/RequestInfoSection"));
 const ApprovalInfoSection = lazy(() => import("@/components/common/OrderDetail/ApprovalInfoSection"));
-
-type TMyOrderDetailPageProps = Record<string, never>;
 
 const LoadingComponent = () => (
   <div className="flex justify-center items-center h-[80vh] md:h-[60vh]">
@@ -60,15 +57,11 @@ const ActionButtons = ({
   </div>
 );
 
-export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
+export default function MyOrderDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const queryClient = useQueryClient();
   const orderId: string = params.orderId as string;
 
-  const [orderData, setOrderData] = useState<TMyOrderDetail | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
   const [toast, setToast] = useState<{
     isVisible: boolean;
     text: string;
@@ -81,27 +74,7 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    const fetchOrderDetail = async (): Promise<void> => {
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        const data: TMyOrderDetail = await getMyOrderDetail(orderId);
-
-        setOrderData(data);
-        setIsLoading(false);
-      } catch {
-        setError("Failed to load order history.");
-        setIsLoading(false);
-      }
-    };
-
-    if (orderId) {
-      fetchOrderDetail();
-    }
-  }, [orderId]);
-
+  const { data: orderData, isLoading, isError } = useMyOrderDetail(orderId);
   // Clear the timer on unmount.
   useEffect(() => {
     return () => {
@@ -133,40 +106,21 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
     }, 3000);
   };
 
-  const addToCart = async (productId: number, quantity: number): Promise<void> => {
-    await cookieFetch("/cart", {
-      method: "POST",
-      body: JSON.stringify({
-        productId,
-        quantity,
-      }),
-    });
-  };
-
-  // Add-to-cart mutation
-  const { mutate: addToCartMutation, isPending: isAddingToCart } = useMutation({
-    mutationFn: async () => {
-      if (!orderData || !orderData.receipts) return;
-
-      // Re-add each item from the order to the cart one by one.
-      for (const item of orderData.receipts) {
-        await addToCart(item.productId, item.quantity);
-      }
-    },
-    onSuccess: () => {
-      // Invalidate the cartItems query cache.
-      queryClient.invalidateQueries({ queryKey: ["cartItems"] });
+  const addToCartMutation = useAddToCart({
+    onAddToCartSuccess: () => {
       showToast("Items added to cart.", "success");
     },
-    onError: (error) => {
+    onAddToCartError: (error) => {
       if (error instanceof SessionExpiredError) return;
+
       showToast("Failed to add items to cart.", "error");
     },
   });
 
   const handleAddToCart = () => {
     if (!orderData || !orderData.receipts) return;
-    addToCartMutation();
+
+    addToCartMutation.mutate(orderData);
   };
 
   const pageTitle = orderData
@@ -220,7 +174,7 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
     );
   }
 
-  if (error || !orderData) {
+  if (isError || !orderData) {
     return (
       <>
         <Head>
@@ -228,7 +182,7 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
           <meta name="description" content="Failed to load purchase request history." />
           <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         </Head>
-        <ErrorComponent error={error} />
+        <ErrorComponent error="Failed to load order history." />
       </>
     );
   }
@@ -301,7 +255,7 @@ export default function MyOrderDetailPage({}: TMyOrderDetailPageProps) {
           <ActionButtons
             onBackToList={handleBackToList}
             onAddToCart={handleAddToCart}
-            isAddingToCart={isAddingToCart}
+            isAddingToCart={addToCartMutation.isPending}
           />
         </div>
       </div>
