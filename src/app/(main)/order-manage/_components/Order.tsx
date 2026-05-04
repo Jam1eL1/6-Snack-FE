@@ -50,13 +50,13 @@ export default function Order() {
 
   const orderByMap = useMemo(
     (): Record<string, string> => ({
-      최신순: "latest",
-      "낮은 가격순": "priceLow",
-      "높은 가격순": "priceHigh",
+      Newest: "latest",
+      "Lowest Price": "priceLow",
+      "Highest Price": "priceHigh",
     }),
     [],
   );
-  const [orderBy, setOrderBy] = useState<string>(orderByMap["최신순"]);
+  const [orderBy, setOrderBy] = useState<string>(orderByMap.Newest);
 
   const { visibleCount } = useOrderVisibleCount();
 
@@ -125,32 +125,32 @@ export default function Order() {
 
   if (error) {
     return (
-      <section className="pt-[30px] w-full relative" role="region" aria-label="주문 관리">
+      <section className="pt-[30px] w-full relative" role="region" aria-label="Order management">
         <div className="text-center py-12 text-red-600" role="alert" aria-live="polite">
-          주문 데이터를 불러오는데 실패했습니다.
+          Failed to load order data.
         </div>
       </section>
     );
   }
 
   return (
-    <section className="pt-[30px] w-full relative" role="region" aria-label="주문 관리">
+    <section className="pt-[30px] w-full relative" role="region" aria-label="Order management">
       <header className="w-full flex justify-between items-center gap-3 pb-3">
-        <h1 className="text-black text-base font-bold">구매 요청 관리</h1>
-        <div role="group" aria-label="정렬 옵션">
+        <h1 className="text-black text-base font-bold">Purchase Request Management</h1>
+        <div role="group" aria-label="Sort options">
           <Dropdown
-            onChange={(selected) => setOrderBy(orderByMap[selected] || orderByMap["최신순"])}
+            onChange={(selected) => setOrderBy(orderByMap[selected] || orderByMap.Newest)}
             options={["Newest", "Lowest Price", "Highest Price"]}
-            aria-label="주문 목록 정렬"
+            aria-label="Sort order list"
           />
         </div>
       </header>
 
       <div className="flex flex-col" role="main" aria-live="polite" aria-busy={isLoading}>
         {isLoading ? (
-          <div className="flex justify-center items-center py-12" role="status" aria-label="로딩 중">
+          <div className="flex justify-center items-center py-12" role="status" aria-label="Loading">
             <DogSpinner />
-            <span className="sr-only">주문 목록을 불러오는 중입니다.</span>
+            <span className="sr-only">Loading order list.</span>
           </div>
         ) : orderRequests.length > 0 ? (
           <>
@@ -184,7 +184,7 @@ export default function Order() {
                 );
               }}
             />
-            <nav className="mt-[20px] sm:mt-10" role="navigation" aria-label="페이지 네비게이션">
+            <nav className="mt-[20px] sm:mt-10" role="navigation" aria-label="Page navigation">
               <Pagination
                 className="mt-[20px] sm:mt-10"
                 currentPage={currentPaginationPage}
@@ -194,29 +194,29 @@ export default function Order() {
             </nav>
           </>
         ) : (
-          <section className="flex flex-1 justify-center min-h-screen" role="status" aria-label="빈 상태">
+          <section className="flex flex-1 justify-center min-h-screen" role="status" aria-label="Empty state">
             <div className="sm:w-80 inline-flex flex-col justify-start items-center gap-7 py-12 mt-[142px] sm:mt-[222px] md:mt-[191px]">
-              <div className="w-24 h-24 relative" role="img" aria-label="주문 내역 없음 아이콘">
-                <Image src={icNoOrder} alt="주문 내역 없음" fill className="object-contain" />
+              <div className="w-24 h-24 relative" role="img" aria-label="No orders icon">
+                <Image src={icNoOrder} alt="No orders" fill className="object-contain" />
               </div>
               <div className="self-stretch flex flex-col justify-start items-center gap-12">
                 <div className="w-72 flex flex-col justify-start items-center gap-2.5">
                   <h2 className="self-stretch text-center text-neutral-800 text-2xl font-extrabold">
-                    요청 내역이 없어요
+                    No requests yet
                   </h2>
                   <p className="self-stretch text-center text-neutral-700 text-base leading-relaxed">
-                    상품 리스트를 둘러보고
+                    Browse the product list
                     <br />
-                    상품을 담아보세요
+                    and add items to your cart.
                   </p>
                 </div>
                 <button
                   className="self-stretch h-16 px-4 py-3 bg-neutral-800 rounded-sm inline-flex justify-center items-center cursor-pointer"
                   onClick={() => router.push("/products")}
                   onKeyDown={handleKeyDown}
-                  aria-label="상품 리스트 페이지로 이동"
+                  aria-label="Go to product list"
                 >
-                  <span className="text-white text-base font-bold">상품 리스트로 이동</span>
+                  <span className="text-white text-base font-bold">Go to Products</span>
                 </button>
               </div>
             </div>

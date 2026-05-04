@@ -229,7 +229,7 @@ export default function OrderManageDetailPage() {
                       </div>
                     </div>
                     <div className="hidden sm:block text-center  text-primary-700 text-xl/[32px] tracking-tight font-extrabold whitespace-nowrap">
-                      {formatPrice(item.price * item.quantity)}원
+                      ${formatPrice(item.price * item.quantity)}
                     </div>
                   </div>
                 ))}
@@ -354,11 +354,11 @@ export default function OrderManageDetailPage() {
           <div className="self-stretch flex flex-col justify-center items-start">
             <div className="self-stretch inline-flex justify-start items-center">
               <div className="flex w-[140px] h-[50px] p-2 border-r border-b border-primary-100 justify-start items-center text-sm/[17px] tracking-tight sm:text-base/[20px]">
-                구매 후 예산
+                Budget After Purchase
               </div>
               <div className="flex-1 h-[50px] px-2 sm:px-4 py-2 border-b border-primary-100 flex justify-start items-center">
                 <div className="text-start justify-center text-primary-900 text-sm sm:text-base font-bold">
-                  {formatPrice(budgetAfterPurchase)}원
+                  ${formatPrice(budgetAfterPurchase)}
                 </div>
               </div>
             </div>
@@ -368,23 +368,23 @@ export default function OrderManageDetailPage() {
       <section
         className="flex w-full justify-center gap-4 sm:gap-5 py-6 md:py-0 mt-[20px] md:mt-[70px] md:items-center"
         role="region"
-        aria-label="주문 요청 처리 버튼"
+        aria-label="Order request action buttons"
       >
         <Button
           type="white"
-          label={updateOrderMutation.isPending ? "처리중..." : "요청 반려"}
+          label={updateOrderMutation.isPending ? "Processing..." : "Reject Request"}
           className="w-full h-16 md:max-w-[300px]"
           onClick={handleReject}
           disabled={updateOrderMutation.isPending}
-          aria-label={updateOrderMutation.isPending ? "처리 중입니다" : "구매 요청을 반려합니다"}
+          aria-label={updateOrderMutation.isPending ? "Processing" : "Reject purchase request"}
         />
         <Button
           type="primary"
-          label={updateOrderMutation.isPending ? "처리중..." : "요청 승인"}
+          label={updateOrderMutation.isPending ? "Processing..." : "Approve Request"}
           className="w-full h-16 md:max-w-[300px]"
           onClick={handleApprove}
           disabled={updateOrderMutation.isPending}
-          aria-label={updateOrderMutation.isPending ? "처리 중입니다" : "구매 요청을 승인합니다"}
+          aria-label={updateOrderMutation.isPending ? "Processing" : "Approve purchase request"}
         />
       </section>
     </div>

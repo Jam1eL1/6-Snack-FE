@@ -4,12 +4,12 @@ export default function OrderDetailSkeleton() {
   return (
     <div className="min-h-screen bg-white">
       <main className="w-full max-w-[1200px] mx-auto pt-[30px] md:pt-[60px] flex flex-col justify-start items-start gap-[30px]">
-        {/* 헤더 skeleton */}
+        {/* Header skeleton */}
         <header>
           <Skeleton className="h-[22px] w-[200px]" />
         </header>
 
-        {/* 요청 품목 섹션 skeleton */}
+        {/* Requested items section skeleton */}
         <section className="self-stretch flex flex-col justify-start items-start gap-5">
           <div className="flex items-center gap-2">
             <Skeleton className="h-[20px] w-[100px]" />
@@ -19,7 +19,7 @@ export default function OrderDetailSkeleton() {
 
           <div className="w-full rounded-sm sm:shadow-[0px_0px_10px_0px_rgba(0,0,0,0.12)]">
             <div className="flex flex-col w-full sm:pt-[20px] sm:px-[20px] sm:pb-[30px] gap-[20px] sm:gap-0">
-              {/* 상품 아이템 skeleton 3개 */}
+              {/* Product item skeletons */}
               {[1, 2, 3].map((item) => (
                 <div
                   key={item}
@@ -44,7 +44,7 @@ export default function OrderDetailSkeleton() {
                 </div>
               ))}
 
-              {/* 주문 금액 정보 skeleton */}
+              {/* Order amount information skeleton */}
               <div className="w-full flex flex-col gap-4 sm:gap-2.5 sm:pt-[20px] sm:px-[20px]">
                 <div className="flex justify-between items-center">
                   <Skeleton className="h-[17px] sm:h-[20px] w-[80px]" />
@@ -63,7 +63,7 @@ export default function OrderDetailSkeleton() {
           </div>
         </section>
 
-        {/* 요청 정보 섹션 skeleton */}
+        {/* Request information section skeleton */}
         <section className="self-stretch flex flex-col justify-start items-start">
           <div className="self-stretch px-2 py-3 sm:py-3.5 border-b border-primary-950 inline-flex justify-start items-center gap-2">
             <Skeleton className="h-[17px] sm:h-[20px] w-[80px]" />
@@ -86,7 +86,7 @@ export default function OrderDetailSkeleton() {
           </div>
         </section>
 
-        {/* 예산 정보 섹션 skeleton */}
+        {/* Budget information section skeleton */}
         <section className="self-stretch flex flex-col justify-start items-start">
           <div className="self-stretch px-2 py-3 sm:py-3.5 border-b border-primary-950 inline-flex justify-start items-center gap-2">
             <Skeleton className="h-[17px] sm:h-[20px] w-[80px]" />
@@ -110,7 +110,7 @@ export default function OrderDetailSkeleton() {
         </section>
       </main>
 
-      {/* 버튼 섹션 skeleton */}
+      {/* Button section skeleton */}
       <section className="flex w-full justify-center gap-4 sm:gap-5 py-6 md:py-0 mt-[20px] md:mt-[70px] md:items-center">
         <Skeleton className="w-full h-16 md:max-w-[300px]" />
         <Skeleton className="w-full h-16 md:max-w-[300px]" />
