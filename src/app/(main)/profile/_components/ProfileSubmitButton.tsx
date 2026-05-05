@@ -1,26 +1,27 @@
 "use client";
 
-import Button from "@/components/ui/Button";
-import { TButtonType } from "@/types/button.types";
+import { twMerge } from "tailwind-merge";
 
 type TProfileSubmitButtonProps = {
   isFormValid: boolean;
   isSubmitting: boolean;
-  onSubmit: () => void;
 };
 
-export default function ProfileSubmitButton({ isFormValid, isSubmitting, onSubmit }: TProfileSubmitButtonProps) {
-  const buttonType: TButtonType = isFormValid ? "black" : "grayDisabled";
+export default function ProfileSubmitButton({ isFormValid, isSubmitting }: TProfileSubmitButtonProps) {
+  const isDisabled = !isFormValid || isSubmitting;
 
   return (
-    <Button
-      type={buttonType}
-      label={isSubmitting ? "Updating..." : "Submit"}
-      className={`self-stretch h-16 p-4 ${!isFormValid ? "bg-primary-100 text-primary-300" : ""}`}
-      disabled={!isFormValid || isSubmitting}
-      onClick={onSubmit}
+    <button
+      type="submit"
+      className={twMerge(
+        "self-stretch h-16 p-4 rounded-[2px] inline-flex justify-center items-center text-base",
+        isDisabled ? "bg-primary-100 text-primary-300 cursor-default" : "bg-primary-950 text-white cursor-pointer",
+      )}
+      disabled={isDisabled}
       aria-label={isSubmitting ? "Updating profile information" : "Save profile changes"}
       aria-describedby={!isFormValid ? "submit-button-description" : undefined}
-    />
+    >
+      {isSubmitting ? "Updating..." : "Submit"}
+    </button>
   );
 }

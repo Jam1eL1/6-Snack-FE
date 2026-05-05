@@ -17,6 +17,7 @@ import ProfileInfoField from "./ProfileInfoField";
 import ProfilePasswordFields from "./ProfilePasswordFields";
 import ProfileSubmitButton from "./ProfileSubmitButton";
 import Toast from "@/components/common/Toast";
+import { useUpdateCompanyInfo } from "@/hooks/useUpdateProfile";
 import { SessionExpiredError } from "@/lib/api/auth.errors";
 
 export default function ProfileForm() {
@@ -72,63 +73,83 @@ export default function ProfileForm() {
     timerRef.current = setTimeout(() => setToastVisible(false), 3000);
   };
 
-  // Profile update mutation
-  const updateProfile = useMutation({
-    mutationFn: async (data: TProfileFormData) => {
-      if (!user) {
-        throw new Error("User information could not be found.");
+  const updateCompanyInfoMutation = useUpdateCompanyInfo({
+    onUpdateCompanyInfoSuccess: () => {
+      if (hasCompanyChanged && hasPasswordChanged) {
+        showToast("Your information has been updated successfully.", "success");
+        return;
       }
 
-      if (user.role === Role.SUPER_ADMIN) {
-        const payload: TUpdateCompanyInfoRequest = {};
-
-        if (hasCompanyChanged) {
-          payload.companyName = data.company?.trim();
-        }
-        if (data.password) {
-          payload.passwordData = {
-            newPassword: data.password,
-            newPasswordConfirm: data.password,
-          };
-        }
-        await updateCompanyInfo(user.id, payload);
-      } else {
-        if (data.password) {
-          const payload: TUpdatePasswordRequest = {
-            newPassword: data.password,
-            newPasswordConfirm: data.password,
-          };
-          return await updatePassword(user.id, payload);
-        }
+      if (hasCompanyChanged) {
+        showToast("Company name has been updated successfully.", "success");
+        return;
+      }
+      if (hasPasswordChanged) {
+        showToast("Password has been updated successfully.", "success");
       }
     },
-    onSuccess: (data, variables) => {
-      // Show a success message based on what changed.
-      if (user?.role === Role.SUPER_ADMIN) {
-        if (hasCompanyChanged && !variables.password) {
-          showToast("Company name updated successfully.", "success");
-        } else if (variables.password) {
-          showToast("Your information has been updated.", "success");
-        }
-      } else {
-        if (variables.password) {
-          showToast("Password updated successfully.", "success");
-        }
-      }
-
-      // Reset password fields.
-      setValue("password", "");
-      setValue("confirmPassword", "");
-
-      // Invalidate cached user data.
-      queryClient.invalidateQueries({ queryKey: ["user"] });
-    },
-    onError: (error: Error) => {
+    onUpdateCompanyInfoError: (error) => {
       if (error instanceof SessionExpiredError) return;
-      const errorMessage = error.message || "Update failed.";
-      showToast(errorMessage, "error");
+      showToast("Failed to update company information", "error");
     },
   });
+  // // Profile update mutation
+  // const updateProfile = useMutation({
+  //   mutationFn: async (data: TProfileFormData) => {
+  //     if (!user) {
+  //       throw new Error("User information could not be found.");
+  //     }
+
+  //     if (user.role === Role.SUPER_ADMIN) {
+  //       const payload: TUpdateCompanyInfoRequest = {};
+
+  //       if (hasCompanyChanged) {
+  //         payload.companyName = data.company?.trim();
+  //       }
+  //       if (data.password) {
+  //         payload.passwordData = {
+  //           newPassword: data.password,
+  //           newPasswordConfirm: data.password,
+  //         };
+  //       }
+  //       await updateCompanyInfo(user.id, payload);
+  //     } else {
+  //       if (data.password) {
+  //         const payload: TUpdatePasswordRequest = {
+  //           newPassword: data.password,
+  //           newPasswordConfirm: data.password,
+  //         };
+  //         return updatePassword(user.id, payload);
+  //       }
+  //     }
+  //   },
+  //   onSuccess: (data, variables) => {
+  //     // Show a success message based on what changed.
+  //     if (user?.role === Role.SUPER_ADMIN) {
+  //       if (hasCompanyChanged && !variables.password) {
+  //         showToast("Company name updated successfully.", "success");
+  //       } else if (variables.password) {
+  //         showToast("Your information has been updated.", "success");
+  //       }
+  //     } else {
+  //       if (variables.password) {
+  //         showToast("Password updated successfully.", "success");
+  //       }
+  //     }
+
+  //     // Reset password fields.
+  //     setValue("password", "");
+  //     setValue("confirmPassword", "");
+
+  //     // Invalidate cached user data.
+  //     queryClient.invalidateQueries({ queryKey: ["user"] });
+  //   },
+  //   onError: (error: Error) => {
+  //     if (error instanceof SessionExpiredError) return;
+  //     const errorMessage = error.message || "Update failed.";
+  //     showToast(errorMessage, "error");
+  //   },
+  // });
 
   // Load user data into the form when it becomes available.
   useEffect(() => {
@@ -171,7 +192,8 @@ export default function ProfileForm() {
       return;
     }
 
-    updateProfile.mutate(data);
+    // TODO update this part
+    // updateProfile.mutate(data);
   };
 
   return (
@@ -236,7 +258,6 @@ export default function ProfileForm() {
             <ProfileSubmitButton
               isFormValid={isFormValid}
               isSubmitting={updateProfile.isPending}
-              onSubmit={handleSubmit(onSubmit)}
             />
           </div>
         </section>
