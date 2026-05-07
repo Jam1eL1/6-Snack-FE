@@ -14,13 +14,8 @@ export const useToggleFavorite = (
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (isFavoriteNow: boolean) => {
-      if (isFavoriteNow) {
-        await deleteFavorite(productId.toString());
-      } else {
-        await createFavorite(productId.toString());
-      }
-    },
+    mutationFn: (isFavoriteNow: boolean) =>
+      isFavoriteNow ? deleteFavorite(productId.toString()) : createFavorite(productId.toString()),
     onMutate: async (isFavoriteNow) => {
       onMutate?.();
 
