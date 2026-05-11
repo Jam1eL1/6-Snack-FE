@@ -50,5 +50,17 @@ export const useToggleFavorite = (
       if (error instanceof SessionExpiredError) return;
       onToggleFavoriteError?.(error);
     },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["productDetail", productId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["favorites"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["products"],
+      });
+    },
   });
 };
