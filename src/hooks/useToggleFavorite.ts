@@ -1,44 +1,54 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFavorite, deleteFavorite } from "@/lib/api/favorite.api";
+import { SessionExpiredError } from "@/lib/api/auth.errors";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+// 4, TContext -> this is what onMutate returns, onError receives
+type TToggleFavoriteContext = {
+  previousProductDetail: unknown;
+};
+
+type TUseToggleFavoriteOptions = {
+  onOptimisticToggle?: () => void;
+  onRollbackToggle?: () => void;
+  onToggleFavoriteError?: (error: Error) => void;
+};
 
 export const useToggleFavorite = (
   productId: number,
-  {
-    onMutate,
-    onError,
-  }: {
-    onMutate?: () => void;
-    onError?: () => void;
-  } = {},
+  { onOptimisticToggle, onRollbackToggle, onToggleFavoriteError }: TUseToggleFavoriteOptions = {},
 ) => {
   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: (isFavoriteNow: boolean) =>
-      isFavoriteNow ? deleteFavorite(productId.toString()) : createFavorite(productId.toString()),
+  return useMutation<void, Error, boolean, TToggleFavoriteContext>({
+    mutationFn: (isFavoriteNow) =>
+      isFavoriteNow ? deleteFavorite(productId.toString()) : createFavorite(productId.toString()).then(() => undefined),
+
     onMutate: async (isFavoriteNow) => {
-      onMutate?.();
-
+      onOptimisticToggle?.(); // UI part in parent component
+      // cancel in-flight refetch to prevent overwriting optimistic cache value
       await queryClient.cancelQueries({ queryKey: ["productDetail", productId] });
-
-      const prev = queryClient.getQueryData(["productDetail", productId]);
+      // take a snapshot of prev cache before update
+      const previousProductDetail = queryClient.getQueryData(["productDetail", productId]);
+      // flip query data before actual API call in mutationFn
       queryClient.setQueryData<{ isFavorite: boolean }>(["productDetail", productId], (old) => {
+        // if current cached data is not present, return early (undefined)
+        // to prevent creating a ghost data from the below return block
         if (!old) return old;
-        return { ...old, isFavorite: !isFavoriteNow };
+        return {
+          ...old,
+          isFavorite: !isFavoriteNow,
+        };
       });
+      return { previousProductDetail };
+    },
 
-      return { prev };
-    },
-    onError: (_err, _variables, context) => {
-      onError?.();
-      if (context?.prev) {
-        queryClient.setQueryData(["productDetail", productId], context.prev);
+    onError: (error, _variables, context) => {
+      onRollbackToggle?.();
+      if (context?.previousProductDetail) {
+        queryClient.setQueryData(["productDetail", productId], context.previousProductDetail);
       }
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["productDetail", productId] });
-      queryClient.invalidateQueries({ queryKey: ["favorites"] });
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      if (error instanceof SessionExpiredError) return;
+      onToggleFavoriteError?.(error);
     },
   });
 };
