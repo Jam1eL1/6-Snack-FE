@@ -1,7 +1,7 @@
 import { getMyOrders } from "@/lib/api/orderHistory.api";
 import { useQuery } from "@tanstack/react-query";
 
-export const MY_ORDERS_QUERY_KEY = ["my-orders"] as const;
+export const MY_ORDERS_QUERY_KEY = ["myOrders"] as const;
 
 export const useMyOrders = () => {
   return useQuery({
