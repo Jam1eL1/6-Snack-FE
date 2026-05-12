@@ -1,5 +1,4 @@
 import { createFavorite, deleteFavorite } from "@/lib/api/favorite.api";
-import { SessionExpiredError } from "@/lib/api/auth.errors";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 // 4, TContext -> this is what onMutate returns, onError receives
@@ -47,7 +46,6 @@ export const useToggleFavorite = (
       if (context?.previousProductDetail) {
         queryClient.setQueryData(["productDetail", productId], context.previousProductDetail);
       }
-      if (error instanceof SessionExpiredError) return;
       onToggleFavoriteError?.(error);
     },
 

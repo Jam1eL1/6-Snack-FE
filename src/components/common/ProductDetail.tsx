@@ -37,10 +37,21 @@ export default function ProductDetail({ productId }: TProductDetailProps) {
   const [toastVariant, setToastVariant] = useState<"success" | "error">("success");
   const [isFavorite, setIsFavorite] = useState(false);
 
-  const { mutate: toggleFavorite } = useToggleFavorite(productId, {
-    onMutate: () => setIsFavorite((prev) => !prev),
-    onError: () => setIsFavorite((prev) => !prev),
+  const toggleFavoriteMutation = useToggleFavorite(productId, {
+    onOptimisticToggle: () => {
+      setIsFavorite((prev) => !prev);
+    },
+    onRollbackToggle: () => {
+      setIsFavorite((prev) => !prev);
+    },
+    onToggleFavoriteError: () => {
+      showToast("Failed to update favorite.", "error");
+    },
   });
+
+  const handleToggleFavorite = (isFavoriteNow: boolean) => {
+    toggleFavoriteMutation.mutate(isFavoriteNow);
+  };
 
   const showToast = (message: string, variant: "success" | "error" = "success") => {
     setToastMessage(message);
@@ -49,21 +60,22 @@ export default function ProductDetail({ productId }: TProductDetailProps) {
     setTimeout(() => setToastVisible(false), 2000);
   };
 
-  const { mutate: mutateAddToCart } = useMutation({
-    mutationFn: () => {
-      if (!product) throw new Error("Product information is unavailable.");
-      return addToCart(product.id, selectedQuantity);
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["cartItems"] });
-      router.push("/cart");
-    },
-    onError: (error) => {
-      if (error instanceof SessionExpiredError) return;
+  // TODO: replace this with useAddToCart
+  // const { mutate: mutateAddToCart } = useMutation({
+  //   mutationFn: () => {
+  //     if (!product) throw new Error("Product information is unavailable.");
+  //     return addToCart(product.id, selectedQuantity);
+  //   },
+  //   onSuccess: async () => {
+  //     await queryClient.invalidateQueries({ queryKey: ["cartItems"] });
+  //     router.push("/cart");
+  //   },
+  //   onError: (error) => {
+  //     if (error instanceof SessionExpiredError) return;
 
-      showToast("Failed to add item to cart.", "error");
-    },
-  });
+  //     showToast("Failed to add item to cart.", "error");
+  //   },
+  // });
 
   useEffect(() => {
     if (product?.category?.id) {
@@ -126,10 +138,6 @@ export default function ProductDetail({ productId }: TProductDetailProps) {
   };
 
   const canEdit = user?.id === product.creatorId || user?.role === "ADMIN" || user?.role === "SUPER_ADMIN";
-
-  const handleToggleFavorite = () => {
-    toggleFavorite(isFavorite);
-  };
 
   return (
     <div className="w-full flex flex-col justify-center items-center sm:max-w-[1180px]">
