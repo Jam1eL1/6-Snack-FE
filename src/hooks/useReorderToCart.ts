@@ -2,12 +2,12 @@ import { addToCart } from "@/lib/api/cart.api";
 import { TMyOrderDetail } from "@/lib/api/orderHistory.api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-export const useAddToCart = ({
-  onAddToCartSuccess,
-  onAddToCartError,
+export const useReorderToCart = ({
+  onReorderToCartSuccess,
+  onReorderToCartError,
 }: {
-  onAddToCartSuccess?: () => void;
-  onAddToCartError?: (error: Error) => void;
+  onReorderToCartSuccess?: () => void;
+  onReorderToCartError?: (error: Error) => void;
 } = {}) => {
   const queryClient = useQueryClient();
 
@@ -19,10 +19,10 @@ export const useAddToCart = ({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cartItems"] });
-      onAddToCartSuccess?.();
+      onReorderToCartSuccess?.();
     },
     onError: (error) => {
-      onAddToCartError?.(error);
+      onReorderToCartError?.(error);
     },
   });
 };

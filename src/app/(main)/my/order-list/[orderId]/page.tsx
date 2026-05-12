@@ -7,7 +7,7 @@ import Toast from "@/components/common/Toast";
 import { getStatusText, formatDate } from "@/components/common/OrderDetail";
 import DogSpinner from "@/components/common/DogSpinner";
 import { SessionExpiredError } from "@/lib/api/auth.errors";
-import { useAddToCart } from "@/hooks/useAddToCart";
+import { useReorderToCart } from "@/hooks/useReorderToCart";
 import { useMyOrderDetail } from "@/hooks/useOrderDetail";
 
 // Lazy-load the detail sections for finer-grained code splitting.
@@ -29,12 +29,12 @@ const ErrorComponent = ({ error }: { error: string | null }) => (
 
 const ActionButtons = ({
   onBackToList,
-  onAddToCart,
-  isAddingToCart,
+  onReorderToCart,
+  isReorderingToCart,
 }: {
   onBackToList: () => void;
-  onAddToCart: () => void;
-  isAddingToCart: boolean;
+  onReorderToCart: () => void;
+  isReorderingToCart: boolean;
 }) => (
   <div className="self-stretch flex justify-center items-center gap-4 pt-6 sm:pt-8">
     <button
@@ -46,12 +46,12 @@ const ActionButtons = ({
     </button>
     <button
       className="w-[155.5px] sm:w-[338px] md:w-[300px] h-16 px-4 py-3 bg-primary-800 rounded-[2px] inline-flex justify-center items-center cursor-pointer hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-      onClick={onAddToCart}
-      disabled={isAddingToCart}
+      onClick={onReorderToCart}
+      disabled={isReorderingToCart}
       type="button"
     >
       <div className="text-center justify-center text-white text-base font-bold">
-        {isAddingToCart ? "Processing..." : "Add to Cart Again"}
+        {isReorderingToCart ? "Processing..." : "Add to Cart Again"}
       </div>
     </button>
   </div>
@@ -106,21 +106,21 @@ export default function MyOrderDetailPage() {
     }, 3000);
   };
 
-  const addToCartMutation = useAddToCart({
-    onAddToCartSuccess: () => {
+  const reorderToCartMutation = useReorderToCart({
+    onReorderToCartSuccess: () => {
       showToast("Items added to cart.", "success");
     },
-    onAddToCartError: (error) => {
+    onReorderToCartError: (error) => {
       if (error instanceof SessionExpiredError) return;
 
       showToast("Failed to add items to cart.", "error");
     },
   });
 
-  const handleAddToCart = () => {
+  const handleReorderToCart = () => {
     if (!orderData || !orderData.receipts) return;
 
-    addToCartMutation.mutate(orderData);
+    reorderToCartMutation.mutate(orderData);
   };
 
   const pageTitle = orderData
@@ -254,8 +254,8 @@ export default function MyOrderDetailPage() {
 
           <ActionButtons
             onBackToList={handleBackToList}
-            onAddToCart={handleAddToCart}
-            isAddingToCart={addToCartMutation.isPending}
+            onReorderToCart={handleReorderToCart}
+            isReorderingToCart={reorderToCartMutation.isPending}
           />
         </div>
       </div>
