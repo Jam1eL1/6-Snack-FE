@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useProductDetail } from "@/hooks/useProductDetail";
-import { addToCart } from "@/lib/api/cart.api";
 import CategoryNavigation from "./ProductDetail/CategoryNavigation";
 import ProductImage from "./ProductDetail/ProductImage";
 import ProductBasicInfo from "./ProductDetail/ProductBasicInfo";
@@ -12,13 +11,13 @@ import CartAndLikeButtons from "./ProductDetail/CartAndLikeButtons";
 import ProductInfoSections from "./ProductDetail/ProductInfoSections";
 import { useAuth } from "@/providers/AuthProvider";
 import { useCategoryStore } from "@/stores/categoryStore";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Toast from "@/components/common/Toast";
 import { useToggleFavorite } from "@/hooks/useToggleFavorite";
 import DogSpinner from "@/components/common/DogSpinner";
 import icNoOrder from "@/assets/icons/ic_no_order.svg";
 import Image from "next/image";
 import { SessionExpiredError } from "@/lib/api/auth.errors";
+import { useAddToCart } from "@/hooks/useAddToCart";
 
 type TProductDetailProps = {
   productId: number;
@@ -30,7 +29,6 @@ export default function ProductDetail({ productId }: TProductDetailProps) {
   const { user } = useAuth();
   const router = useRouter();
   const { setSelectedCategory } = useCategoryStore();
-  const queryClient = useQueryClient();
 
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -44,7 +42,9 @@ export default function ProductDetail({ productId }: TProductDetailProps) {
     onRollbackToggle: () => {
       setIsFavorite((prev) => !prev);
     },
-    onToggleFavoriteError: () => {
+    onToggleFavoriteError: (error) => {
+      if (error instanceof SessionExpiredError) return;
+
       showToast("Failed to update favorite.", "error");
     },
   });
@@ -53,29 +53,22 @@ export default function ProductDetail({ productId }: TProductDetailProps) {
     toggleFavoriteMutation.mutate(isFavoriteNow);
   };
 
+  const addToCartMutation = useAddToCart({
+    onAddToCartSuccess: () => {
+      showToast("Added to cart", "success");
+    },
+    onAddToCartError: (error) => {
+      if (error instanceof SessionExpiredError) return;
+      showToast("Failed to add item to cart", "error");
+    },
+  });
+
   const showToast = (message: string, variant: "success" | "error" = "success") => {
     setToastMessage(message);
     setToastVariant(variant);
     setToastVisible(true);
     setTimeout(() => setToastVisible(false), 2000);
   };
-
-  // TODO: replace this with useAddToCart
-  // const { mutate: mutateAddToCart } = useMutation({
-  //   mutationFn: () => {
-  //     if (!product) throw new Error("Product information is unavailable.");
-  //     return addToCart(product.id, selectedQuantity);
-  //   },
-  //   onSuccess: async () => {
-  //     await queryClient.invalidateQueries({ queryKey: ["cartItems"] });
-  //     router.push("/cart");
-  //   },
-  //   onError: (error) => {
-  //     if (error instanceof SessionExpiredError) return;
-
-  //     showToast("Failed to add item to cart.", "error");
-  //   },
-  // });
 
   useEffect(() => {
     if (product?.category?.id) {
@@ -133,8 +126,10 @@ export default function ProductDetail({ productId }: TProductDetailProps) {
       alert("Please choose at least one item.");
       return;
     }
-
-    mutateAddToCart();
+    addToCartMutation.mutate({
+      productId: product.id,
+      quantity: selectedQuantity,
+    });
   };
 
   const canEdit = user?.id === product.creatorId || user?.role === "ADMIN" || user?.role === "SUPER_ADMIN";
