@@ -1,4 +1,5 @@
 import { createFavorite, deleteFavorite } from "@/lib/api/favorite.api";
+import { queryKeys } from "@/lib/queryKeys";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 // 4, TContext -> this is what onMutate returns, onError receives
@@ -25,11 +26,11 @@ export const useToggleFavorite = (
     onMutate: async (isFavoriteNow) => {
       onOptimisticToggle?.(); // UI part in parent component
       // cancel in-flight refetch to prevent overwriting optimistic cache value
-      await queryClient.cancelQueries({ queryKey: ["productDetail", productId] });
+      await queryClient.cancelQueries({ queryKey: queryKeys.products.detail(productId) });
       // take a snapshot of prev cache before update
-      const previousProductDetail = queryClient.getQueryData(["productDetail", productId]);
+      const previousProductDetail = queryClient.getQueryData(queryKeys.products.detail(productId));
       // flip query data before actual API call in mutationFn
-      queryClient.setQueryData<{ isFavorite: boolean }>(["productDetail", productId], (old) => {
+      queryClient.setQueryData<{ isFavorite: boolean }>(queryKeys.products.detail(productId), (old) => {
         // if current cached data is not present, return early (undefined)
         // to prevent creating a ghost data from the below return block
         if (!old) return old;
@@ -44,20 +45,20 @@ export const useToggleFavorite = (
     onError: (error, _variables, context) => {
       onRollbackToggle?.();
       if (context?.previousProductDetail) {
-        queryClient.setQueryData(["productDetail", productId], context.previousProductDetail);
+        queryClient.setQueryData(queryKeys.products.detail(productId), context.previousProductDetail);
       }
       onToggleFavoriteError?.(error);
     },
 
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["productDetail", productId],
+        queryKey: queryKeys.products.detail(productId),
       });
       queryClient.invalidateQueries({
-        queryKey: ["favorites"],
+        queryKey: queryKeys.favorites.all,
       });
       queryClient.invalidateQueries({
-        queryKey: ["products"],
+        queryKey: queryKeys.products.all,
       });
     },
   });

@@ -21,6 +21,7 @@ import img_logo from "@/assets/images/img_logo.webp";
 import { useAuth } from "@/providers/AuthProvider";
 import { useQuery } from "@tanstack/react-query";
 import { getCartItems } from "@/lib/api/cart.api";
+import { queryKeys } from "@/lib/queryKeys";
 import { useDeviceType } from "@/hooks/useDeviceType";
 import clsx from "clsx";
 
@@ -36,7 +37,7 @@ export default function AuthenticatedHeader() {
   const { isMobile } = useDeviceType();
 
   const { data: cartItems } = useQuery({
-    queryKey: ["cartItems"],
+    queryKey: queryKeys.cartItems.all,
     queryFn: () => getCartItems(),
   });
 

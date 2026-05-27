@@ -4,6 +4,7 @@ import { TInviteMemberModalProps, TUserRole } from "@/types/inviteMemberModal.ty
 import { useModal } from "@/providers/ModalProvider";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateUserRole } from "@/lib/api/superAdmin.api";
+import { queryKeys } from "@/lib/queryKeys";
 import Button from "@/components/ui/Button";
 import Input from "@/components/common/Input";
 import Toast from "@/components/common/Toast";
@@ -63,7 +64,7 @@ export default function InviteMemberModal({
   const updateRoleMutation = useMutation({
     mutationFn: ({ userId, role }: { userId: string; role: TUserRole }) => updateUserRole(userId, role),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["companyUsers"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.companyUsers.all });
       onSubmit?.({ name, email, role: selectedRole });
       closeModal();
     },

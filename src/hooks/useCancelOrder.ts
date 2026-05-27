@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { cancelOrder } from "@/lib/api/orderHistory.api";
-import { MY_ORDERS_QUERY_KEY } from "./useMyOrders";
+import { queryKeys } from "@/lib/queryKeys";
 
 export const useCancelOrder = ({
   onCancelSuccess,
@@ -14,7 +14,7 @@ export const useCancelOrder = ({
   return useMutation({
     mutationFn: (orderId: string) => cancelOrder(orderId),
     onSuccess: (_, orderId) => {
-      queryClient.invalidateQueries({ queryKey: MY_ORDERS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: queryKeys.myOrders.all });
       onCancelSuccess?.(orderId);
     },
     onError: (error) => {

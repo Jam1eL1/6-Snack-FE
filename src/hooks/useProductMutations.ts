@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createProduct, getProducts } from "@/lib/api/product.api";
+import { queryKeys } from "@/lib/queryKeys";
 
 // Product creation mutation
 export const useCreateProduct = () => {
@@ -9,7 +10,7 @@ export const useCreateProduct = () => {
     mutationFn: createProduct,
     onSuccess: () => {
       // Invalidate the product list query so it refetches.
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.products.all });
     },
   });
 };
@@ -22,7 +23,7 @@ export const useGetProducts = (params?: {
   limit?: number;
 }) => {
   return useQuery({
-    queryKey: ["products", params],
+    queryKey: queryKeys.products.list(params),
     queryFn: () => getProducts(params),
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes

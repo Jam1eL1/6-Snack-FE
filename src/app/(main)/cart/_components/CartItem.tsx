@@ -11,6 +11,7 @@ import { useAuth } from "@/providers/AuthProvider";
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import { formatPrice } from "@/lib/utils/formatPrice.util";
+import { queryKeys } from "@/lib/queryKeys";
 import Link from "next/link";
 import DogSpinner from "@/components/common/DogSpinner";
 
@@ -48,11 +49,11 @@ export default function CartItem({
   >({
     mutationFn: ({ cartItemId, isChecked }) => toggleCheckItem(cartItemId, isChecked),
     onMutate: async ({ cartItemId, isChecked }) => {
-      await queryClient.cancelQueries({ queryKey: ["cartItems"] });
+      await queryClient.cancelQueries({ queryKey: queryKeys.cartItems.all });
 
-      const previousCartItems = queryClient.getQueryData<TGetCartItemsResponse>(["cartItems"]);
+      const previousCartItems = queryClient.getQueryData<TGetCartItemsResponse>(queryKeys.cartItems.all);
 
-      queryClient.setQueryData<TGetCartItemsResponse>(["cartItems"], (old) =>
+      queryClient.setQueryData<TGetCartItemsResponse>(queryKeys.cartItems.all, (old) =>
         old ? { ...old, cart: old.cart.map((item) => (item.id === cartItemId ? { ...item, isChecked } : item)) } : old,
       );
 
@@ -60,22 +61,22 @@ export default function CartItem({
     },
     onError: (error, variables, context) => {
       if (context?.previousCartItems) {
-        queryClient.setQueryData(["cartItems"], context.previousCartItems);
+        queryClient.setQueryData(queryKeys.cartItems.all, context.previousCartItems);
       }
     },
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ["cartItems"] }),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: queryKeys.cartItems.all }),
   });
 
   // 장바구니 선택 삭제
   const { mutate: deleteCheckedCartItems } = useMutation<void, Error, number[]>({
     mutationFn: (cartItemIds) => deleteSelectedItems(cartItemIds),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["cartItems"] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.cartItems.all }),
   });
 
   // 장바구니 수량 선택
   const { mutate: updateCartItemQuantity } = useMutation<void, Error, { cartItemId: number; quantity: number }>({
     mutationFn: ({ cartItemId, quantity }) => updateItemQuantity(cartItemId, quantity),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["cartItems"] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.cartItems.all }),
   });
 
   // 장바구니 전체 선택 / 전체 해제 - Optimistic update
@@ -87,11 +88,11 @@ export default function CartItem({
   >({
     mutationFn: (isAllChecked) => toggleCheckAllItems(!isAllChecked),
     onMutate: async (isAllChecked) => {
-      await queryClient.cancelQueries({ queryKey: ["cartItems"] });
+      await queryClient.cancelQueries({ queryKey: queryKeys.cartItems.all });
 
-      const previousCartItems = queryClient.getQueryData<TGetCartItemsResponse>(["cartItems"]);
+      const previousCartItems = queryClient.getQueryData<TGetCartItemsResponse>(queryKeys.cartItems.all);
 
-      queryClient.setQueryData<TGetCartItemsResponse>(["cartItems"], (old) =>
+      queryClient.setQueryData<TGetCartItemsResponse>(queryKeys.cartItems.all, (old) =>
         old ? { ...old, cart: old.cart.map((item) => ({ ...item, isChecked: !isAllChecked })) } : old,
       );
 
@@ -99,10 +100,10 @@ export default function CartItem({
     },
     onError: (error, variables, context) => {
       if (context?.previousCartItems) {
-        queryClient.setQueryData(["cartItems"], context.previousCartItems);
+        queryClient.setQueryData(queryKeys.cartItems.all, context.previousCartItems);
       }
     },
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ["cartItems"] }),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: queryKeys.cartItems.all }),
   });
 
   return (

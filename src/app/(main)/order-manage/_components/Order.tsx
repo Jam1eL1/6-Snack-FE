@@ -13,6 +13,7 @@ import Image from "next/image";
 import { usePendingOrders } from "@/hooks/usePendingOrders";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { updateOrderStatus } from "@/lib/api/orderManage.api";
+import { queryKeys } from "@/lib/queryKeys";
 import icNoOrder from "@/assets/icons/ic_no_order.svg";
 import { useAuth } from "@/providers/AuthProvider";
 import { TToastVariant } from "@/types/toast.types";
@@ -66,15 +67,15 @@ export default function Order() {
   const { mutate: updateOrderStatusMutation } = useMutation({
     mutationFn: updateOrderStatus,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["pendingOrders"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.pendingOrders.all });
     },
   });
 
   // Invalidate related queries when the user context changes.
   useEffect(() => {
     if (user?.company?.id) {
-      queryClient.invalidateQueries({ queryKey: ["pendingOrders"] });
-      queryClient.invalidateQueries({ queryKey: ["budgets"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.pendingOrders.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.budgets.all });
     }
   }, [user?.company?.id, queryClient]);
 

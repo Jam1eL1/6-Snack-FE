@@ -6,6 +6,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getBudgets, patchBudgets } from "@/lib/api/budgets.api";
+import { queryKeys } from "@/lib/queryKeys";
 import BudgetFormUI from "./_components/BudgetFormUI";
 import DogSpinner from "@/components/common/DogSpinner";
 
@@ -27,7 +28,7 @@ function ManageBudgetsPage() {
 
   // 예산 데이터 패칭
   const { data, isLoading: isQueryLoading } = useQuery<BudgetResponse>({
-    queryKey: ["budgets"],
+    queryKey: queryKeys.budgets.all,
     queryFn: getBudgets,
   });
 
@@ -71,8 +72,8 @@ function ManageBudgetsPage() {
       setShowSubmitSpinner(true);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["budgets"] });
-      queryClient.invalidateQueries({ queryKey: ["orderDetail"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.budgets.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.adminOrders.detailPrefix });
       setShowSubmitSpinner(false);
     },
     onError: () => {

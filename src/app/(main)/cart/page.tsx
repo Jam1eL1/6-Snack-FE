@@ -16,6 +16,7 @@ import { TOrderResponse } from "@/types/order.types";
 import { useDeviceType } from "@/hooks/useDeviceType";
 import clsx from "clsx";
 import { formatPrice } from "@/lib/utils/formatPrice.util";
+import { queryKeys } from "@/lib/queryKeys";
 import { useOrderStore } from "@/stores/orderStore";
 
 export default function CartPage() {
@@ -34,8 +35,8 @@ export default function CartPage() {
     data: cartItems,
     isPending,
     error,
-  } = useQuery<TGetCartItemsResponse, Error, TGetCartItemsResponse, [string]>({
-    queryKey: ["cartItems"],
+  } = useQuery<TGetCartItemsResponse, Error, TGetCartItemsResponse>({
+    queryKey: queryKeys.cartItems.all,
     queryFn: () => getCartItems(),
   });
 

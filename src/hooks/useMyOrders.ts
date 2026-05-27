@@ -1,11 +1,10 @@
 import { getMyOrders } from "@/lib/api/orderHistory.api";
+import { queryKeys } from "@/lib/queryKeys";
 import { useQuery } from "@tanstack/react-query";
-
-export const MY_ORDERS_QUERY_KEY = ["myOrders"] as const;
 
 export const useMyOrders = () => {
   return useQuery({
-    queryKey: MY_ORDERS_QUERY_KEY,
+    queryKey: queryKeys.myOrders.all,
     queryFn: async () => {
       const data = await getMyOrders();
       return data.filter((item) => item.status !== "CANCELED");

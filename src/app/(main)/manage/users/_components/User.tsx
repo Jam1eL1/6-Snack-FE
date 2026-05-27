@@ -17,6 +17,7 @@ import { Suspense, useMemo, useState, useRef, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import DogSpinner from "@/components/common/DogSpinner";
 import { SessionExpiredError } from "@/lib/api/auth.errors";
+import { queryKeys } from "@/lib/queryKeys";
 
 export default function User() {
   const [currentPaginationPage, setCurrentPaginationPage] = useState<number>(1);
@@ -65,7 +66,7 @@ export default function User() {
     isLoading: isLoadingMembers,
     error: membersError,
   } = useQuery({
-    queryKey: ["companyUsers", name],
+    queryKey: queryKeys.companyUsers.list(name),
     queryFn: () => fetchAllCompanyUsers({ name, limit: 50 }),
   });
 
@@ -83,7 +84,7 @@ export default function User() {
     mutationFn: deleteUserById,
     onSuccess: (data) => {
       showToast(data.message, "success");
-      queryClient.invalidateQueries({ queryKey: ["companyUsers"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.companyUsers.all });
     },
     onError: (error) => {
       if (error instanceof SessionExpiredError) return;
@@ -116,7 +117,7 @@ export default function User() {
         showToast("Invitation link created but email sending failed.", "error");
       }
       // Invalidate member list cache to refetch
-      queryClient.invalidateQueries({ queryKey: ["companyUsers"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.companyUsers.all });
     },
     onError: (error) => {
       if (error instanceof SessionExpiredError) return;

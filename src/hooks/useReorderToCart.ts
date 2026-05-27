@@ -1,5 +1,6 @@
 import { addToCart } from "@/lib/api/cart.api";
 import { TMyOrderDetail } from "@/lib/api/orderHistory.api";
+import { queryKeys } from "@/lib/queryKeys";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const useReorderToCart = ({
@@ -18,7 +19,7 @@ export const useReorderToCart = ({
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cartItems"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.cartItems.all });
       onReorderToCartSuccess?.();
     },
     onError: (error) => {

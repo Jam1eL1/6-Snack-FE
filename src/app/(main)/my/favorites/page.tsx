@@ -4,6 +4,7 @@ import DogSpinner from "@/components/common/DogSpinner";
 import ProductGrid from "@/components/common/ProductGrid";
 import { useDeviceType } from "@/hooks/useDeviceType";
 import { getFavorites } from "@/lib/api/favorite.api";
+import { queryKeys } from "@/lib/queryKeys";
 import { TGetFavoriteProductResponse } from "@/types/favorite.types";
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
 import React from "react";
@@ -25,10 +26,10 @@ export default function MyFavoritesPage() {
     TGetFavoriteProductResponse,
     Error,
     InfiniteData<TGetFavoriteProductResponse>,
-    [string, string],
+    ReturnType<typeof queryKeys.favorites.list>,
     string
   >({
-    queryKey: ["favorites", limit],
+    queryKey: queryKeys.favorites.list(limit),
     queryFn: ({ pageParam }) => getFavorites({ cursor: pageParam ?? "", limit }),
     initialPageParam: "",
     getNextPageParam: (lastPage) => {

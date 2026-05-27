@@ -1,4 +1,5 @@
 import { addToCart } from "@/lib/api/cart.api";
+import { queryKeys } from "@/lib/queryKeys";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type TAddToCartVariables = {
@@ -15,7 +16,7 @@ export const useAddToCart = ({ onAddToCartSuccess, onAddToCartError }: TUseAddTo
   return useMutation({
     mutationFn: ({ productId, quantity }: TAddToCartVariables) => addToCart(productId, quantity),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cartItems"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.cartItems.all });
       onAddToCartSuccess?.();
     },
     onError: (error) => {

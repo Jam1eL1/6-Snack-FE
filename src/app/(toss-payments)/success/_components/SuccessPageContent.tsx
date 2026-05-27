@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getOrderDetailWithoutStatus } from "@/lib/api/orderManage.api";
 import CheckIconSvg from "@/components/svg/CheckIconSvg";
+import { queryKeys } from "@/lib/queryKeys";
 
 type TSuccessPageContentProps = {
   orderId?: string;
@@ -19,7 +20,7 @@ export default function SuccessPageContent({ orderId, amount, paymentKey }: TSuc
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
   const { data: order, isPending } = useQuery({
-    queryKey: ["order", orderId],
+    queryKey: queryKeys.paymentOrder.detail(orderId ?? ""),
     queryFn: () => getOrderDetailWithoutStatus(orderId ?? ""),
     enabled: !!orderId,
   });

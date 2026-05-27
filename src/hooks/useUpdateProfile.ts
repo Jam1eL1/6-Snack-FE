@@ -4,6 +4,7 @@ import {
   updateCompanyInfo,
   updatePassword,
 } from "@/lib/api/profile.api";
+import { queryKeys } from "@/lib/queryKeys";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const useUpdateCompanyInfo = ({
@@ -19,7 +20,7 @@ export const useUpdateCompanyInfo = ({
     mutationFn: ({ userId, payload }: { userId: string; payload: TUpdateCompanyInfoRequest }) =>
       updateCompanyInfo(userId, payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.user.all });
       onUpdateCompanyInfoSuccess?.();
     },
     onError: (error) => {
@@ -41,7 +42,7 @@ export const useUpdatePassword = ({
     mutationFn: ({ userId, payload }: { userId: string; payload: TUpdatePasswordRequest }) =>
       updatePassword(userId, payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.user.all });
       onUpdatePasswordSuccess?.();
     },
     onError: (error) => {

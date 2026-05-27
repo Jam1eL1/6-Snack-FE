@@ -1,5 +1,6 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { getProducts } from "@/lib/api/product.api";
+import { queryKeys } from "@/lib/queryKeys";
 
 type TUseProductsParams = {
   category?: number;
@@ -9,7 +10,7 @@ type TUseProductsParams = {
 
 export const useProducts = (params: TUseProductsParams) => {
   return useInfiniteQuery({
-    queryKey: ["products", params.category, params.sort, params.limit],
+    queryKey: queryKeys.products.infinite(params.category, params.sort, params.limit),
     queryFn: ({ pageParam }: { pageParam: number | undefined }) =>
       getProducts({
         ...params,

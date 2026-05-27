@@ -10,6 +10,7 @@ import { getCartItems } from "@/lib/api/cart.api";
 import { TGetCartItemsParams, TGetCartItemsResponse } from "@/types/cart.types";
 import { useRouter } from "next/navigation";
 import { createOrder } from "@/lib/api/order.api";
+import { queryKeys } from "@/lib/queryKeys";
 import clsx from "clsx";
 import { TOrderResponse } from "@/types/order.types";
 
@@ -30,8 +31,8 @@ export default function OrderPageContent({ cartItemId }: TOrderPageContentProps)
     data: cartItems,
     isPending,
     error,
-  } = useQuery<TGetCartItemsResponse, Error, TGetCartItemsResponse, [string, string, string]>({
-    queryKey: ["cartItems", "order", cartItemId ?? "isChecked"],
+  } = useQuery<TGetCartItemsResponse, Error, TGetCartItemsResponse>({
+    queryKey: queryKeys.cartItems.order(cartItemId),
     queryFn: () => getCartItems(params),
   });
 

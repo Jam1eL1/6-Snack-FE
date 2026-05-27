@@ -12,6 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import NoContent from "@/components/common/NoContent";
 import { useRouter } from "next/navigation";
 import DogSpinner from "@/components/common/DogSpinner";
+import { queryKeys } from "@/lib/queryKeys";
 
 export default function MyProductsPage() {
   const [params, setParams] = useState<TMyProductsParams>({
@@ -26,8 +27,8 @@ export default function MyProductsPage() {
     data: products,
     isPending,
     error,
-  } = useQuery<TMyProductsResponse, Error, TMyProductsResponse, [string, string, TMyProductsParams]>({
-    queryKey: ["my", "products", params],
+  } = useQuery<TMyProductsResponse, Error, TMyProductsResponse>({
+    queryKey: queryKeys.myProducts.list(params),
     queryFn: () => getMyProducts(params),
   });
 
