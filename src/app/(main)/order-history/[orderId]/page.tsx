@@ -147,14 +147,14 @@ export default function OrderHistoryDetailPage({}: TOrderHistoryDetailPageProps)
               onClick={handleGoHome}
               type="button"
             >
-              홈으로
+              Home
             </button>
             <button
               className="flex-1 md:flex-none md:w-[264px] h-16 px-4 py-3 bg-primary-800 rounded-[2px] flex justify-center items-center text-base font-bold cursor-pointer hover:bg-primary-700 transition-colors duration-200 text-white"
               onClick={handleGoToOrderHistory}
               type="button"
             >
-              구매 내역 확인
+              Back to List
             </button>
           </div>
         </div>

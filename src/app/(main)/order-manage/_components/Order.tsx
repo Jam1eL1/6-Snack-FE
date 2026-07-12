@@ -19,6 +19,13 @@ import { useAuth } from "@/providers/AuthProvider";
 import { TToastVariant } from "@/types/toast.types";
 import { useRouter } from "next/navigation";
 import { useOrderStore } from "@/stores/orderStore";
+import { TOrder, TOrderSort } from "@/types/order.types";
+
+const ORDER_BY_MAP: Record<string, TOrderSort> = {
+  Newest: "latest",
+  "Lowest Price": "priceLow",
+  "Highest Price": "priceHigh",
+};
 
 export default function Order() {
   const [currentPaginationPage, setCurrentPaginationPage] = useState<number>(1);
@@ -49,15 +56,7 @@ export default function Order() {
     timerRef.current = setTimeout(() => setToastVisible(false), 3000);
   };
 
-  const orderByMap = useMemo(
-    (): Record<string, string> => ({
-      Newest: "latest",
-      "Lowest Price": "priceLow",
-      "Highest Price": "priceHigh",
-    }),
-    [],
-  );
-  const [orderBy, setOrderBy] = useState<string>(orderByMap.Newest);
+  const [orderBy, setOrderBy] = useState<TOrderSort>(ORDER_BY_MAP.Newest);
 
   const { visibleCount } = useOrderVisibleCount();
 
@@ -140,7 +139,7 @@ export default function Order() {
         <h1 className="text-black text-base font-bold">Purchase Request Management</h1>
         <div role="group" aria-label="Sort options">
           <Dropdown
-            onChange={(selected) => setOrderBy(orderByMap[selected] || orderByMap.Newest)}
+            onChange={(selected) => setOrderBy(ORDER_BY_MAP[selected] ?? ORDER_BY_MAP.Newest)}
             options={["Newest", "Lowest Price", "Highest Price"]}
             aria-label="Sort order list"
           />
@@ -202,9 +201,7 @@ export default function Order() {
               </div>
               <div className="self-stretch flex flex-col justify-start items-center gap-12">
                 <div className="w-72 flex flex-col justify-start items-center gap-2.5">
-                  <h2 className="self-stretch text-center text-neutral-800 text-2xl font-extrabold">
-                    No requests yet
-                  </h2>
+                  <h2 className="self-stretch text-center text-neutral-800 text-2xl font-extrabold">No requests yet</h2>
                   <p className="self-stretch text-center text-neutral-700 text-base leading-relaxed">
                     Browse the product list
                     <br />

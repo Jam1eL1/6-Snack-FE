@@ -79,7 +79,7 @@ export default function OrderManageDetailPage() {
           modalTitle="Approval Complete"
           modalDescription="Approval has been completed!<br />Check shipping status through purchase history"
           leftButtonText="Go Home"
-          rightButtonText="View Purchase History"
+          rightButtonText="Purchase History"
           onLeftClick={() => {
             router.push("/products");
           }}

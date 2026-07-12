@@ -1,25 +1,35 @@
-import { TAdminOrdersResponse, TOrderNowResponse, TOrderRequestBody, TOrderResponse } from "@/types/order.types";
+import {
+  TAdminOrdersData,
+  TAdminOrdersResponse,
+  TOrderNowResponse,
+  TOrderRequestBody,
+  TOrderResponse,
+  TOrderSort,
+} from "@/types/order.types";
 import { cookieFetch } from "./fetchClient.api";
 
 // Retrieve admin order history
-export const getAdminOrders = ({
+type TGetAdminOrdersParams = {
+  status: "pending" | "approved";
+  offset?: number;
+  limit?: number;
+  orderBy?: TOrderSort;
+};
+export const getAdminOrders = async ({
   status,
   offset = 0,
   limit = 4,
   orderBy = "latest",
-}: {
-  status: "pending" | "approved";
-  offset?: number;
-  limit?: number;
-  orderBy?: string;
-}): Promise<TAdminOrdersResponse> => {
+}: TGetAdminOrdersParams): Promise<TAdminOrdersData> => {
+  const page = Math.floor(offset / limit) + 1;
   const params = new URLSearchParams({
     status,
-    offset: String(offset),
+    page: String(page),
     limit: String(limit),
     orderBy,
   });
-  return cookieFetch<TAdminOrdersResponse>(`/admin/orders?${params.toString()}`);
+  const response = await cookieFetch<TAdminOrdersResponse>(`/admin/orders?${params.toString()}`);
+  return response.data;
 };
 
 export const createOrder = ({ requestMessage, cartItemIds }: TOrderRequestBody): Promise<TOrderResponse> => {

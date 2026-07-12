@@ -1,24 +1,29 @@
 import {
+  TAdminOrdersData,
+  TAdminOrdersResponse,
   TOrderResponse,
+  TOrderSort,
   TOrderWithoutStatus,
-  TPendingOrderResponse,
   TUpdateOrderStatusRequest,
   TUpdateOrderStatusResponse,
 } from "@/types/order.types";
 import { cookieFetch } from "./fetchClient.api";
 
-export const getPendingOrders = ({
+type TGetPendingOrdersParams = {
+  offset?: number;
+  limit?: number;
+  orderBy?: TOrderSort;
+};
+
+export const getPendingOrders = async ({
   offset = 0,
   limit = 10,
   orderBy = "latest",
-}: {
-  offset?: number;
-  limit?: number;
-  orderBy?: string;
-}): Promise<TPendingOrderResponse> => {
+}: TGetPendingOrdersParams): Promise<TAdminOrdersData> => {
   const page = Math.floor(offset / limit) + 1;
   const query = `?status=pending&page=${page}&limit=${limit}&orderBy=${orderBy}`;
-  return cookieFetch<TPendingOrderResponse>(`/admin/orders${query}`);
+  const response = await cookieFetch<TAdminOrdersResponse>(`/admin/orders${query}`);
+  return response.data;
 };
 
 export const getPendingOrderDetail = (orderId: string): Promise<TOrderResponse> => {

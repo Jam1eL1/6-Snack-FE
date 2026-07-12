@@ -13,6 +13,20 @@ type TBudget = {
   currentMonthExpense: number;
 };
 
+export type TOrderSort = "latest" | "priceLow" | "priceHigh";
+
+export type TOrdersMeta = {
+  totalCount: number;
+  itemsPerPage: number;
+  currentPage: number;
+  totalPages: number;
+};
+
+export type TAdminOrdersData = {
+  orders: TOrderSummary[];
+  meta: TOrdersMeta;
+};
+
 export type TOrderBase = {
   id: string;
   userId: string;
@@ -50,12 +64,10 @@ export type TOrderNowResponse = {
   data: TUpdateOrderStatusResponse;
 };
 
-export type TPendingOrderResponse = {
-  orders: TOrderSummary[];
-  meta: { totalCount: number; itemsPerPage: number; currentPage: number; totalPages: number };
+export type TAdminOrdersResponse = {
+  message: string;
+  data: TAdminOrdersData;
 };
-
-export type TAdminOrdersResponse = TPendingOrderResponse;
 
 export type TUpdateOrderStatusRequest = {
   orderId: string;
