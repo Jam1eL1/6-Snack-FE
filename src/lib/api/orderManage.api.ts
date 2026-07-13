@@ -1,9 +1,9 @@
 import {
+  TAdminOrderDetail,
+  TAdminOrderDetailResponse,
   TAdminOrdersData,
   TAdminOrdersResponse,
-  TOrderResponse,
   TOrderSort,
-  TOrderWithoutStatus,
   TUpdateOrderStatusRequest,
   TUpdateOrderStatusResponse,
 } from "@/types/order.types";
@@ -26,11 +26,14 @@ export const getPendingOrders = async ({
   return response.data;
 };
 
-export const getPendingOrderDetail = (orderId: string): Promise<TOrderResponse> => {
-  return cookieFetch<TOrderResponse>(`/admin/orders/${orderId}?status=pending`);
+export const getPendingOrderDetail = async (orderId: string): Promise<TAdminOrderDetail> => {
+  const response = await cookieFetch<TAdminOrderDetailResponse>(`/admin/orders/${orderId}?status=pending`);
+  return response.data;
 };
-export const getOrderDetailWithoutStatus = (orderId: string): Promise<TOrderWithoutStatus> => {
-  return cookieFetch<TOrderWithoutStatus>(`/admin/orders/${orderId}`);
+export const getOrderDetailWithoutStatus = async (orderId: string): Promise<TAdminOrderDetail> => {
+  const response = await cookieFetch<TAdminOrderDetailResponse>(`/admin/orders/${orderId}`);
+
+  return response.data;
 };
 
 export const updateOrderStatus = ({
@@ -42,4 +45,13 @@ export const updateOrderStatus = ({
     method: "PATCH",
     body: JSON.stringify({ status, adminMessage }),
   });
+};
+
+// get order detail for admin
+export const getOrderDetail = async (
+  orderId: string,
+  status: "pending" | "approved" = "pending",
+): Promise<TAdminOrderDetail> => {
+  const response = await cookieFetch<TAdminOrderDetailResponse>(`/admin/orders/${orderId}?status=${status}`);
+  return response.data;
 };

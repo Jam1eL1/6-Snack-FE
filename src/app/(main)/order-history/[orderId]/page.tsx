@@ -3,9 +3,10 @@
 import { useState, useEffect, useCallback, useMemo, Suspense, lazy } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import Head from "next/head";
-import { getOrderDetail, TAdminOrderDetail } from "@/lib/api/orderDetail.api";
 import { getStatusText, formatDate } from "@/components/common/OrderDetail";
 import DogSpinner from "@/components/common/DogSpinner";
+import { TAdminOrderDetail } from "@/types/order.types";
+import { getOrderDetail } from "@/lib/api/orderManage.api";
 
 // Lazy-load the detail sections for finer-grained code splitting.
 const OrderItemsSection = lazy(() => import("@/components/common/OrderDetail/OrderItemsSection"));

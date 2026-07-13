@@ -10,9 +10,9 @@ export const addToCart = (productId: number, quantity: number): Promise<TAddToCa
 
 // Fetch cart items
 export const getCartItems = async (params: TGetCartItemsParams = {}): Promise<TGetCartItemsResponse> => {
-  const queryString = new URLSearchParams(params);
+  const queryString = new URLSearchParams(params).toString();
 
-  return cookieFetch<TGetCartItemsResponse>(`/cart?${queryString.toString()}`);
+  return cookieFetch<TGetCartItemsResponse>(queryString ? `/cart?${queryString}` : "/cart");
 };
 
 // Select or deselect a cart item

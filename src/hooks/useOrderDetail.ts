@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { getOrderDetail, TAdminOrderDetail } from "@/lib/api/orderDetail.api";
 import { getMyOrderDetail, TMyOrderDetail } from "@/lib/api/orderHistory.api";
 import { queryKeys } from "@/lib/queryKeys";
+import { getOrderDetail } from "@/lib/api/orderManage.api";
+import { TAdminOrderDetail } from "@/types/order.types";
 
 // Custom hook for fetching order details (admin)
 export const useOrderDetail = (orderId: string, status: "pending" | "approved" = "pending") => {
-  return useQuery<TAdminOrderDetail>({
+  return useQuery({
     queryKey: queryKeys.adminOrders.detail(orderId, status),
     queryFn: () => getOrderDetail(orderId, status),
     enabled: !!orderId, // Only run the query when orderId is available
@@ -16,7 +17,7 @@ export const useOrderDetail = (orderId: string, status: "pending" | "approved" =
 
 // Custom hook for fetching my order details (user)
 export const useMyOrderDetail = (orderId: string) => {
-  return useQuery<TMyOrderDetail>({
+  return useQuery({
     queryKey: queryKeys.myOrders.detail(orderId),
     queryFn: () => getMyOrderDetail(orderId),
     enabled: !!orderId, // Only run the query when orderId is available
