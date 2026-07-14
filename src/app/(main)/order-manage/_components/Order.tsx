@@ -8,7 +8,7 @@ import Toast from "@/components/common/Toast";
 import { useOrderVisibleCount } from "@/hooks/useOrderVisibleCount";
 import { getPendingOrderDetail } from "@/lib/api/orderManage.api";
 import { useModal } from "@/providers/ModalProvider";
-import { useMemo, useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { usePendingOrders } from "@/hooks/usePendingOrders";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
@@ -19,7 +19,7 @@ import { useAuth } from "@/providers/AuthProvider";
 import { TToastVariant } from "@/types/toast.types";
 import { useRouter } from "next/navigation";
 import { useOrderStore } from "@/stores/orderStore";
-import { TOrder, TOrderSort } from "@/types/order.types";
+import { TOrderSort } from "@/types/order.types";
 
 const ORDER_BY_MAP: Record<string, TOrderSort> = {
   Newest: "latest",
@@ -67,6 +67,8 @@ export default function Order() {
     mutationFn: updateOrderStatus,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.pendingOrders.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.adminOrders.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.adminOrders.detailPrefix });
     },
   });
 

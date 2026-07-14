@@ -94,7 +94,7 @@ export type TOrderNowBody = {
 
 export type TOrderNowResponse = {
   message: string;
-  data: TUpdateOrderStatusResponse;
+  data: TUpdateOrderStatusData;
 };
 
 export type TAdminOrdersResponse = {
@@ -108,7 +108,7 @@ export type TUpdateOrderStatusRequest = {
   adminMessage?: string;
 };
 
-export type TUpdateOrderStatusResponse = {
+export type TUpdateOrderStatusData = {
   id: string;
   companyId: number;
   userId: string;
@@ -120,6 +120,11 @@ export type TUpdateOrderStatusResponse = {
   createdAt: string;
   updatedAt: string;
   status: "PENDING" | "APPROVED" | "REJECTED" | "CANCELED" | "INSTANT_APPROVED";
+};
+
+export type TUpdateOrderStatusResponse = {
+  message: string;
+  data: TUpdateOrderStatusData;
 };
 
 export type TOrderResponse = TOrderBase & {

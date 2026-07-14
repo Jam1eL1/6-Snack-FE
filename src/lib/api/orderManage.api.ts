@@ -5,6 +5,7 @@ import {
   TAdminOrdersResponse,
   TOrderSort,
   TUpdateOrderStatusRequest,
+  TUpdateOrderStatusData,
   TUpdateOrderStatusResponse,
 } from "@/types/order.types";
 import { cookieFetch } from "./fetchClient.api";
@@ -36,15 +37,17 @@ export const getOrderDetailWithoutStatus = async (orderId: string): Promise<TAdm
   return response.data;
 };
 
-export const updateOrderStatus = ({
+export const updateOrderStatus = async ({
   orderId,
   status,
   adminMessage,
-}: TUpdateOrderStatusRequest): Promise<TUpdateOrderStatusResponse> => {
-  return cookieFetch<TUpdateOrderStatusResponse>(`/admin/orders/${orderId}`, {
+}: TUpdateOrderStatusRequest): Promise<TUpdateOrderStatusData> => {
+  const response = await cookieFetch<TUpdateOrderStatusResponse>(`/admin/orders/${orderId}`, {
     method: "PATCH",
     body: JSON.stringify({ status, adminMessage }),
   });
+
+  return response.data;
 };
 
 // get order detail for admin

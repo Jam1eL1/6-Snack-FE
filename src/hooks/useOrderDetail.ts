@@ -1,8 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { getMyOrderDetail, TMyOrderDetail } from "@/lib/api/orderHistory.api";
+import { getMyOrderDetail } from "@/lib/api/orderHistory.api";
 import { queryKeys } from "@/lib/queryKeys";
 import { getOrderDetail } from "@/lib/api/orderManage.api";
-import { TAdminOrderDetail } from "@/types/order.types";
 
 // Custom hook for fetching order details (admin)
 export const useOrderDetail = (orderId: string, status: "pending" | "approved" = "pending") => {
