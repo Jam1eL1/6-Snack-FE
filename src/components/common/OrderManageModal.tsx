@@ -1,5 +1,5 @@
 import { useModal } from "@/providers/ModalProvider";
-import { TOrder } from "@/types/order.types";
+import { TAdminOrderDetail } from "@/types/order.types";
 import Image from "next/image";
 import { useState } from "react";
 import { twMerge } from "tailwind-merge";
@@ -11,7 +11,7 @@ import { TToastVariant } from "@/types/toast.types";
 
 type TOrderManageModalProps = {
   type: "reject" | "approve";
-  order: TOrder;
+  order: TAdminOrderDetail;
   onClick: () => void;
   onUpdateOrderStatus: (variables: { orderId: string; status: "APPROVED" | "REJECTED"; adminMessage?: string }) => void;
   showToast: (message: string, variant: TToastVariant) => void;
@@ -27,8 +27,10 @@ export default function OrderManageModal({
   const { closeModal } = useModal();
   const [adminMessage, setAdminMessage] = useState("");
 
+  const currentMonthBudget = order.budget.currentMonthBudget ?? 0;
+  const currentMonthExpense = order.budget.currentMonthExpense ?? 0;
   const remainingBudget =
-    order.budget.currentMonthBudget - order.budget.currentMonthExpense - order.productsPriceTotal - order.deliveryFee;
+    currentMonthBudget - currentMonthExpense - order.productsPriceTotal - order.deliveryFee;
 
   return (
     <div

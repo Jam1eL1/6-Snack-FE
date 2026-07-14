@@ -11,8 +11,7 @@ import { useModal } from "@/providers/ModalProvider";
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { usePendingOrders } from "@/hooks/usePendingOrders";
-import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { updateOrderStatus } from "@/lib/api/orderManage.api";
+import { useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/lib/queryKeys";
 import icNoOrder from "@/assets/icons/ic_no_order.svg";
 import { useAuth } from "@/providers/AuthProvider";
@@ -20,6 +19,7 @@ import { TToastVariant } from "@/types/toast.types";
 import { useRouter } from "next/navigation";
 import { useOrderStore } from "@/stores/orderStore";
 import { TOrderSort } from "@/types/order.types";
+import { useOrderStatusUpdate } from "@/hooks/useOrderStatusUpdate";
 
 const ORDER_BY_MAP: Record<string, TOrderSort> = {
   Newest: "latest",
@@ -63,14 +63,7 @@ export default function Order() {
   const prevVisibleCountRef = useRef(visibleCount);
 
   // Order status update mutation
-  const { mutate: updateOrderStatusMutation } = useMutation({
-    mutationFn: updateOrderStatus,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.pendingOrders.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.adminOrders.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.adminOrders.detailPrefix });
-    },
-  });
+  const { mutate: updateOrderStatusMutation } = useOrderStatusUpdate();
 
   // Invalidate related queries when the user context changes.
   useEffect(() => {

@@ -137,3 +137,5 @@ export type TOrderResponse = TOrderBase & {
   })[];
   budget: TBudget;
 };
+
+export type TCheckoutOrder = Pick<TOrderResponse, "id" | "productsPriceTotal" | "deliveryFee" | "products">;
