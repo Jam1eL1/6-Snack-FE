@@ -4,7 +4,7 @@ export type TOrderItem = {
   productsPriceTotal: number;
   deliveryFee: number;
   createdAt: string;
-  status: "PENDING" | "APPROVED" | "REJECTED" | "CANCELED";
+  status: "PENDING" | "APPROVED" | "REJECTED" | "CANCELED" | "INSTANT_APPROVED";
   receipts: {
     productName: string;
     imageUrl: string;

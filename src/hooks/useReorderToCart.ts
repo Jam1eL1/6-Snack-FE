@@ -1,5 +1,5 @@
 import { addToCart } from "@/lib/api/cart.api";
-import { TMyOrderDetail } from "@/lib/api/orderHistory.api";
+import { TMyOrderDetail } from "@/types/order.types";
 import { queryKeys } from "@/lib/queryKeys";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 

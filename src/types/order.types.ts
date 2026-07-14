@@ -115,3 +115,83 @@ export type TCreateOrderResponse = {
 };
 
 export type TCheckoutOrder = Pick<TCreateOrderData, "id" | "productsPriceTotal" | "deliveryFee" | "products">;
+
+export type TMyOrderReceipt = {
+  id: number;
+  productId: number;
+  orderId: string;
+  productName: string;
+  price: number;
+  imageUrl: string;
+  quantity: number;
+  createdAt: string;
+};
+
+export type TOrderUser = {
+  id: string;
+  email: string;
+  name: string;
+  companyId: number;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  role: "USER" | "ADMIN" | "SUPER_ADMIN";
+};
+
+export type TMyOrderDetail = {
+  id: string;
+  companyId: number;
+  userId: string;
+  approver: string | null;
+  adminMessage: string | null;
+  requestMessage: string | null;
+  productsPriceTotal: number;
+  deliveryFee: number;
+  createdAt: string;
+  updatedAt: string;
+  status: "PENDING" | "APPROVED" | "REJECTED" | "CANCELED" | "INSTANT_APPROVED";
+  user: TOrderUser;
+  receipts: TMyOrderReceipt[];
+};
+
+export type TMyOrderDetailResponse = {
+  message: string;
+  data: TMyOrderDetail;
+};
+
+export type TMyOrdersReceiptData = {
+  id: number;
+  productName: string;
+  price: number;
+  imageUrl: string;
+  quantity: number;
+};
+
+export type TMyOrdersItemData = {
+  id: string;
+  companyId: number;
+  userId: string;
+  approver: string | null;
+  adminMessage: string | null;
+  requestMessage: string | null;
+  deliveryFee: number;
+  productsPriceTotal: number;
+  createdAt: string;
+  updatedAt: string;
+  status: "PENDING" | "APPROVED" | "REJECTED" | "CANCELED" | "INSTANT_APPROVED";
+  receipts: TMyOrdersReceiptData[];
+};
+
+export type TGetMyOrdersResponse = {
+  message: string;
+  data: TMyOrdersItemData[];
+};
+
+export type TCancelOrderData = Omit<TMyOrdersItemData, "status"> & {
+  status: "CANCELED";
+};
+
+export type TCancelOrderResponse = {
+  message: string;
+  data: TCancelOrderData;
+};
