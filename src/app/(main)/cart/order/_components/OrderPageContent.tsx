@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 import { createOrder } from "@/lib/api/order.api";
 import { queryKeys } from "@/lib/queryKeys";
 import clsx from "clsx";
-import { TOrderResponse } from "@/types/order.types";
+import { TCreateOrderData } from "@/types/order.types";
 
 type TOrderPageContentProps = {
   cartItemId?: string;
@@ -38,7 +38,7 @@ export default function OrderPageContent({ cartItemId }: TOrderPageContentProps)
 
   // 구매 요청
   const { mutate: orderRequest } = useMutation<
-    TOrderResponse,
+    TCreateOrderData,
     Error,
     { requestMessage?: string; cartItemIds: number[] }
   >({

@@ -1,9 +1,10 @@
 import {
   TAdminOrdersData,
   TAdminOrdersResponse,
+  TCreateOrderData,
+  TCreateOrderResponse,
   TOrderNowResponse,
   TOrderRequestBody,
-  TOrderResponse,
   TOrderSort,
 } from "@/types/order.types";
 import { cookieFetch } from "./fetchClient.api";
@@ -32,11 +33,13 @@ export const getAdminOrders = async ({
   return response.data;
 };
 
-export const createOrder = ({ requestMessage, cartItemIds }: TOrderRequestBody): Promise<TOrderResponse> => {
-  return cookieFetch<TOrderResponse>("/orders", {
+export const createOrder = async ({ requestMessage, cartItemIds }: TOrderRequestBody): Promise<TCreateOrderData> => {
+  const response = await cookieFetch<TCreateOrderResponse>("/orders", {
     method: "POST",
     body: JSON.stringify({ requestMessage, cartItemIds }),
   });
+
+  return response.data;
 };
 
 // Instant purchase from cart - admins only

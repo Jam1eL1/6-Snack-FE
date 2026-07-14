@@ -1,18 +1,3 @@
-import { StaticImageData } from "next/image";
-
-type TProducts = {
-  id: number;
-  productName: string;
-  price: number;
-  imageUrl: string | StaticImageData;
-  quantity: number;
-}[];
-
-type TBudget = {
-  currentMonthBudget: number;
-  currentMonthExpense: number;
-};
-
 export type TOrderSort = "latest" | "priceLow" | "priceHigh";
 
 export type TOrdersMeta = {
@@ -78,11 +63,6 @@ export type TAdminOrderDetail = {
     currentMonthExpense: number | null;
   };
 };
-export type TOrder = TOrderBase & {
-  products: TProducts;
-  budget: TBudget;
-};
-
 export type TOrderRequestBody = {
   requestMessage?: string;
   cartItemIds: number[];
@@ -127,15 +107,11 @@ export type TUpdateOrderStatusResponse = {
   data: TUpdateOrderStatusData;
 };
 
-export type TOrderResponse = TOrderBase & {
-  companyId: number;
-  requester: string;
-  products: (TProducts[number] & {
-    productId: number;
-    orderId: string;
-    createdAt: string;
-  })[];
-  budget: TBudget;
+export type TCreateOrderData = TAdminOrderDetail;
+
+export type TCreateOrderResponse = {
+  message: string;
+  data: TCreateOrderData;
 };
 
-export type TCheckoutOrder = Pick<TOrderResponse, "id" | "productsPriceTotal" | "deliveryFee" | "products">;
+export type TCheckoutOrder = Pick<TCreateOrderData, "id" | "productsPriceTotal" | "deliveryFee" | "products">;

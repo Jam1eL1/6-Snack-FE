@@ -12,7 +12,7 @@ import { TGetCartItemsResponse } from "@/types/cart.types";
 import { useRouter } from "next/navigation";
 import Toast from "@/components/common/Toast";
 import { createOrder } from "@/lib/api/order.api";
-import { TOrderResponse } from "@/types/order.types";
+import { TCreateOrderData } from "@/types/order.types";
 import { useDeviceType } from "@/hooks/useDeviceType";
 import clsx from "clsx";
 import { formatPrice } from "@/lib/utils/formatPrice.util";
@@ -40,7 +40,7 @@ export default function CartPage() {
     queryFn: () => getCartItems(),
   });
 
-  const { mutate: orderRequest } = useMutation<TOrderResponse, Error, number[]>({
+  const { mutate: orderRequest } = useMutation<TCreateOrderData, Error, number[]>({
     mutationFn: (cartItemIds) => createOrder({ cartItemIds }),
     onSuccess: (order) => {
       setOrder(order);
