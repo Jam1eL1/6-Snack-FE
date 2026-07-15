@@ -17,7 +17,6 @@ import icNoOrder from "@/assets/icons/ic_no_order.svg";
 import { useAuth } from "@/providers/AuthProvider";
 import { TToastVariant } from "@/types/toast.types";
 import { useRouter } from "next/navigation";
-import { useOrderStore } from "@/stores/orderStore";
 import { TOrderSort } from "@/types/order.types";
 import { useOrderStatusUpdate } from "@/hooks/useOrderStatusUpdate";
 
@@ -33,9 +32,6 @@ export default function Order() {
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const router = useRouter();
-
-  // Zustand order state
-  const setOrder = useOrderStore((state) => state.setOrder);
 
   // Toast state
   const [toastVisible, setToastVisible] = useState<boolean>(false);
@@ -170,8 +166,7 @@ export default function Order() {
                     order={fullOrder}
                     type="approve"
                     onClick={() => {
-                      setOrder(fullOrder);
-                      router.push("/checkout");
+                      router.push("/order-history");
                     }}
                     onUpdateOrderStatus={updateOrderStatusMutation}
                     showToast={showToast}

@@ -114,8 +114,6 @@ export type TCreateOrderResponse = {
   data: TCreateOrderData;
 };
 
-export type TCheckoutOrder = Pick<TCreateOrderData, "id" | "productsPriceTotal" | "deliveryFee" | "products">;
-
 export type TMyOrderReceipt = {
   id: number;
   productId: number;

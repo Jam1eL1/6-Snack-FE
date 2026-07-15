@@ -221,7 +221,7 @@ export default function OrderManageModal({
                 return;
               }
 
-              // For approvals, continue to the Toss Payments checkout page.
+              // Temporarily continue to purchase history until the replacement payment flow is ready.
               if (type === "approve") {
                 onUpdateOrderStatus({
                   orderId: String(order.id),

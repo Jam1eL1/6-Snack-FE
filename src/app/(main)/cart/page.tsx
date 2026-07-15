@@ -5,19 +5,18 @@ import CartItem from "./_components/CartItem";
 import Button from "@/components/ui/Button";
 import Link from "next/link";
 import ArrowIconSvg from "@/components/svg/ArrowIconSvg";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCartItems } from "@/lib/api/cart.api";
 import { useAuth } from "@/providers/AuthProvider";
 import { TGetCartItemsResponse } from "@/types/cart.types";
 import { useRouter } from "next/navigation";
 import Toast from "@/components/common/Toast";
-import { createOrder } from "@/lib/api/order.api";
-import { TCreateOrderData } from "@/types/order.types";
+import { orderNow } from "@/lib/api/order.api";
+import { TUpdateOrderStatusData } from "@/types/order.types";
 import { useDeviceType } from "@/hooks/useDeviceType";
 import clsx from "clsx";
 import { formatPrice } from "@/lib/utils/formatPrice.util";
 import { queryKeys } from "@/lib/queryKeys";
-import { useOrderStore } from "@/stores/orderStore";
 
 export default function CartPage() {
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
@@ -27,9 +26,7 @@ export default function CartPage() {
 
   const { user } = useAuth();
   const router = useRouter();
-
-  // Zustand로 Order 정보 저장
-  const setOrder = useOrderStore((state) => state.setOrder);
+  const queryClient = useQueryClient();
 
   const {
     data: cartItems,
@@ -40,12 +37,13 @@ export default function CartPage() {
     queryFn: () => getCartItems(),
   });
 
-  const { mutate: orderRequest } = useMutation<TCreateOrderData, Error, number[]>({
-    mutationFn: (cartItemIds) => createOrder({ cartItemIds }),
-    onSuccess: (order) => {
-      setOrder(order);
-
-      router.push("/checkout");
+  const { mutate: orderRequest } = useMutation<TUpdateOrderStatusData, Error, number[]>({
+    mutationFn: orderNow,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.cartItems.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.adminOrders.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.budgets.all });
+      router.push("/order-history");
     },
     onError: () => setIsDisabled(false),
   });
