@@ -15,7 +15,7 @@ export default function QuantityDropdown({ value, onClick: updateQuantity, type 
   const [quantity, setQuantity] = useState<number>(value);
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const toggleRef = useRef<HTMLDivElement>(null); // 드롭다운 토글 버튼 ref
+  const toggleRef = useRef<HTMLDivElement>(null); // Dropdown toggle reference
   const optionRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const quantityOptions = Array.from({ length: 100 }, (_, i) => i + 1);
@@ -26,35 +26,35 @@ export default function QuantityDropdown({ value, onClick: updateQuantity, type 
 
   const changeQuantity = useRef(debounce((quantity: number) => updateQuantity?.(quantity), 500)).current;
 
-  // 직접 수량 입력
+  // Enter a quantity directly
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     const num = Number(val);
 
-    // 숫자가 아니거나 빈 값일 때는 quantity를 null로 세팅해서 빈 칸으로 유지
+    // Keep the field empty when the value is empty or not a number
     if (val === "" || isNaN(num)) {
-      setQuantity(NaN); // null 또는 NaN 등 빈 상태 표시용
+      setQuantity(NaN); // Represents an empty input state
       return;
     }
 
     if (num >= 1 && num <= 100) {
       setQuantity(num);
-      changeQuantity(num); // ✅ 입력 디바운싱 처리
+      changeQuantity(num); // Debounce quantity changes
     }
   };
 
-  // 드롭다운 수량 선택
+  // Select a quantity from the dropdown
   const handleSelect = (val: number) => {
     setQuantity(val);
 
     if (val !== value) {
-      updateQuantity?.(val); // ✅ 값이 바뀐 경우만 요청
+      updateQuantity?.(val); // Send a request only when the value changes
     }
 
     setIsDropdownVisible(false);
   };
 
-  // quantity가 바뀌고 드롭다운이 보일 때 해당 항목 스크롤 이동
+  // Scroll to the selected option when the quantity changes while the dropdown is open
   useEffect(() => {
     if (isDropdownVisible && quantity >= 1 && quantity <= 100) {
       const el = optionRefs.current[quantity - 1];
@@ -65,12 +65,12 @@ export default function QuantityDropdown({ value, onClick: updateQuantity, type 
     }
   }, [quantity, isDropdownVisible]);
 
-  // 외부 클릭 감지
+  // Detect clicks outside the dropdown
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       const target = event.target as Node;
 
-      // 드롭다운, 인풋, 토글 버튼 모두에 포함 안되면 닫기
+      // Close when the click is outside the dropdown, input, and toggle
       if (
         dropdownRef.current &&
         !dropdownRef.current.contains(target) &&
@@ -81,16 +81,16 @@ export default function QuantityDropdown({ value, onClick: updateQuantity, type 
       ) {
         setIsDropdownVisible(false);
 
-        // 유효하지 않은 수량이면 value로 리셋
+        // Reset to the current value when the quantity is invalid
         if (quantity < 1 || quantity > 100 || isNaN(quantity)) {
           setQuantity(value);
         } else if (quantity !== value) {
-          updateQuantity?.(quantity); // 값이 바뀌었을 때만 호출
+          updateQuantity?.(quantity); // Call only when the value changes
         }
       }
     }
 
-    document.addEventListener("click", handleClickOutside, true); // 캡처링 단계에서 잡음
+    document.addEventListener("click", handleClickOutside, true); // Listen during the capture phase
     return () => {
       document.removeEventListener("click", handleClickOutside, true);
     };
@@ -110,7 +110,7 @@ export default function QuantityDropdown({ value, onClick: updateQuantity, type 
           value={isNaN(quantity) ? "" : quantity}
           onChange={handleChange}
           onFocus={() => {
-            inputRef.current?.select(); // 전체 텍스트 선택
+            inputRef.current?.select(); // Select all input text
           }}
           onBlur={() => {
             if (isNaN(quantity)) {
@@ -143,7 +143,7 @@ export default function QuantityDropdown({ value, onClick: updateQuantity, type 
                 optionRefs.current[idx] = el;
               }}
               onMouseDown={(e) => {
-                e.preventDefault(); // 포커스 잃는 문제 방지
+                e.preventDefault(); // Prevent the input from losing focus
                 handleSelect(qty);
               }}
               className={`flex justify-end items-center h-[40px] pr-[24px] pl-[25px] font-bold text-[14px]/[17px] tracking-tight text-primary-950 cursor-pointer sm:text-[16px]/[20px] sm:pr-[28px] sm:pl-[18px] 

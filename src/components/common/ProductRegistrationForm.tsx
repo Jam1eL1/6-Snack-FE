@@ -8,26 +8,12 @@ import { useProductRegistrationForm } from "@/hooks/useProductRegistrationForm";
 import XIconSvg from "../svg/XIconSvg";
 import Button from "../ui/Button";
 
-type TProductData = {
-  productName: string;
-  price: string;
-  productLink: string;
-  parentCategory: string;
-  childrenCategory: string;
-  imageUrl?: string;
-};
-
 type TProductRegistrationFormProps = {
   onSubmitSuccess?: () => void;
   onClose?: () => void;
-  initialData?: TProductData;
 };
 
-export default function ProductRegistrationForm({
-  onSubmitSuccess,
-  onClose,
-  initialData,
-}: TProductRegistrationFormProps) {
+export default function ProductRegistrationForm({ onSubmitSuccess, onClose }: TProductRegistrationFormProps) {
   const {
     form,
     imagePreviewUrl,
@@ -42,7 +28,6 @@ export default function ProductRegistrationForm({
   } = useProductRegistrationForm({
     onSubmitSuccess,
     onClose,
-    initialData,
   });
 
   const { formState } = form;
@@ -59,7 +44,7 @@ export default function ProductRegistrationForm({
       <div className="w-full h-full sm:w-[512px] sm:max-h-[750px] sm:fixed sm:inset-0 sm:top-1/2 sm:left-1/2 sm:-translate-1/2 rounded-[6px] sm:p-[30px] bg-white shadow-[0px_0px_30px_0px_rgba(0,0,0,0.14)] flex flex-col sm:gap-[36px] items-center">
         <div className="w-full h-full flex flex-col p-6 sm:p-0">
           <div className="flex justify-center items-center p-2 -m-6 sm:mt-0 sm:p-0 mb-[30px] font-bold text-lg/[22px] tracking-tight">
-            상품 등록
+            Register Product
           </div>
           <div className="flex flex-col items-center mb-[30px]">
             <div className="flex justify-center items-center relative">
@@ -69,7 +54,7 @@ export default function ProductRegistrationForm({
                   className="w-[140px] h-[140px] flex flex-col items-center justify-center border border-primary-200 rounded-[2px] text-primary-400 cursor-pointer hover:bg-primary-100"
                 >
                   <div className="relative w-[30px] h-[30px]">
-                    <Image src={photoIcon} fill alt="사진 아이콘" className="object-contain" />
+                    <Image src={photoIcon} fill alt="Photo upload" className="object-contain" />
                   </div>
                   <input id="imageUpload" type="file" accept="image/*" onChange={onImageChange} className="hidden" />
                 </label>
@@ -115,13 +100,13 @@ export default function ProductRegistrationForm({
               </div>
             </div>
             <div className="w-full">
-              <FormInput name="productName" placeholder="상품명을 입력해주세요" label="상품명" />
+              <FormInput name="productName" placeholder="Enter product name" label="Product Name" />
             </div>
             <div className="w-full">
-              <FormInput name="price" type="text" placeholder="가격을 입력해주세요" label="가격" />
+              <FormInput name="price" type="text" inputMode="decimal" placeholder="0.00" label="Price (CAD)" />
             </div>
             <div className="w-full">
-              <FormInput name="productLink" type="text" placeholder="제품 링크를 입력해주세요" label="제품 링크" />
+              <FormInput name="productLink" type="text" placeholder="Enter product URL" label="Product URL" />
             </div>
           </form>
         </div>
@@ -129,7 +114,7 @@ export default function ProductRegistrationForm({
         <div className="flex justify-between w-full p-6 sm:p-0 gap-5">
           <Button
             type="white"
-            label="취소"
+            label="Cancel"
             onClick={() => {
               if (onClose) {
                 onClose();
@@ -140,7 +125,7 @@ export default function ProductRegistrationForm({
           />
           <Button
             type={createProductMutation.isPending || !formState.isValid ? "grayDisabled" : "black"}
-            label={createProductMutation.isPending ? "등록중..." : "등록하기"}
+            label={createProductMutation.isPending ? "Registering..." : "Register"}
             onClick={onSubmit}
             disabled={createProductMutation.isPending || !formState.isValid}
             className="w-full sm:w-[216px] h-[64px]"

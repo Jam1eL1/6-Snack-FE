@@ -5,7 +5,7 @@ import { useState } from "react";
 import { twMerge } from "tailwind-merge";
 import Button from "../ui/Button";
 import TextArea from "./TextArea";
-import { formatPrice } from "@/lib/utils/formatPrice.util";
+import { formatCurrency } from "@/lib/utils/currency.util";
 import clsx from "clsx";
 import { TToastVariant } from "@/types/toast.types";
 
@@ -107,7 +107,7 @@ export default function OrderManageModal({
                           {product.productName}
                         </h4>
                         <p className="font-bold text-[14px]/[17px] tracking-tight text-primary-950 sm:text-[16px]/[20px]">
-                          ${formatPrice(product.price)}
+                          {formatCurrency(product.price)}
                         </p>
                       </div>
                     </div>
@@ -121,7 +121,7 @@ export default function OrderManageModal({
                         Quantity {product.quantity}
                       </p>
                       <p className="font-bold text-[16px]/[20px] tracking-tight text-primary-700 sm:min-w-[88px] sm:font-extrabold sm:text-[20px]/[32px] sm:tracking-normal">
-                        ${formatPrice(product.price * product.quantity)}
+                        {formatCurrency(product.price * product.quantity)}
                       </p>
                     </div>
                   </article>
@@ -136,14 +136,14 @@ export default function OrderManageModal({
               <div className="flex justify-between items-center w-full px-[8px]">
                 <p className="font-bold text-[16px]/[20px] tracking-tight text-primary-700">Order Amount</p>
                 <p className="font-bold text-[16px]/[20px] tracking-tight text-primary-700">
-                  ${formatPrice(order.productsPriceTotal)}
+                  {formatCurrency(order.productsPriceTotal)}
                 </p>
               </div>
 
               <div className="flex justify-between items-center w-full px-[8px]">
                 <p className="font-bold text-[16px]/[20px] tracking-tight text-primary-700">Shipping Fee</p>
                 <p className="font-bold text-[16px]/[20px] tracking-tight text-primary-700">
-                  ${formatPrice(order.deliveryFee)}
+                  {formatCurrency(order.deliveryFee)}
                 </p>
               </div>
 
@@ -152,7 +152,7 @@ export default function OrderManageModal({
                   Total Order Amount
                 </p>
                 <p className="font-extrabold text-[20px]/[25px] tracking-tight text-primary-950 sm:text-[24px]/[30px]">
-                  ${formatPrice(order.productsPriceTotal + order.deliveryFee)}
+                  {formatCurrency(order.productsPriceTotal + order.deliveryFee)}
                 </p>
               </div>
             </section>
@@ -174,7 +174,7 @@ export default function OrderManageModal({
                   role="status"
                   aria-live="polite"
                 >
-                  ${formatPrice(remainingBudget)}
+                  {formatCurrency(remainingBudget)}
                 </p>
               </div>
             </section>

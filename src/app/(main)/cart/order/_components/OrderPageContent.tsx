@@ -36,7 +36,7 @@ export default function OrderPageContent({ cartItemId }: TOrderPageContentProps)
     queryFn: () => getCartItems(params),
   });
 
-  // 구매 요청
+  // Submit the purchase request
   const { mutate: orderRequest } = useMutation<
     TCreateOrderData,
     Error,
@@ -54,7 +54,7 @@ export default function OrderPageContent({ cartItemId }: TOrderPageContentProps)
   };
 
   if (error) {
-    return <div role="alert">에러 발생 : {error.message}</div>;
+    return <div role="alert">Something went wrong: {error.message}</div>;
   }
 
   return (
@@ -74,7 +74,7 @@ export default function OrderPageContent({ cartItemId }: TOrderPageContentProps)
 
         <div className="flex flex-col justify-center items-start mt-[40px] gap-[14px] sm:gap-[20px]">
           <label htmlFor="textarea" className="font-bold text-[16px]/[20px] tracking-tight text-primary-950">
-            요청 메시지
+            Request Message
           </label>
           <TextArea
             value={requestMessage}
@@ -88,7 +88,7 @@ export default function OrderPageContent({ cartItemId }: TOrderPageContentProps)
             onClick={() => router.push("/cart")}
             className="w-full max-w-[300px] h-[64px] font-bold text-[16px]/[20px] tracking-tight"
             type="white"
-            label="취소"
+            label="Cancel"
           />
           <Button
             onClick={() => {
@@ -98,7 +98,7 @@ export default function OrderPageContent({ cartItemId }: TOrderPageContentProps)
             aria-live="polite"
             disabled={isDisabled}
             type="black"
-            label={isDisabled ? "잠시만 기다려주세요..." : "구매 요청"}
+            label={isDisabled ? "Please wait..." : "Submit Request"}
             className={clsx(
               "w-full max-w-[300px] h-[64px] font-bold text-[16px]/[20px] tracking-tight",
               isDisabled && "text-primary-300 bg-primary-100 cursor-default text-[14px]/[17px] sm:text-[16px]/[20px]",

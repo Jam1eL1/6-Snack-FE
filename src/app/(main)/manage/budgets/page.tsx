@@ -9,10 +9,15 @@ import { getBudgets, patchBudgets } from "@/lib/api/budgets.api";
 import { queryKeys } from "@/lib/queryKeys";
 import BudgetFormUI from "./_components/BudgetFormUI";
 import DogSpinner from "@/components/common/DogSpinner";
+import { centsToDollars, dollarsToCents } from "@/lib/utils/currency.util";
+
+const dollarAmountSchema = z.string().refine((value) => value === "" || /^\d+(\.\d{1,2})?$/.test(value), {
+  message: "Enter a valid CAD amount with no more than two decimal places.",
+});
 
 const budgetSchema = z.object({
-  currentMonthBudget: z.string().optional(),
-  nextMonthBudget: z.string().optional(),
+  currentMonthBudget: dollarAmountSchema.optional(),
+  nextMonthBudget: dollarAmountSchema.optional(),
 });
 
 type BudgetInputs = z.infer<typeof budgetSchema>;
@@ -51,8 +56,9 @@ function ManageBudgetsPage() {
   useEffect(() => {
     if (data) {
       reset({
-        currentMonthBudget: data.currentMonthBudget?.toString() ?? "",
-        nextMonthBudget: data.monthlyBudget?.toString() ?? "",
+        currentMonthBudget:
+          data.currentMonthBudget !== undefined ? String(centsToDollars(data.currentMonthBudget)) : "",
+        nextMonthBudget: data.monthlyBudget !== undefined ? String(centsToDollars(data.monthlyBudget)) : "",
       });
     }
   }, [data, reset]);
@@ -65,8 +71,8 @@ function ManageBudgetsPage() {
   } = useMutation({
     mutationFn: (formData: BudgetInputs) =>
       patchBudgets({
-        currentMonthBudget: Number(formData.currentMonthBudget) || 0,
-        monthlyBudget: Number(formData.nextMonthBudget) || 0,
+        currentMonthBudget: dollarsToCents(formData.currentMonthBudget ?? 0),
+        monthlyBudget: dollarsToCents(formData.nextMonthBudget ?? 0),
       }),
     onMutate: () => {
       setShowSubmitSpinner(true);
@@ -112,6 +118,7 @@ function ManageBudgetsPage() {
       <section aria-labelledby="budget-form-section" role="region">
         <h2 id="budget-form-section" className="sr-only">예산 설정 폼</h2>
         <BudgetFormUI
+          savedCurrentMonthBudget={data?.currentMonthBudget}
           currentMonthBudget={String((typeof watch === "function" ? watch("currentMonthBudget") : "") || "")}
           nextMonthBudget={String((typeof watch === "function" ? watch("nextMonthBudget") : "") || "")}
           onChange={handleUIChange}

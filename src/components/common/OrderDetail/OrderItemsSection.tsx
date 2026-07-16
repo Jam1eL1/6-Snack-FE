@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import ArrowIconSvg from "@/components/svg/ArrowIconSvg";
-import { formatPrice } from "@/lib/utils/formatPrice.util";
+import { formatCurrency } from "@/lib/utils/currency.util";
 
 type TProduct = {
   id: number;
@@ -86,7 +86,7 @@ export default function OrderItemsSection({
                           {item.productName}
                         </div>
                         <div className="justify-start text-primary-950 text-sm sm:text-base font-bold">
-                          ${formatPrice(item.price)}
+                          {formatCurrency(item.price)}
                         </div>
                       </div>
                       <div className="flex justify-between items-center w-full sm:justify-start sm:flex sm:justify-start">
@@ -94,13 +94,13 @@ export default function OrderItemsSection({
                           Quantity {item.quantity}
                         </div>
                         <div className="text-center justify-center text-primary-700 text-base font-bold sm:hidden">
-                          ${formatPrice(item.price * item.quantity)}
+                          {formatCurrency(item.price * item.quantity)}
                         </div>
                       </div>
                     </div>
                   </div>
                   <div className="hidden sm:block text-center justify-center text-primary-700 text-[20px] font-extrabold">
-                    ${formatPrice(item.price * item.quantity)}
+                    {formatCurrency(item.price * item.quantity)}
                   </div>
                 </div>
               ))}
@@ -113,7 +113,7 @@ export default function OrderItemsSection({
                   Order Amount
                 </div>
                 <div className="text-center justify-center text-primary-700 text-sm sm:text-base font-bold">
-                  ${formatPrice(productsPriceTotal)}
+                  {formatCurrency(productsPriceTotal)}
                 </div>
               </div>
               <div className="flex justify-between items-center">
@@ -121,7 +121,7 @@ export default function OrderItemsSection({
                   Shipping Fee
                 </div>
                 <div className="text-center justify-center text-primary-700 text-sm sm:text-base font-bold">
-                  ${formatPrice(shippingFee)}
+                  {formatCurrency(shippingFee)}
                 </div>
               </div>
               <div className="flex justify-between items-center">
@@ -129,7 +129,7 @@ export default function OrderItemsSection({
                   Total
                 </div>
                 <div className="text-center justify-center text-primary-950 text-lg sm:text-2xl font-bold sm:font-extrabold">
-                  ${formatPrice(finalTotal)}
+                  {formatCurrency(finalTotal)}
                 </div>
               </div>
             </div>

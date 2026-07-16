@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import Mobile from "./Mobile";
 import Button from "../ui/Button";
 import { formatDate } from "@/lib/utils/formatDate.util";
-import { formatPrice } from "@/lib/utils/formatPrice.util";
+import { formatCurrency } from "@/lib/utils/currency.util";
 import { TOrderSummary } from "@/types/order.types";
 
 type TRequestListProps = {
@@ -115,7 +115,7 @@ export default function RequestList({ orderRequests, onClickReject, onClickAppro
                         className="font-extrabold text-[20px]/[25px] tracking-tight text-primary-950"
                         aria-label="Order amount"
                       >
-                        ${formatPrice(request.productsPriceTotal + request.deliveryFee)}
+                        {formatCurrency(request.productsPriceTotal + request.deliveryFee)}
                       </div>
                     </div>
                   </header>
@@ -166,7 +166,7 @@ export default function RequestList({ orderRequests, onClickReject, onClickAppro
                   role="cell"
                   aria-label="Order amount"
                 >
-                  ${formatPrice(request.productsPriceTotal + request.deliveryFee)}
+                  {formatCurrency(request.productsPriceTotal + request.deliveryFee)}
                 </div>
                 <div className="flex justify-center items-center gap-[12px]" role="cell" aria-label="Requester">
                   <div

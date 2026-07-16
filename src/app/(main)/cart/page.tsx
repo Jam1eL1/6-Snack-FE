@@ -15,8 +15,9 @@ import { orderNow } from "@/lib/api/order.api";
 import { TUpdateOrderStatusData } from "@/types/order.types";
 import { useDeviceType } from "@/hooks/useDeviceType";
 import clsx from "clsx";
-import { formatPrice } from "@/lib/utils/formatPrice.util";
+import { formatCurrency } from "@/lib/utils/currency.util";
 import { queryKeys } from "@/lib/queryKeys";
+import { STANDARD_DELIVERY_FEE_CENTS } from "@/lib/constants/money";
 
 export default function CartPage() {
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
@@ -48,25 +49,28 @@ export default function CartPage() {
     onError: () => setIsDisabled(false),
   });
 
-  // budget 예외 처리
+  // Use safe defaults when budget data is unavailable
   const { currentMonthBudget = 0, currentMonthExpense = 0 } = cartItems?.budget ?? {};
 
-  // 장바구니 선택한 상품의 총 가격: number
+  // Total price of selected cart items
   const selectedTotalPrice = cartItems?.cart
     .filter((item) => item.isChecked === true)
     .reduce((totalPrice, item) => totalPrice + item.product.price * item.quantity, 0);
 
-  // 구매 가능 여부: boolean
+  // Whether the selected items are within budget
   const canPurchase =
-    currentMonthBudget - currentMonthExpense - (selectedTotalPrice ? selectedTotalPrice + 3000 : 0) >= 0;
+    currentMonthBudget -
+      currentMonthExpense -
+      (selectedTotalPrice ? selectedTotalPrice + STANDARD_DELIVERY_FEE_CENTS : 0) >=
+    0;
 
-  // 남은 예산: number
+  // Remaining budget
   const remainingBudget = cartItems?.budget ? currentMonthBudget - currentMonthExpense : 0;
 
-  // 장바구니 선택한 상품 IDs: number[]
+  // Selected cart item IDs
   const checkedCartItemIds = cartItems?.cart.filter((item) => item.isChecked).map((item) => item.id) ?? [];
 
-  // 타이머 언마운트 시 클린업
+  // Clear the toast timer on unmount
   useEffect(() => {
     return () => {
       if (timerRef.current) {
@@ -78,7 +82,7 @@ export default function CartPage() {
   const handleRequestOrder = () => {
     const isBudgetExceeded = user?.role !== "USER" && !canPurchase;
 
-    // 아무 상품도 선택하지 않았거나, 예산 초과할 때
+    // Stop when no items are selected or the purchase exceeds the budget
     if (checkedCartItemIds.length === 0 || isBudgetExceeded) {
       setIsToastVisible(true);
 
@@ -92,31 +96,31 @@ export default function CartPage() {
       return;
     }
 
-    // USER일 때
+    // Regular users continue to the request page
     if (user?.role === "USER") return router.push("/cart/order");
 
-    // Order 생성 API
+    // Admins create an instant Order
     setIsDisabled(true);
     orderRequest(checkedCartItemIds);
   };
 
   if (error) {
-    return <div>에러 발생 : {error.message}</div>;
+    return <div>Something went wrong: {error.message}</div>;
   }
 
   return (
     <div className="flex flex-col justify-center items-center w-full">
       {checkedCartItemIds.length === 0 ? (
-        <Toast text="1개 이상의 상품을 선택하세요." isVisible={isToastVisible} />
+        <Toast text="Select at least one item." isVisible={isToastVisible} />
       ) : (
         <Toast
           text={
             isMobile ? (
-              "예산이 부족합니다."
+              "Insufficient budget."
             ) : (
               <>
-                <p>예산이 부족합니다.&nbsp;</p>
-                <p>수량을 줄이거나 항목을 제거해주세요.</p>
+                <p>Insufficient budget.&nbsp;</p>
+                <p>Reduce the quantity or remove an item.</p>
               </>
             )
           }
@@ -156,27 +160,27 @@ export default function CartPage() {
             <section className="flex flex-col w-full gap-[14px]">
               <div className="flex justify-start items-center gap-[4px]">
                 <p className="font-bold text-[24px]/[30px] tracking-tight text-primary-950 sm:text-[30px]/[37px]">
-                  총 주문금액
+                  Order Total
                 </p>
                 <p className="font-extrabold text-[24px]/[30px] tracking-tight text-primary-950 sm:text-[30px]/[37px]">
-                  {formatPrice(selectedTotalPrice ? selectedTotalPrice + 3000 : 0)}원
+                  {formatCurrency(selectedTotalPrice ? selectedTotalPrice + STANDARD_DELIVERY_FEE_CENTS : 0)}
                 </p>
               </div>
               <div className="flex flex-col gap-[6px]">
                 <p className="font-normal text-[16px]/[20px] tracking-tight text-[#6b6b6b]">
-                  주문 상품은 {formatPrice(selectedTotalPrice)}원
+                  Items: {formatCurrency(selectedTotalPrice)}
                 </p>
                 <p className="font-normal text-[16px]/[20px] tracking-tight text-[#6b6b6b] mb-[6px] sm:mb-[10px]">
-                  배송비는 3,000원입니다.
+                  Shipping: {formatCurrency(STANDARD_DELIVERY_FEE_CENTS)}
                 </p>
               </div>
               {user?.role !== "USER" && (
                 <>
                   <div className="outline-1 outline-primary-100"></div>
                   <div className="flex justify-start items-center gap-[4px] mt-[2px] sm:mt-[6px]">
-                    <p className="font-bold text-[18px]/[22px] tracking-tight text-primary-700">남은 예산 금액</p>
+                    <p className="font-bold text-[18px]/[22px] tracking-tight text-primary-700">Remaining Budget</p>
                     <p className="font-extrabold text-[18px]/[22px] tracking-tight text-primary-700">
-                      {formatPrice(remainingBudget)}원
+                      {formatCurrency(remainingBudget)}
                     </p>
                   </div>
                 </>
@@ -184,11 +188,11 @@ export default function CartPage() {
             </section>
 
             <section className="flex flex-col justify-center items-center w-full gap-[20px] sm:max-w-[300px]">
-              <Link aria-label="상품 리스트 페이지로 이동" href="/products" className="w-full">
+              <Link aria-label="Go to the product list" href="/products" className="w-full">
                 <Button
                   type="white"
                   disabled={isDisabled}
-                  label="계속 쇼핑하기"
+                  label="Continue Shopping"
                   className="w-full h-[64px] font-bold tracking-tight text-primary-950"
                 />
               </Link>
@@ -196,7 +200,7 @@ export default function CartPage() {
                 onClick={handleRequestOrder}
                 disabled={isDisabled}
                 type="black"
-                label={isDisabled ? "잠시만 기다려주세요..." : user?.role !== "USER" ? "구매하기" : "구매 요청"}
+                label={isDisabled ? "Please wait..." : user?.role !== "USER" ? "Buy Now" : "Submit Request"}
                 className={clsx(
                   isDisabled && "text-primary-300 bg-primary-100 cursor-default",
                   "w-full h-[64px] font-bold tracking-tight",

@@ -1,29 +1,18 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { productRegistrationSchema, type ProductRegistrationFormData } from "@/lib/schemas/product.schema";
 import { CATEGORIES } from "@/lib/constants/categories";
 import { useCreateProduct } from "./useProductMutations";
 import { SessionExpiredError } from "@/lib/api/auth.errors";
+import { dollarsToCents } from "@/lib/utils/currency.util";
 
 type UseProductRegistrationFormProps = {
   onSubmitSuccess?: () => void;
   onClose?: () => void;
-  initialData?: {
-    productName: string;
-    price: string;
-    productLink: string;
-    parentCategory: string;
-    childrenCategory: string;
-    imageUrl?: string;
-  };
 };
 
-export const useProductRegistrationForm = ({
-  onSubmitSuccess,
-  onClose,
-  initialData,
-}: UseProductRegistrationFormProps) => {
+export const useProductRegistrationForm = ({ onSubmitSuccess, onClose }: UseProductRegistrationFormProps) => {
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const createProductMutation = useCreateProduct();
 
@@ -42,19 +31,6 @@ export const useProductRegistrationForm = ({
   const { watch, setValue, reset, trigger } = form;
   const watchedValues = watch();
 
-  // Set initial form data.
-  useEffect(() => {
-    if (initialData) {
-      setValue("productName", initialData.productName);
-      setValue("price", initialData.price);
-      setValue("productLink", initialData.productLink);
-      setValue("parentCategory", initialData.parentCategory);
-      setValue("childrenCategory", initialData.childrenCategory);
-      if (initialData.imageUrl) {
-        setImagePreviewUrl(initialData.imageUrl);
-      }
-    }
-  }, [initialData, setValue]);
   // Handle image selection.
   const handleImageChange = (file: File | null) => {
     if (file) {
@@ -93,7 +69,7 @@ export const useProductRegistrationForm = ({
 
       const formData = new FormData();
       formData.append("name", data.productName);
-      formData.append("price", data.price);
+      formData.append("price", String(dollarsToCents(data.price)));
       formData.append("linkUrl", data.productLink);
       formData.append("categoryId", categoryId.toString());
 

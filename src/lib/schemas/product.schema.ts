@@ -9,9 +9,9 @@ export const productRegistrationSchema = z.object({
   price: z
     .string()
     .min(1, "Please enter price")
-    .regex(/^\d*$/, "Please enter numbers only")
-    .refine((val) => val === "" || parseInt(val, 10) > 0, "Price must be greater than 0")
-    .refine((val) => val === "" || parseInt(val, 10) <= 1000000, "Price must be 1,000,000 or less"),
+    .regex(/^\d+(\.\d{1,2})?$/, "Enter a valid CAD amount with no more than two decimal places")
+    .refine((val) => val === "" || Number(val) > 0, "Price must be greater than 0")
+    .refine((val) => val === "" || Number(val) <= 1000000, "Price must be 1,000,000 or less"),
   productLink: z
     .string()
     .min(1, "Please enter product link")

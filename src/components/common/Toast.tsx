@@ -7,7 +7,7 @@ import exclamationIc from "@/assets/icons/ic_exclamation_mark_red.svg";
 import checkIc from "@/assets/icons/ic_check_white.svg";
 import { twMerge } from "tailwind-merge";
 import { useEffect, useState } from "react";
-import { formatPrice } from "@/lib/utils/formatPrice.util";
+import { formatCurrency } from "@/lib/utils/currency.util";
 
 type TToastProps = {
   text: string | React.ReactNode;
@@ -25,7 +25,7 @@ const Toast = ({ text, budget, variant = "error", isVisible, className = "" }: T
   }, []);
 
   const iconSrc = variant === "success" ? checkIc : exclamationIc;
-  const iconAlt = variant === "success" ? "성공 아이콘" : "경고 아이콘";
+  const iconAlt = variant === "success" ? "Success icon" : "Warning icon";
 
   if (!isMounted) return null;
 
@@ -40,7 +40,7 @@ const Toast = ({ text, budget, variant = "error", isVisible, className = "" }: T
         className,
       )}
     >
-      {/* 좌측 아이콘 + 메시지 */}
+      {/* Icon and message */}
       <div className="flex items-center gap-2 flex-1 min-w-0">
         <div className="w-5 h-5 sm:w-6 sm:h-6 relative shrink-0">
           <Image src={iconSrc} alt={iconAlt} fill style={{ objectFit: "contain" }} />
@@ -48,12 +48,12 @@ const Toast = ({ text, budget, variant = "error", isVisible, className = "" }: T
         <div className="flex flex-wrap">{text}</div>
       </div>
 
-      {/* 예산 + 닫기 */}
+      {/* Remaining budget */}
       {typeof budget === "number" && (
         <div className="flex items-center gap-3 sm:gap-6">
           <div className="flex items-center gap-1.5 sm:gap-3">
-            <span>남은 예산</span>
-            <span>{formatPrice(budget)}원</span>
+            <span>Remaining Budget</span>
+            <span>{formatCurrency(budget)}</span>
           </div>
         </div>
       )}
