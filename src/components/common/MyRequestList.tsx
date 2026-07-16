@@ -2,7 +2,7 @@
 
 import React from "react";
 import Badge from "@/components/ui/Badge";
-import { formatPrice } from "@/lib/utils/formatPrice.util";
+import { formatCurrency } from "@/lib/utils/currency.util";
 import ConfirmationModal from "@/components/common/ConfirmationModal";
 import { useModal } from "@/providers/ModalProvider";
 import Link from "next/link";
@@ -73,7 +73,7 @@ export default function RequestListItem({
           <Link href={`/my/order-list/${orderId}`} className="text-blue-600">
             {productName}
           </Link>
-          <div className="text-sm text-primary-950">${formatPrice(price)}</div>
+          <div className="text-sm text-primary-950">{formatCurrency(price)}</div>
         </div>
 
         {showCancelButton && (
@@ -92,7 +92,7 @@ export default function RequestListItem({
         <Link href={`/my/order-list/${orderId}`} className="text-blue-600">
           {productName}
         </Link>
-        <div className="min-w-[90px] text-sm md:text-base text-primary-950">${formatPrice(price)}</div>
+        <div className="min-w-[90px] text-sm md:text-base text-primary-950">{formatCurrency(price)}</div>
         <div className="flex justify-center">
           <Badge type={getBadgeType()} />
         </div>

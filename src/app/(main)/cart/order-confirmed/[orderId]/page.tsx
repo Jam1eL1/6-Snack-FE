@@ -9,7 +9,7 @@ import clsx from "clsx";
 import ArrowIconSvg from "@/components/svg/ArrowIconSvg";
 import { useMyOrderDetail } from "@/hooks/useOrderDetail";
 import { useAuth } from "@/providers/AuthProvider";
-import { formatPrice } from "@/lib/utils/formatPrice.util";
+import { formatCurrency } from "@/lib/utils/currency.util";
 import DogSpinner from "@/components/common/DogSpinner";
 
 // Memoized product item component
@@ -37,7 +37,7 @@ const ProductItem = React.memo(({ receipt }: { receipt: { price: number; quantit
               {receipt.productName}
             </div>
             <div className="justify-start text-primary-950 text-sm sm:text-base font-bold">
-              ${formatPrice(receipt.price)}
+              {formatCurrency(receipt.price)}
             </div>
           </div>
           <div className="flex justify-between items-center w-full sm:justify-start sm:flex sm:justify-start">
@@ -45,13 +45,13 @@ const ProductItem = React.memo(({ receipt }: { receipt: { price: number; quantit
               Quantity {receipt.quantity}
             </div>
             <div className="text-center justify-center text-primary-700 text-base font-bold sm:hidden">
-              ${formatPrice(totalPrice)}
+              {formatCurrency(totalPrice)}
             </div>
           </div>
         </div>
       </div>
       <div className="hidden sm:block text-center justify-center text-primary-700 text-[20px] font-extrabold">
-        ${formatPrice(totalPrice)}
+        {formatCurrency(totalPrice)}
       </div>
     </div>
   );
@@ -235,7 +235,7 @@ export default function OrderConfirmedPage() {
                       Items
                     </div>
                     <div className="text-center justify-center text-primary-700 text-sm sm:text-base font-bold">
-                      ${formatPrice(orderData.productsPriceTotal)}
+                      {formatCurrency(orderData.productsPriceTotal)}
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
@@ -243,7 +243,7 @@ export default function OrderConfirmedPage() {
                       Shipping Fee
                     </div>
                     <div className="text-center justify-center text-primary-700 text-sm sm:text-base font-bold">
-                      ${formatPrice(shippingFee)}
+                      {formatCurrency(shippingFee)}
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
@@ -251,7 +251,7 @@ export default function OrderConfirmedPage() {
                       Order Total
                     </div>
                     <div className="text-center justify-center text-primary-950 text-lg sm:text-2xl font-bold sm:font-extrabold">
-                      ${formatPrice(totalAmount)}
+                      {formatCurrency(totalAmount)}
                     </div>
                   </div>
                 </div>

@@ -3,7 +3,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { formatPrice } from "@/lib/utils/formatPrice.util";
+import { formatCurrency } from "@/lib/utils/currency.util";
 import NoContent from "./NoContent";
 import LikeIconSvg from "../svg/LikeIconSvg";
 import { TProductGrid } from "@/types/product.types";
@@ -66,7 +66,7 @@ export default function ProductGrid({ products, currentCategoryId }: ProductGrid
                 </div>
               </div>
               <div className="justify-start text-base/[20px] md:text-lg/[22px] font-extrabold tracking-tight">
-                {formatPrice(product.price)}원
+                {formatCurrency(product.price)}
               </div>
               <div className="justify-center text-secondary-500 text-[13px]/[16px] md:text-sm/[17px] font-bold md:hidden">
                 {product.cumulativeSales}회 구매

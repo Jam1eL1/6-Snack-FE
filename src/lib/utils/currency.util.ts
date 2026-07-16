@@ -26,7 +26,3 @@ export const formatDollarInput = (amountInDollars: number): string => {
     maximumFractionDigits: 2,
   });
 };
-// export const formatPrice = (price: number | undefined | null): string => {
-//   if (price === undefined || price === null) return "0";
-//   return price.toLocaleString("en-CA");
-// };

@@ -15,7 +15,7 @@ import { orderNow } from "@/lib/api/order.api";
 import { TUpdateOrderStatusData } from "@/types/order.types";
 import { useDeviceType } from "@/hooks/useDeviceType";
 import clsx from "clsx";
-import { formatPrice } from "@/lib/utils/formatPrice.util";
+import { formatCurrency } from "@/lib/utils/currency.util";
 import { queryKeys } from "@/lib/queryKeys";
 import { STANDARD_DELIVERY_FEE_CENTS } from "@/lib/constants/money";
 
@@ -163,15 +163,15 @@ export default function CartPage() {
                   Order Total
                 </p>
                 <p className="font-extrabold text-[24px]/[30px] tracking-tight text-primary-950 sm:text-[30px]/[37px]">
-                  ₩{formatPrice(selectedTotalPrice ? selectedTotalPrice + STANDARD_DELIVERY_FEE_CENTS : 0)}
+                  {formatCurrency(selectedTotalPrice ? selectedTotalPrice + STANDARD_DELIVERY_FEE_CENTS : 0)}
                 </p>
               </div>
               <div className="flex flex-col gap-[6px]">
                 <p className="font-normal text-[16px]/[20px] tracking-tight text-[#6b6b6b]">
-                  Items: ₩{formatPrice(selectedTotalPrice)}
+                  Items: {formatCurrency(selectedTotalPrice)}
                 </p>
                 <p className="font-normal text-[16px]/[20px] tracking-tight text-[#6b6b6b] mb-[6px] sm:mb-[10px]">
-                  Shipping: ₩3,000
+                  Shipping: {formatCurrency(STANDARD_DELIVERY_FEE_CENTS)}
                 </p>
               </div>
               {user?.role !== "USER" && (
@@ -180,7 +180,7 @@ export default function CartPage() {
                   <div className="flex justify-start items-center gap-[4px] mt-[2px] sm:mt-[6px]">
                     <p className="font-bold text-[18px]/[22px] tracking-tight text-primary-700">Remaining Budget</p>
                     <p className="font-extrabold text-[18px]/[22px] tracking-tight text-primary-700">
-                      ₩{formatPrice(remainingBudget)}
+                      {formatCurrency(remainingBudget)}
                     </p>
                   </div>
                 </>

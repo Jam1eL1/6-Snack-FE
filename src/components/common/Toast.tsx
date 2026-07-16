@@ -7,7 +7,7 @@ import exclamationIc from "@/assets/icons/ic_exclamation_mark_red.svg";
 import checkIc from "@/assets/icons/ic_check_white.svg";
 import { twMerge } from "tailwind-merge";
 import { useEffect, useState } from "react";
-import { formatPrice } from "@/lib/utils/formatPrice.util";
+import { formatCurrency } from "@/lib/utils/currency.util";
 
 type TToastProps = {
   text: string | React.ReactNode;
@@ -53,7 +53,7 @@ const Toast = ({ text, budget, variant = "error", isVisible, className = "" }: T
         <div className="flex items-center gap-3 sm:gap-6">
           <div className="flex items-center gap-1.5 sm:gap-3">
             <span>Remaining Budget</span>
-            <span>₩{formatPrice(budget)}</span>
+            <span>{formatCurrency(budget)}</span>
           </div>
         </div>
       )}

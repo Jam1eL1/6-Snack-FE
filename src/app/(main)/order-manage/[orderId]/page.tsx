@@ -8,7 +8,7 @@ import Button from "@/components/ui/Button";
 import Image from "next/image";
 import Toast from "@/components/common/Toast";
 import { formatDate } from "@/lib/utils/formatDate.util";
-import { formatPrice } from "@/lib/utils/formatPrice.util";
+import { formatCurrency } from "@/lib/utils/currency.util";
 import { useOrderStatusUpdate } from "@/hooks/useOrderStatusUpdate";
 import { useModal } from "@/providers/ModalProvider";
 import OrderActionModal from "../_components/OrderActionModal";
@@ -215,7 +215,7 @@ export default function OrderManageDetailPage() {
                           {item.productName}
                         </p>
                         <div className="text-primary-950 text-sm/[17px] tracking-tight sm:text-base/[20px] font-bold">
-                          ${formatPrice(item.price)}
+                          {formatCurrency(item.price)}
                         </div>
                       </div>
 
@@ -224,12 +224,12 @@ export default function OrderManageDetailPage() {
                           Quantity {item.quantity}
                         </div>
                         <div className="sm:hidden text-center  text-primary-700 text-base/[20px] tracking-tight font-extrabold">
-                          ${formatPrice(item.price * item.quantity)}
+                          {formatCurrency(item.price * item.quantity)}
                         </div>
                       </div>
                     </div>
                     <div className="hidden sm:block text-center  text-primary-700 text-xl/[32px] tracking-tight font-extrabold whitespace-nowrap">
-                      ${formatPrice(item.price * item.quantity)}
+                      {formatCurrency(item.price * item.quantity)}
                     </div>
                   </div>
                 ))}
@@ -244,7 +244,7 @@ export default function OrderManageDetailPage() {
                       Order Amount
                     </div>
                     <div className="text-primary-700 tracking-tight text-sm/[17px] sm:text-base/[20px] font-bold">
-                      ${formatPrice(productsPriceTotal)}
+                      {formatCurrency(productsPriceTotal)}
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
@@ -252,13 +252,13 @@ export default function OrderManageDetailPage() {
                       Shipping Fee
                     </div>
                     <div className="text-primary-700 tracking-tight text-sm/[17px] sm:text-base/[20px] font-bold">
-                      ${formatPrice(shippingFee)}
+                      {formatCurrency(shippingFee)}
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
                     <div className="text-primary-950 text-lg/[22px] tracking-tight font-bold">Total Order Amount</div>
                     <div className="text-primary-950 text-lg/[22px] sm:text-[24px]/[30px] tracking-tight font-extrabold">
-                      ${formatPrice(finalTotal)}
+                      {formatCurrency(finalTotal)}
                     </div>
                   </div>
                 </div>
@@ -336,7 +336,7 @@ export default function OrderManageDetailPage() {
               </div>
               <div className="flex-1 h-[50px] px-2 sm:px-4 py-2 border-b border-primary-100 flex justify-start items-center">
                 <div className="text-center justify-center text-primary-900 text-sm sm:text-base font-bold">
-                  ${formatPrice(currentMonthExpense)}
+                  {formatCurrency(currentMonthExpense)}
                 </div>
               </div>
             </div>
@@ -346,7 +346,7 @@ export default function OrderManageDetailPage() {
               </div>
               <div className="flex-1 h-[50px] px-2 sm:px-4 py-2 border-b border-primary-100 flex justify-start items-center">
                 <div className="text-center justify-center text-primary-900 text-sm sm:text-base font-bold">
-                  ${formatPrice(remainingBudget)}
+                  {formatCurrency(remainingBudget)}
                 </div>
               </div>
             </div>
@@ -358,7 +358,7 @@ export default function OrderManageDetailPage() {
               </div>
               <div className="flex-1 h-[50px] px-2 sm:px-4 py-2 border-b border-primary-100 flex justify-start items-center">
                 <div className="text-start justify-center text-primary-900 text-sm sm:text-base font-bold">
-                  ${formatPrice(budgetAfterPurchase)}
+                  {formatCurrency(budgetAfterPurchase)}
                 </div>
               </div>
             </div>

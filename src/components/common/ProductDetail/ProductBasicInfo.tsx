@@ -1,6 +1,6 @@
 import React from "react";
 import type { TProduct } from "@/types/productDetail.types";
-import { formatPrice } from "@/lib/utils/formatPrice.util";
+import { formatCurrency } from "@/lib/utils/currency.util";
 
 type TProductBasicInfoProps = {
   product: TProduct;
@@ -24,7 +24,7 @@ export default function ProductBasicInfo({ product }: TProductBasicInfoProps) {
           {product.cumulativeSales} sold
         </div>
       </div>
-      <div className="text-black text-lg/[22px] font-extrabold tracking-tight">₩{formatPrice(product.price)}</div>
+      <div className="text-black text-lg/[22px] font-extrabold tracking-tight">{formatCurrency(product.price)}</div>
     </div>
   );
 }

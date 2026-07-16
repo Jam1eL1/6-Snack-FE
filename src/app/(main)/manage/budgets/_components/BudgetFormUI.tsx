@@ -3,7 +3,7 @@
 import React from "react";
 import Toast from "@/components/common/Toast";
 import { TToastVariant } from "@/types/toast.types";
-import { formatPrice } from "@/lib/utils/formatPrice.util";
+import { formatDollarInput } from "@/lib/utils/currency.util";
 
 interface BudgetFormUIProps {
   currentMonthBudget: string;
@@ -58,7 +58,7 @@ const BudgetFormUI: React.FC<BudgetFormUIProps> = ({
     if (!value || value === "") return "";
     const num = Number(value);
     if (isNaN(num)) return "";
-    return formatPrice(num);
+    return formatDollarInput(num);
   }
 
   // 한글 금액 단위 포맷 함수 (3백5십만원 등)

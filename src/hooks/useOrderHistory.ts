@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useBudgets } from "@/hooks/useBudgets";
 import { useAdminOrders } from "@/hooks/useAdminOrders";
 import { formatDate } from "@/lib/utils/formatDate.util";
-import { formatPrice } from "@/lib/utils/formatPrice.util";
+import { formatCurrency } from "@/lib/utils/currency.util";
 
 export type TPurchaseItem = {
   id: string;
@@ -70,7 +70,7 @@ export const useOrderHistory = (sortByDefault: string = "latest", itemsPerPage: 
     item: item.productName || item.itemSummary || item.item || "-",
     amount:
       typeof item.productsPriceTotal === "number" && typeof item.deliveryFee === "number"
-        ? formatPrice(item.productsPriceTotal + item.deliveryFee)
+        ? formatCurrency(item.productsPriceTotal + item.deliveryFee)
         : "-",
     approvalDate: item.approvalDate ? formatDate(item.approvalDate) : item.updatedAt ? formatDate(item.updatedAt) : "-",
     manager: item.approver || item.managerName || item.manager || "-",
@@ -147,8 +147,8 @@ export const useOrderHistory = (sortByDefault: string = "latest", itemsPerPage: 
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [dropdownOpen]);
 
-  // Number formatting helper
-  const formatNumber = (num: number | undefined) => (typeof num === "number" ? "$" + formatPrice(num) : "-");
+  // Currency formatting helper
+  const formatNumber = (num: number | undefined) => (typeof num === "number" ? formatCurrency(num) : "-");
 
   return {
     // Budget state

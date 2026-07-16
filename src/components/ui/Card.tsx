@@ -1,6 +1,6 @@
 import Image, { StaticImageData } from "next/image";
 import React from "react";
-import { formatPrice } from "@/lib/utils/formatPrice.util";
+import { formatCurrency } from "@/lib/utils/currency.util";
 
 type TCardProps = {
   name: string;
@@ -31,7 +31,7 @@ export default function Card({ name, purchaseCount, price, imageUrl }: TCardProp
           )}
         </div>
         <div className="text-stone-900 text-base md:text-lg font-extrabold font-suit">
-          {formatPrice(Number(price))}원
+          {formatCurrency(Number(price))}
         </div>
       </div>
     </div>

@@ -5,7 +5,7 @@ import ChevronRightIcon from "@/assets/icons/ic_chevron_right.svg";
 import Dropdown from "@/components/common/DropDown";
 import NoContent from "@/components/common/NoContent";
 import { useOrderHistory } from "@/hooks/useOrderHistory";
-import { formatPrice } from "@/lib/utils/formatPrice.util";
+import { formatCurrency } from "@/lib/utils/currency.util";
 import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -62,7 +62,9 @@ const OrderHistoryPage = () => {
       </div>
       <div className="justify-center text-white text-sm font-normal">
         지난 달보다{" "}
-        {budgetData ? formatPrice(Math.abs(budgetData.currentMonthExpense - budgetData.previousMonthExpense)) : "0"}원{" "}
+        {budgetData
+          ? formatCurrency(Math.abs(budgetData.currentMonthExpense - budgetData.previousMonthExpense))
+          : formatCurrency(0)}{" "}
         {budgetData && budgetData.currentMonthExpense - budgetData.previousMonthExpense > 0
           ? "더 사용했어요"
           : "덜 사용했어요"}
@@ -127,11 +129,12 @@ const OrderHistoryPage = () => {
                 <div className="self-stretch flex flex-col justify-start items-start gap-2.5">
                   <div className="self-stretch justify-center text-primary-800 text-base font-bold">이번 달 예산</div>
                   <div className="justify-center text-primary-800 text-lg font-extrabold">
-                    {safeBudgetData ? formatNumber(safeBudgetData.currentMonthBudget) : "0원"}
+                    {safeBudgetData ? formatNumber(safeBudgetData.currentMonthBudget) : formatCurrency(0)}
                   </div>
                 </div>
                 <div className="relative justify-center text-primary-600 text-sm font-normal">
-                  지난 달 예산은 {safeBudgetData ? formatNumber(safeBudgetData.previousMonthBudget) : "0원"}이었어요
+                  지난 달 예산은 {safeBudgetData ? formatNumber(safeBudgetData.previousMonthBudget) : formatCurrency(0)}
+                  이었어요
                 </div>
               </div>
               <div
@@ -144,11 +147,11 @@ const OrderHistoryPage = () => {
                 <div className="self-stretch flex flex-col justify-start items-start gap-2.5 overflow-hidden">
                   <div className="self-stretch justify-center text-primary-800 text-base font-bold">이번 달 지출액</div>
                   <div className="justify-center text-primary-800 text-lg font-extrabold">
-                    {safeBudgetData ? formatNumber(safeBudgetData.currentMonthExpense) : "0원"}
+                    {safeBudgetData ? formatNumber(safeBudgetData.currentMonthExpense) : formatCurrency(0)}
                   </div>
                 </div>
                 <div className="justify-center text-primary-600 text-sm font-normal">
-                  지난 달: {safeBudgetData ? formatNumber(safeBudgetData.previousMonthExpense) : "0원"}
+                  지난 달: {safeBudgetData ? formatNumber(safeBudgetData.previousMonthExpense) : formatCurrency(0)}
                 </div>
                 <div className="self-stretch inline-flex justify-left items-center gap-1">
                   <div className="w-20 h-1.5 bg-primary-200 rounded-md overflow-hidden">
@@ -182,17 +185,17 @@ const OrderHistoryPage = () => {
                   </div>
                 </div>
                 <div className="justify-center text-primary-800 text-lg font-extrabold">
-                  {safeBudgetData ? formatNumber(safeBudgetData.currentYearTotalExpense) : "0원"}
+                  {safeBudgetData ? formatNumber(safeBudgetData.currentYearTotalExpense) : formatCurrency(0)}
                 </div>
               </div>
               <div className="self-stretch justify-center text-primary-600 text-sm font-normal leading-snug">
                 작년보다{" "}
                 {safeBudgetData
-                  ? formatPrice(
+                  ? formatCurrency(
                       Math.abs(safeBudgetData.currentYearTotalExpense - safeBudgetData.previousYearTotalExpense),
                     )
-                  : "0"}
-                원<br />
+                  : formatCurrency(0)}
+                <br />
                 {safeBudgetData && safeBudgetData.currentYearTotalExpense - safeBudgetData.previousYearTotalExpense > 0
                   ? "더 지출했어요"
                   : "덜 지출했어요"}
@@ -229,7 +232,7 @@ const OrderHistoryPage = () => {
                       총 수량 {getProductTypeCount(item.productName)}개
                     </div>
                     <div className="text-center justify-center text-primary-800 text-base font-extrabold">
-                      {parseInt(item.amount.replace(/[^0-9]/g, "")).toLocaleString()}원
+                      {item.amount}
                     </div>
                   </div>
                   <div className="self-stretch flex flex-col justify-center items-start">
@@ -349,13 +352,13 @@ const OrderHistoryPage = () => {
               <div className="self-stretch flex flex-col justify-start items-start gap-2.5">
                 <div className="self-stretch justify-center text-primary-800 text-lg font-bold">이번 달 예산</div>
                 <div className="justify-center text-primary-800 text-2xl font-extrabold">
-                  {safeBudgetData ? formatNumber(safeBudgetData.currentMonthBudget) : "0원"}
+                  {safeBudgetData ? formatNumber(safeBudgetData.currentMonthBudget) : formatCurrency(0)}
                 </div>
               </div>
               <div className="justify-center text-primary-600 text-base font-normal leading-relaxed">
                 지난 달 예산은
                 <br />
-                {safeBudgetData ? formatNumber(safeBudgetData.previousMonthBudget) : "0원"}이었어요
+                {safeBudgetData ? formatNumber(safeBudgetData.previousMonthBudget) : formatCurrency(0)}이었어요
               </div>
             </div>
             <div
@@ -368,11 +371,11 @@ const OrderHistoryPage = () => {
               <div className="self-stretch flex flex-col justify-start items-start gap-2.5">
                 <div className="self-stretch justify-center text-primary-800 text-lg font-bold">이번 달 지출액</div>
                 <div className="justify-center text-primary-800 text-2xl font-extrabold">
-                  {safeBudgetData ? formatNumber(safeBudgetData.currentMonthExpense) : "0원"}
+                  {safeBudgetData ? formatNumber(safeBudgetData.currentMonthExpense) : formatCurrency(0)}
                 </div>
               </div>
               <div className="justify-center text-primary-600 text-base font-normal">
-                지난 달: {safeBudgetData ? formatNumber(safeBudgetData.previousMonthExpense) : "0원"}
+                지난 달: {safeBudgetData ? formatNumber(safeBudgetData.previousMonthExpense) : formatCurrency(0)}
               </div>
               <div className="self-stretch inline-flex justify-left items-center gap-2.5">
                 <div className="w-36 h-1.5 bg-primary-200 rounded-md overflow-hidden">
@@ -403,17 +406,17 @@ const OrderHistoryPage = () => {
                   </div>
                 </div>
                 <div className="justify-center text-primary-800 text-2xl font-extrabold">
-                  {safeBudgetData ? formatNumber(safeBudgetData.currentYearTotalExpense) : "0원"}
+                  {safeBudgetData ? formatNumber(safeBudgetData.currentYearTotalExpense) : formatCurrency(0)}
                 </div>
               </div>
               <div className="self-stretch justify-center text-primary-600 text-base font-normal leading-relaxed">
                 작년보다{" "}
                 {safeBudgetData
-                  ? formatPrice(
+                  ? formatCurrency(
                       Math.abs(safeBudgetData.currentYearTotalExpense - safeBudgetData.previousYearTotalExpense),
                     )
-                  : "0"}
-                원<br />
+                  : formatCurrency(0)}
+                <br />
                 {safeBudgetData && safeBudgetData.currentYearTotalExpense - safeBudgetData.previousYearTotalExpense > 0
                   ? "더 지출했어요"
                   : "덜 지출했어요"}
@@ -447,7 +450,7 @@ const OrderHistoryPage = () => {
                       </div>
                     </div>
                     <div className="text-center justify-center text-primary-800 text-base font-extrabold">
-                      {parseInt(item.amount.replace(/[^0-9]/g, "")).toLocaleString()}원
+                      {item.amount}
                     </div>
                   </div>
                   <div className="self-stretch flex flex-col justify-center items-start">
@@ -575,14 +578,14 @@ const OrderHistoryPage = () => {
               <div className="self-stretch inline-flex justify-between items-start">
                 <div className="justify-center text-primary-800 text-lg font-bold">이번 달 예산</div>
                 <div className="justify-center text-primary-800 text-2xl font-extrabold">
-                  {safeBudgetData ? formatNumber(safeBudgetData.currentMonthBudget) : "0원"}
+                  {safeBudgetData ? formatNumber(safeBudgetData.currentMonthBudget) : formatCurrency(0)}
                 </div>
               </div>
               <div className="flex flex-col justify-start items-start gap-2">
                 <div className="justify-center text-primary-600 text-base font-normal leading-relaxed">
                   지난 달 예산은
                   <br />
-                  {safeBudgetData ? formatNumber(safeBudgetData.previousMonthBudget) : "0원"}이었어요
+                  {safeBudgetData ? formatNumber(safeBudgetData.previousMonthBudget) : formatCurrency(0)}이었어요
                 </div>
               </div>
             </div>
@@ -598,12 +601,13 @@ const OrderHistoryPage = () => {
                   <div className="inline-flex flex-col justify-start items-start gap-2">
                     <div className="self-stretch justify-center text-primary-800 text-lg font-bold">이번 달 지출액</div>
                     <div className="justify-center text-[16px] font-normal leading-normal tracking-[-0.4px] text-primary-600">
-                      지난 달 지출액: {safeBudgetData ? formatNumber(safeBudgetData.previousMonthExpense) : "0원"}
+                      지난 달 지출액:{" "}
+                      {safeBudgetData ? formatNumber(safeBudgetData.previousMonthExpense) : formatCurrency(0)}
                     </div>
                   </div>
                 </div>
                 <div className="justify-center text-primary-800 text-2xl font-extrabold">
-                  {safeBudgetData ? formatNumber(safeBudgetData.currentMonthExpense) : "0원"}
+                  {safeBudgetData ? formatNumber(safeBudgetData.currentMonthExpense) : formatCurrency(0)}
                 </div>
               </div>
               <div className="self-stretch inline-flex justify-left items-center gap-2.5">
@@ -635,18 +639,17 @@ const OrderHistoryPage = () => {
                   </div>
                 </div>
                 <div className="justify-center text-primary-800 text-2xl font-extrabold">
-                  {safeBudgetData ? formatNumber(safeBudgetData.currentYearTotalExpense) : "0원"}
+                  {safeBudgetData ? formatNumber(safeBudgetData.currentYearTotalExpense) : formatCurrency(0)}
                 </div>
               </div>
               <div className="justify-center text-primary-600 text-base font-normal leading-relaxed">
                 올해 작년보다
                 <br />
                 {safeBudgetData
-                  ? formatPrice(
+                  ? formatCurrency(
                       Math.abs(safeBudgetData.currentYearTotalExpense - safeBudgetData.previousYearTotalExpense),
                     )
-                  : "0"}
-                원{" "}
+                  : formatCurrency(0)}{" "}
                 {safeBudgetData && safeBudgetData.currentYearTotalExpense - safeBudgetData.previousYearTotalExpense > 0
                   ? "더 지출했어요"
                   : "덜 지출했어요"}
@@ -706,7 +709,7 @@ const OrderHistoryPage = () => {
                         </div>
                       </div>
                       <div className="w-32 justify-start text-primary-800 text-base font-normal">
-                        {parseInt(item.amount.replace(/[^0-9]/g, "")).toLocaleString()}원
+                        {item.amount}
                       </div>
                       <div className="flex justify-start items-center gap-5">
                         <div className="w-32 justify-start text-primary-800 text-base font-normal">
