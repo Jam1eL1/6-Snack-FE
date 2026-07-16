@@ -9,6 +9,7 @@ type TFormInputProps = {
   label?: string;
   placeholder?: string;
   type?: "text" | "email" | "password" | "number";
+  inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
   className?: string;
   containerClassName?: string;
 };
@@ -18,6 +19,7 @@ export default function FormInput({
   label,
   placeholder,
   type = "text",
+  inputMode,
   className,
   containerClassName,
 }: TFormInputProps) {
@@ -60,6 +62,7 @@ export default function FormInput({
           {...register(name)}
           id={name}
           type={type}
+          inputMode={inputMode}
           placeholder={placeholder}
           className={twMerge(
             "w-full font-normal text-base text-primary-950 outline-none placeholder:font-normal placeholder:text-base placeholder:tracking-tight placeholder:text-primary-500",
