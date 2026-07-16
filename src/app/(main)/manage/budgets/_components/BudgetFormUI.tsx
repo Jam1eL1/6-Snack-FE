@@ -3,9 +3,10 @@
 import React from "react";
 import Toast from "@/components/common/Toast";
 import { TToastVariant } from "@/types/toast.types";
-import { formatDollarInput } from "@/lib/utils/currency.util";
+import { formatCurrency, formatDollarInput } from "@/lib/utils/currency.util";
 
 interface BudgetFormUIProps {
+  savedCurrentMonthBudget?: number;
   currentMonthBudget: string;
   nextMonthBudget: string;
   onChange: (field: "currentMonthBudget" | "nextMonthBudget", value: string) => void;
@@ -19,6 +20,7 @@ interface BudgetFormUIProps {
 }
 
 const BudgetFormUI: React.FC<BudgetFormUIProps> = ({
+  savedCurrentMonthBudget,
   currentMonthBudget,
   nextMonthBudget,
   onChange,
@@ -53,54 +55,14 @@ const BudgetFormUI: React.FC<BudgetFormUIProps> = ({
     // }
   }, [success]);
 
-  // 숫자에 3자리마다 쉼표 추가하는 함수
+  // Format the dollar input while preserving an unfinished decimal value.
   function formatNumberWithCommas(value: string): string {
-    if (!value || value === "") return "";
-    const num = Number(value);
-    if (isNaN(num)) return "";
-    return formatDollarInput(num);
-  }
+    if (!value) return "";
 
-  // 한글 금액 단위 포맷 함수 (3백5십만원 등)
-  function formatKoreanCurrencyUnit(value: string): string {
-    if (!value || value === "0") return "0원";
-    const num = Number(value);
-    if (isNaN(num) || num === 0) return "0원";
+    const [wholeDollars, decimalCents] = value.split(".");
+    const formattedWholeDollars = formatDollarInput(Number(wholeDollars || 0));
 
-    // 1000만원 이상은 NaN 방지를 위해 간단하게 처리
-    if (num >= 100000000) return "1억원 이상";
-
-    // 만원 단위 이하
-    if (num < 10000) return num + "원";
-
-    // 만원 단위 이상
-    const units = ["", "십", "백", "천"];
-    const man = Math.floor(num / 10000);
-    let manStr = "";
-    const manArr = man.toString().split("").reverse();
-    for (let i = manArr.length - 1; i >= 0; i--) {
-      const digit = Number(manArr[i]);
-      if (digit > 0) {
-        manStr += digit + units[i];
-      }
-    }
-    manStr += "만원";
-
-    // 만원 이하 처리
-    const rest = num % 10000;
-    let restStr = "";
-    if (rest > 0) {
-      const restArr = rest.toString().split("").reverse();
-      for (let i = restArr.length - 1; i >= 0; i--) {
-        const digit = Number(restArr[i]);
-        if (digit > 0) {
-          restStr += digit + units[i];
-        }
-      }
-      restStr += "원";
-    }
-
-    return manStr + (restStr ? restStr : "");
+    return decimalCents !== undefined ? `${formattedWholeDollars}.${decimalCents}` : formattedWholeDollars;
   }
 
   return (
@@ -126,10 +88,15 @@ const BudgetFormUI: React.FC<BudgetFormUIProps> = ({
                   <div className="self-stretch text-[color:var(--color-primary-950)] text-sm md:text-base font-bold">
                     이번 달
                   </div>
+                  {savedCurrentMonthBudget !== undefined && (
+                    <div className="self-stretch text-[color:var(--color-primary-400)] text-sm md:text-base font-normal">
+                      Currently saved: {formatCurrency(savedCurrentMonthBudget)}
+                    </div>
+                  )}
                   <div className="self-stretch border-b-2 border-neutral-700 inline-flex justify-center items-center gap-1 w-full max-w-full h-[49px] pb-[12px] scrollbar-hide overflow-x-visible">
                     <input
                       type="text"
-                      inputMode="numeric"
+                      inputMode="decimal"
                       style={
                         currentMonthBudget ? { color: "var(--color-primary-950)", height: "37px" } : { height: "37px" }
                       }
@@ -148,24 +115,22 @@ const BudgetFormUI: React.FC<BudgetFormUIProps> = ({
                             : ""
                       }
                       onChange={(e) => {
-                        const onlyNums = e.target.value.replace(/[^0-9]/g, "");
-                        // 99999999 (천만원 미만)까지만 입력 가능
-                        if (onlyNums.length <= 8) {
-                          onChange("currentMonthBudget", onlyNums);
+                        const dollarValue = e.target.value.replace(/,/g, "");
+                        const wholeDollarLength = dollarValue.split(".")[0].length;
+
+                        if (/^\d*(\.\d{0,2})?$/.test(dollarValue) && wholeDollarLength <= 8) {
+                          onChange("currentMonthBudget", dollarValue);
                         }
                       }}
                       disabled={loading}
                     />
                     <div className="text-[color:var(--color-primary-950)] font-bold leading-[100%] align-middle tracking-tight sm:text-3xl md:text-4xl">
-                      원
+                      CAD
                     </div>
                   </div>
                   {errors?.currentMonthBudget && (
                     <p className="text-red-500 text-xs mt-1 ml-2">{errors.currentMonthBudget}</p>
                   )}
-                  <div className="self-stretch text-[color:var(--color-primary-400)] text-sm md:text-base font-bold">
-                    {formatKoreanCurrencyUnit(currentMonthBudget)}
-                  </div>
                 </div>
                 {/* 다음 달 예산 */}
                 <div className="self-stretch flex flex-col justify-center items-start gap-3">
@@ -175,7 +140,7 @@ const BudgetFormUI: React.FC<BudgetFormUIProps> = ({
                   <div className="self-stretch border-b-2 border-neutral-700 inline-flex justify-center items-center gap-1 w-full max-w-full h-[49px] pb-[12px] scrollbar-hide overflow-x-visible">
                     <input
                       type="text"
-                      inputMode="numeric"
+                      inputMode="decimal"
                       style={
                         nextMonthBudget ? { color: "var(--color-primary-950)", height: "37px" } : { height: "37px" }
                       }
@@ -194,24 +159,22 @@ const BudgetFormUI: React.FC<BudgetFormUIProps> = ({
                             : ""
                       }
                       onChange={(e) => {
-                        const onlyNums = e.target.value.replace(/[^0-9]/g, "");
-                        // 99999999 (천만원 미만)까지만 입력 가능
-                        if (onlyNums.length <= 8) {
-                          onChange("nextMonthBudget", onlyNums);
+                        const dollarValue = e.target.value.replace(/,/g, "");
+                        const wholeDollarLength = dollarValue.split(".")[0].length;
+
+                        if (/^\d*(\.\d{0,2})?$/.test(dollarValue) && wholeDollarLength <= 8) {
+                          onChange("nextMonthBudget", dollarValue);
                         }
                       }}
                       disabled={loading}
                     />
                     <div className="text-[color:var(--color-primary-950)] font-bold leading-[100%] align-middle tracking-tight sm:text-3xl md:text-4xl">
-                      원
+                      CAD
                     </div>
                   </div>
                   {errors?.nextMonthBudget && (
                     <p className="text-red-500 text-xs mt-1 ml-2">{errors.nextMonthBudget}</p>
                   )}
-                  <div className="self-stretch text-[color:var(--color-primary-400)] text-sm md:text-base font-bold">
-                    {formatKoreanCurrencyUnit(nextMonthBudget)}
-                  </div>
                 </div>
               </div>
             </div>
