@@ -40,7 +40,7 @@ export default function CartItem({
 
   const isAllChecked = cartItems?.cart.length && cartItems?.cart.every((item) => item.isChecked);
 
-  // 장바구니 선택 - Optimistic Update
+  // Select a cart item - optimistic update
   const { mutate: toggleCheckCartItem } = useMutation<
     void,
     Error,
@@ -67,19 +67,19 @@ export default function CartItem({
     onSettled: () => queryClient.invalidateQueries({ queryKey: queryKeys.cartItems.all }),
   });
 
-  // 장바구니 선택 삭제
+  // Delete selected cart items
   const { mutate: deleteCheckedCartItems } = useMutation<void, Error, number[]>({
     mutationFn: (cartItemIds) => deleteSelectedItems(cartItemIds),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.cartItems.all }),
   });
 
-  // 장바구니 수량 선택
+  // Update a cart item quantity
   const { mutate: updateCartItemQuantity } = useMutation<void, Error, { cartItemId: number; quantity: number }>({
     mutationFn: ({ cartItemId, quantity }) => updateItemQuantity(cartItemId, quantity),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.cartItems.all }),
   });
 
-  // 장바구니 전체 선택 / 전체 해제 - Optimistic update
+  // Select or clear all cart items - optimistic update
   const { mutate: toggleCheckAllCartItems } = useMutation<
     void,
     Error,
@@ -119,14 +119,14 @@ export default function CartItem({
           >
             <Image
               src={isAllChecked ? ic_checkbox_active : ic_checkbox}
-              alt="체크박스"
+              alt="Checkbox"
               fill
               className="object-contain"
             />
           </button>
 
           <p className="font-bold text-[16px]/[20px] tracking-tight text-black sm:text-[18px]/[22px]">
-            전체 선택 ({checkedCartItemIds?.length ?? 0}개)
+            Select All ({checkedCartItemIds?.length ?? 0})
           </p>
         </div>
 
@@ -137,7 +137,7 @@ export default function CartItem({
           }}
           className="font-normal text-[14px]/[17px] tracking-tight underline text-primary-600 cursor-pointer sm:text-[16px]/[20px]"
         >
-          선택 삭제
+          Remove Selected
         </button>
       </div>
 
@@ -146,7 +146,7 @@ export default function CartItem({
           <DogSpinner />
         </div>
       ) : !cartItems?.cart.length ? (
-        <div className="flex justify-center items-center h-[200px]">장바구니에 담은 상품이 없습니다.</div>
+        <div className="flex justify-center items-center h-[200px]">Your cart is empty.</div>
       ) : (
         cartItems.cart.map((item) => (
           <div
@@ -161,7 +161,7 @@ export default function CartItem({
               >
                 <Image
                   src={item.isChecked ? ic_checkbox_active : ic_checkbox}
-                  alt="체크박스"
+                  alt="Checkbox"
                   fill
                   className="object-contain"
                 />
@@ -173,7 +173,7 @@ export default function CartItem({
                   className="flex justify-center items-center w-[81px] h-[81px] p-[24px] rounded-[2px] bg-primary-50 sm:w-[140px] sm:h-[140px] sm:bg-white"
                 >
                   <div className="relative w-[29px] h-[50px] sm:w-[59px] sm:h-[102px]">
-                    <Image src={item.product.imageUrl} alt="상품" fill className="object-contain" />
+                    <Image src={item.product.imageUrl} alt={item.product.name} fill className="object-contain" />
                   </div>
                 </Link>
 
@@ -187,7 +187,7 @@ export default function CartItem({
                         {item.product.name}
                       </Link>
                       <p className="font-extrabold text-[14px]/[17px] tracking-tight text-primary-950 sm:font-bold sm:text-[16px]/[20px] sm:text-[#1f1f1f]">
-                        {formatPrice(item.product.price)}원
+                        ${formatPrice(item.product.price)}
                       </p>
                     </div>
 
@@ -198,17 +198,17 @@ export default function CartItem({
                       />
 
                       <p className="hidden sm:block sm:font-extrabold sm:text-[24px]/[32px] sm:text-[#1f1f1f] md:tracking-tight md:leading-[30px]">
-                        총 {formatPrice(item.product.price * item.quantity)}원
+                        Total ${formatPrice(item.product.price * item.quantity)}
                       </p>
                     </div>
                   </div>
 
                   <div className="flex justify-between items-center sm:items-start">
                     <p className="font-normal text-[13px]/[16px] tracking-tight text-[#6b6b6b] sm:hidden">
-                      택배 3,000원
+                      Shipping ₩3,000
                     </p>
                     <p className="hidden sm:block sm:font-normal sm:text-[14px]/[17px] tracking-tight text-[#6b6b6b]">
-                      택배 배송비 3,000원
+                      Shipping fee ₩3,000
                     </p>
                     <Button
                       onClick={() => {
@@ -217,13 +217,13 @@ export default function CartItem({
                         }
 
                         if (user?.role !== "USER") {
-                          // Order 생성 API
+                          // Create the Order
                           setIsDisabled(true);
                           orderRequest([item.id]);
                         }
                       }}
                       type="white"
-                      label={user?.role === "USER" ? "바로 요청" : "즉시 구매"}
+                      label={user?.role === "USER" ? "Request Item" : "Buy Now"}
                       disabled={isDisabled ? isDisabled : user?.role === "USER" ? false : !canPurchase}
                       className={clsx(
                         user?.role === "USER"

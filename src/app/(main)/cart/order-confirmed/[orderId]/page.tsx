@@ -12,7 +12,7 @@ import { useAuth } from "@/providers/AuthProvider";
 import { formatPrice } from "@/lib/utils/formatPrice.util";
 import DogSpinner from "@/components/common/DogSpinner";
 
-// 메모이제이션된 상품 아이템 컴포넌트
+// Memoized product item component
 const ProductItem = React.memo(({ receipt }: { receipt: { price: number; quantity: number; imageUrl: string; productName: string } }) => {
   const totalPrice = useMemo(() => receipt.price * receipt.quantity, [receipt.price, receipt.quantity]);
   
@@ -25,7 +25,7 @@ const ProductItem = React.memo(({ receipt }: { receipt: { price: number; quantit
           <div className="relative w-[75%] h-[75%]">
             <Image
               src={receipt.imageUrl}
-              alt={`${receipt.productName} 상품 이미지`}
+              alt={`${receipt.productName} product image`}
               fill
               className="object-contain"
             />
@@ -37,21 +37,21 @@ const ProductItem = React.memo(({ receipt }: { receipt: { price: number; quantit
               {receipt.productName}
             </div>
             <div className="justify-start text-primary-950 text-sm sm:text-base font-bold">
-              {formatPrice(receipt.price)}원
+              ${formatPrice(receipt.price)}
             </div>
           </div>
           <div className="flex justify-between items-center w-full sm:justify-start sm:flex sm:justify-start">
             <div className="justify-center text-primary-500 text-[13px] sm:text-base font-bold">
-              수량 {receipt.quantity}개
+              Quantity {receipt.quantity}
             </div>
             <div className="text-center justify-center text-primary-700 text-base font-bold sm:hidden">
-              {formatPrice(totalPrice)}원
+              ${formatPrice(totalPrice)}
             </div>
           </div>
         </div>
       </div>
       <div className="hidden sm:block text-center justify-center text-primary-700 text-[20px] font-extrabold">
-        {formatPrice(totalPrice)}원
+        ${formatPrice(totalPrice)}
       </div>
     </div>
   );
@@ -59,18 +59,18 @@ const ProductItem = React.memo(({ receipt }: { receipt: { price: number; quantit
 
 ProductItem.displayName = 'ProductItem';
 
-// 간단한 로딩 컴포넌트
+// Loading state
 const LoadingComponent = () => (
   <div className="flex justify-center items-center h-[80vh] md:h-[60vh]">
     <DogSpinner />
   </div>
 );
 
-// 최적화된 에러 컴포넌트
+// Error state
 const ErrorComponent = ({ error }: { error: Error | null }) => (
   <div className="min-h-screen bg-white flex items-center justify-center">
     <div className="text-base sm:text-lg md:text-xl text-red-600">
-      {error?.message || "주문 내역을 찾을 수 없습니다."}
+      {error?.message || "Order details could not be found."}
     </div>
   </div>
 );
@@ -80,13 +80,13 @@ export default function OrderConfirmedPage() {
   const params = useParams();
   const { user } = useAuth();
   
-  // orderId 우선순위: props > URL params
+  // Read the Order ID from the URL
   const orderId = params.orderId as string;
 
-  // useQuery를 사용한 데이터 페칭
+  // Fetch the Order detail through React Query
   const { data: orderData, isLoading, error } = useMyOrderDetail(orderId);
 
-  // 메모이제이션된 이벤트 핸들러
+  // Memoized event handlers
   const handleViewOrderHistory = useCallback(() => {
     if (user?.role === "USER") {
       router.push("/my/order-list");
@@ -99,27 +99,27 @@ export default function OrderConfirmedPage() {
     router.push("/cart");
   }, [router]);
 
-  // 메모이제이션된 계산값들
+  // Memoized totals
   const shippingFee = useMemo(() => orderData ? orderData.deliveryFee : 0, [orderData]);
   const totalAmount = useMemo(() => 
     orderData ? orderData.productsPriceTotal + shippingFee : 0, 
     [orderData, shippingFee]
   );
 
-  // 페이지 제목 메모이제이션
+  // Memoized page title
   const pageTitle = useMemo(() => {
     if (orderData) {
-      return `주문 완료 - ${orderData.receipts?.length || 0}개 상품`;
+      return `Order Confirmed - ${orderData.receipts?.length || 0} Items`;
     }
-    return "주문 완료";
+    return "Order Confirmed";
   }, [orderData]);
 
-  // 버튼 텍스트 메모이제이션
+  // Memoized button text
   const buttonText = useMemo(() => {
-    return user?.role === "USER" ? "요청내역 확인" : "요청내역 확인";
+    return "View Order History";
   }, [user?.role]);
 
-  // 진행 단계 컴포넌트 메모이제이션
+  // Memoized progress steps
   const progressSteps = useMemo(() => {
     if (user?.role === "USER") {
       return (
@@ -158,12 +158,12 @@ export default function OrderConfirmedPage() {
     }
   }, [user?.role]);
 
-  // 완료 메시지 메모이제이션
+  // Memoized confirmation message
   const completionMessage = useMemo(() => {
-    return user?.role === "USER" ? "구매 요청이 완료되었습니다." : "구매가 완료되었습니다.";
+    return user?.role === "USER" ? "Your purchase request has been submitted." : "Your order has been placed.";
   }, [user?.role]);
 
-  // 메인 컨텐츠 메모이제이션
+  // Memoized page content
   const mainContent = useMemo(() => {
     if (!orderData) return null;
     
@@ -200,58 +200,58 @@ export default function OrderConfirmedPage() {
             "md:pb-32",
           )}
         >
-          {/* 진행 단계 */}
+          {/* Progress steps */}
           <div className="flex flex-col sm:flex-row md:gap-5 justify-center items-center gap-2.5 sm:gap-4">
             {progressSteps}
           </div>
 
-          {/* 주문 완료 메시지 */}
+          {/* Confirmation message */}
           <div className="self-stretch text-center justify-center text-primary-800 text-2xl sm:text-3xl md:text-3xl font-bold">
             {completionMessage}
           </div>
 
-          {/* 주문 상품 목록 */}
+          {/* Order items */}
           <div className="self-stretch flex flex-col justify-start items-start gap-10">
             <div className="self-stretch flex flex-col justify-start items-start gap-[15px]">
               <div className="inline-flex justify-start items-start gap-1.5">
-                <div className="justify-center text-primary-950 text-base font-bold">요청 품목</div>
+                <div className="justify-center text-primary-950 text-base font-bold">Requested Items</div>
                 <div className="justify-center text-primary-950 text-base font-normal">
-                  총 {orderData.receipts.length}개
+                  {orderData.receipts.length} items total
                 </div>
               </div>
 
               <div className="self-stretch bg-white rounded-sm sm:shadow-[0px_2px_8px_0px_rgba(0,0,0,0.1)] md:shadow-[0px_2px_8px_0px_rgba(0,0,0,0.1)] flex flex-col justify-start items-start gap-5 sm:px-5 sm:pt-5 sm:pb-[30px] md:px-[60px] md:py-[40px]">
-                {/* 상품 목록 */}
+                {/* Product list */}
                 <div className="self-stretch flex flex-col justify-start items-start gap-[16px] sm:gap-0">
                   {orderData.receipts.map((receipt) => (
                     <ProductItem key={receipt.id} receipt={receipt} />
                   ))}
                 </div>
 
-                {/* 주문 금액 정보 */}
+                {/* Order totals */}
                 <div className="self-stretch flex flex-col gap-3 sm:gap-[7px] sm:px-5">
                   <div className="flex justify-between items-center">
                     <div className="text-center justify-center text-primary-700 text-sm sm:text-base font-bold">
-                      주문금액
+                      Items
                     </div>
                     <div className="text-center justify-center text-primary-700 text-sm sm:text-base font-bold">
-                      {formatPrice(orderData.productsPriceTotal)}원
+                      ${formatPrice(orderData.productsPriceTotal)}
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
                     <div className="text-center justify-center text-primary-700 text-sm sm:text-base font-bold">
-                      배송비
+                      Shipping Fee
                     </div>
                     <div className="text-center justify-center text-primary-700 text-sm sm:text-base font-bold">
-                      {formatPrice(shippingFee)}원
+                      ${formatPrice(shippingFee)}
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
                     <div className="text-center justify-center text-primary-950 text-lg sm:text-lg font-bold">
-                      총 주문금액
+                      Order Total
                     </div>
                     <div className="text-center justify-center text-primary-950 text-lg sm:text-2xl font-bold sm:font-extrabold">
-                      {formatPrice(totalAmount)}원
+                      ${formatPrice(totalAmount)}
                     </div>
                   </div>
                 </div>
@@ -259,26 +259,26 @@ export default function OrderConfirmedPage() {
             </div>
           </div>
 
-          {/* 요청 메시지 */}
+          {/* Request message */}
           <div className="self-stretch flex flex-col justify-start items-start gap-5">
             <div className="self-stretch justify-center text-primary-800 text-base font-bold">
-              요청 메시지
+              Request Message
             </div>
             <div className="self-stretch h-40 p-6 bg-white rounded-sm outline-1 outline-offset-[-1px] outline-primary-300 inline-flex justify-start items-start gap-2 overflow-hidden">
               <div className="justify-center text-primary-400 text-base font-normal leading-relaxed">
-                {orderData.requestMessage || "요청 메시지가 없습니다."}
+                {orderData.requestMessage || "No request message was provided."}
               </div>
             </div>
           </div>
 
-          {/* 하단 버튼 */}
+          {/* Page actions */}
           <div className="self-stretch h-16 inline-flex justify-start md:justify-center items-center gap-5">
             <div
               className="flex-1 md:flex-none md:w-[260px] h-16 px-4 py-3 bg-white rounded-[2px] outline-1 outline-offset-[-1px] outline-zinc-400 flex justify-center items-center text-base font-semibold cursor-pointer border border-zinc-400"
               onClick={handleBackToCart}
             >
-              <span className="block sm:hidden text-center">장바구니</span>
-              <span className="hidden sm:block">장바구니로 돌아가기</span>
+              <span className="block sm:hidden text-center">Cart</span>
+              <span className="hidden sm:block">Back to Cart</span>
             </div>
             <Button
               type="black"
@@ -296,8 +296,8 @@ export default function OrderConfirmedPage() {
     return (
       <>
         <Head>
-          <title>주문 완료 - 로딩 중</title>
-          <meta name="description" content="주문 정보를 불러오는 중입니다." />
+          <title>Order Confirmed - Loading</title>
+          <meta name="description" content="Loading Order information." />
           <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -313,8 +313,8 @@ export default function OrderConfirmedPage() {
     return (
       <>
         <Head>
-          <title>주문 완료 - 오류</title>
-          <meta name="description" content="주문 정보를 불러오는데 실패했습니다." />
+          <title>Order Confirmed - Error</title>
+          <meta name="description" content="Unable to load Order information." />
           <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         </Head>
         <ErrorComponent error={error} />
@@ -326,7 +326,10 @@ export default function OrderConfirmedPage() {
     <>
       <Head>
         <title>{pageTitle}</title>
-        <meta name="description" content={`주문이 완료되었습니다. ${orderData.receipts?.length || 0}개의 상품이 포함되어 있습니다.`} />
+        <meta
+          name="description"
+          content={`Your Order has been confirmed with ${orderData.receipts?.length || 0} items.`}
+        />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
