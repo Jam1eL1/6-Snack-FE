@@ -21,7 +21,7 @@ type TBudgetData = {
 
 const getProductTypeCount = (productName?: string) => {
   if (!productName) return 1;
-  const match = productName.match(/외 (\d+)건/);
+  const match = productName.match(/and (\d+) more$/);
   return match ? Number(match[1]) + 1 : 1;
 };
 
@@ -45,29 +45,30 @@ const OrderHistoryPage = () => {
   }) => (
     <div className={`p-6 bg-primary-800 rounded flex flex-col justify-center items-start gap-2 shadow-lg ${className}`}>
       <div className="inline-flex justify-start items-center gap-2">
-        <div className="justify-center text-white text-base font-extrabold">이번 달 남은 예산:</div>
+        <div className="justify-center text-white text-base font-extrabold">Remaining Budget This Month:</div>
         <div className="justify-center text-white text-base font-extrabold">
           {budgetData
             ? formatNumber(budgetData.currentMonthBudget - budgetData.currentMonthExpense)
-            : "데이터 로딩 중..."}
+            : "Loading data..."}
         </div>
       </div>
       <div className="inline-flex justify-start items-center gap-1">
-        <div className="justify-center text-white text-sm font-normal">지난 달 남은 예산:</div>
+        <div className="justify-center text-white text-sm font-normal">Remaining Budget Last Month:</div>
         <div className="justify-center text-white text-sm font-normal">
           {budgetData
             ? formatNumber(budgetData.previousMonthBudget - budgetData.previousMonthExpense)
-            : "데이터 로딩 중..."}
+            : "Loading data..."}
         </div>
       </div>
       <div className="justify-center text-white text-sm font-normal">
-        지난 달보다{" "}
+        You spent{" "}
         {budgetData
           ? formatCurrency(Math.abs(budgetData.currentMonthExpense - budgetData.previousMonthExpense))
           : formatCurrency(0)}{" "}
         {budgetData && budgetData.currentMonthExpense - budgetData.previousMonthExpense > 0
-          ? "더 사용했어요"
-          : "덜 사용했어요"}
+          ? "more"
+          : "less"}{" "}
+        than last month.
       </div>
     </div>
   );
@@ -86,10 +87,10 @@ const OrderHistoryPage = () => {
   const emptyOrdersContent = (
     <div className="flex flex-col justify-center items-center w-full pb-20">
       <NoContent
-        title="구매 내역이 없어요"
-        subText1="아직 구매한 내역이 없습니다."
-        subText2="상품을 둘러보고 첫 주문을 진행해 보세요."
-        buttonText="상품 보러가기"
+        title="No purchase history"
+        subText1="You haven't made any purchases yet."
+        subText2="Browse products and place your first order."
+        buttonText="Browse Products"
         onClick={() => router.push("/products")}
         className="sm:mt-[10px] md:mt-[10px]"
       />
@@ -101,18 +102,18 @@ const OrderHistoryPage = () => {
       {/* Mobile Layout */}
       <main
         className="min-h-screen w-full relative bg-white overflow-hidden sm:hidden"
-        aria-label="구매 내역 모바일 화면"
+        aria-label="Purchase history mobile view"
       >
         <header className="self-stretch flex justify-between items-center px-4 pt-6 pb-6" role="banner">
-          <h1 className="text-primary-800 text-lg font-bold flex-shrink-0">구매 내역 확인</h1>
-          <nav aria-label="정렬 옵션" className="flex-shrink-0">
+          <h1 className="text-primary-800 text-lg font-bold flex-shrink-0">Purchase History</h1>
+          <nav aria-label="Sort options" className="flex-shrink-0">
             <div className="relative custom-sort-dropdown w-auto" role="region">
               <Dropdown
                 options={["Newest", "Lowest Price", "Highest Price"]}
                 onChange={(selectedOption: string) => {
-                  if (selectedOption === "최신순") setSortBy("latest");
-                  else if (selectedOption === "낮은 가격순") setSortBy("priceLow");
-                  else if (selectedOption === "높은 가격순") setSortBy("priceHigh");
+                  if (selectedOption === "Newest") setSortBy("latest");
+                  else if (selectedOption === "Lowest Price") setSortBy("priceLow");
+                  else if (selectedOption === "Highest Price") setSortBy("priceHigh");
                 }}
               />
             </div>
@@ -120,21 +121,23 @@ const OrderHistoryPage = () => {
         </header>
         <section className="w-full flex flex-col gap-4 px-4 pb-2" aria-labelledby="budget-section-mobile">
           <h2 id="budget-section-mobile" className="sr-only">
-            예산 현황
+            Budget Overview
           </h2>
-          {/* 예산 카드 */}
+          {/* Budget cards */}
           <div className="self-stretch relative flex flex-col justify-center items-start gap-4">
             <div className="self-stretch inline-flex justify-start items-start gap-4 min-w-0">
               <div className="flex-1 h-40 p-5 bg-primary-50 rounded inline-flex flex-col justify-start items-start gap-5 overflow-hidden min-w-0">
                 <div className="self-stretch flex flex-col justify-start items-start gap-2.5">
-                  <div className="self-stretch justify-center text-primary-800 text-base font-bold">이번 달 예산</div>
+                  <div className="self-stretch justify-center text-primary-800 text-base font-bold">
+                    Current Month Budget
+                  </div>
                   <div className="justify-center text-primary-800 text-lg font-extrabold">
                     {safeBudgetData ? formatNumber(safeBudgetData.currentMonthBudget) : formatCurrency(0)}
                   </div>
                 </div>
                 <div className="relative justify-center text-primary-600 text-sm font-normal">
-                  지난 달 예산은 {safeBudgetData ? formatNumber(safeBudgetData.previousMonthBudget) : formatCurrency(0)}
-                  이었어요
+                  Last month's budget was{" "}
+                  {safeBudgetData ? formatNumber(safeBudgetData.previousMonthBudget) : formatCurrency(0)}.
                 </div>
               </div>
               <div
@@ -145,13 +148,15 @@ const OrderHistoryPage = () => {
                 onTouchEnd={() => setIsHoveredMobile(false)}
               >
                 <div className="self-stretch flex flex-col justify-start items-start gap-2.5 overflow-hidden">
-                  <div className="self-stretch justify-center text-primary-800 text-base font-bold">이번 달 지출액</div>
+                  <div className="self-stretch justify-center text-primary-800 text-base font-bold">
+                    Current Month Spending
+                  </div>
                   <div className="justify-center text-primary-800 text-lg font-extrabold">
                     {safeBudgetData ? formatNumber(safeBudgetData.currentMonthExpense) : formatCurrency(0)}
                   </div>
                 </div>
                 <div className="justify-center text-primary-600 text-sm font-normal">
-                  지난 달: {safeBudgetData ? formatNumber(safeBudgetData.previousMonthExpense) : formatCurrency(0)}
+                  Last month: {safeBudgetData ? formatNumber(safeBudgetData.previousMonthExpense) : formatCurrency(0)}
                 </div>
                 <div className="self-stretch inline-flex justify-left items-center gap-1">
                   <div className="w-20 h-1.5 bg-primary-200 rounded-md overflow-hidden">
@@ -180,7 +185,7 @@ const OrderHistoryPage = () => {
                 <div className="inline-flex justify-start items-center gap-3.5">
                   <div className="inline-flex flex-col justify-start items-start gap-2">
                     <div className="self-stretch justify-center text-primary-800 text-base font-bold">
-                      올해 총 지출액
+                      Total Spending This Year
                     </div>
                   </div>
                 </div>
@@ -189,7 +194,7 @@ const OrderHistoryPage = () => {
                 </div>
               </div>
               <div className="self-stretch justify-center text-primary-600 text-sm font-normal leading-snug">
-                작년보다{" "}
+                You spent{" "}
                 {safeBudgetData
                   ? formatCurrency(
                       Math.abs(safeBudgetData.currentYearTotalExpense - safeBudgetData.previousYearTotalExpense),
@@ -197,8 +202,9 @@ const OrderHistoryPage = () => {
                   : formatCurrency(0)}
                 <br />
                 {safeBudgetData && safeBudgetData.currentYearTotalExpense - safeBudgetData.previousYearTotalExpense > 0
-                  ? "더 지출했어요"
-                  : "덜 지출했어요"}
+                  ? "more"
+                  : "less"}{" "}
+                than last year.
               </div>
             </div>
 
@@ -207,7 +213,7 @@ const OrderHistoryPage = () => {
         </section>
         <section className="w-full flex flex-col gap-2 px-4" aria-labelledby="purchase-list-mobile" role="list">
           <h2 id="purchase-list-mobile" className="sr-only">
-            구매 내역 목록
+            Purchase History List
           </h2>
           {/* Mobile Purchase List */}
           {currentItems.length > 0
@@ -223,13 +229,13 @@ const OrderHistoryPage = () => {
                         onClick={() => handleProductClick(item.id)}
                         className="text-blue-600 cursor-pointer text-base font-bold bg-transparent border-none p-0 focus:outline-none whitespace-nowrap overflow-hidden text-ellipsis max-w-32"
                         type="button"
-                        aria-label={`${item.item} 상세보기로 이동`}
+                        aria-label={`View details for ${item.item}`}
                       >
                         {item.item}
                       </button>
                     </div>
                     <div className="text-center justify-center text-primary-500 text-xs font-normal ml-[-100px]">
-                      총 수량 {getProductTypeCount(item.productName)}개
+                      Total Quantity: {getProductTypeCount(item.productName)}
                     </div>
                     <div className="text-center justify-center text-primary-800 text-base font-extrabold">
                       {item.amount}
@@ -239,7 +245,7 @@ const OrderHistoryPage = () => {
                     <div className="self-stretch inline-flex justify-start items-center">
                       <div className="w-36 h-12 p-2 border-r border-b border-primary-200 flex justify-start items-center gap-2">
                         <div className="text-center justify-center text-primary-800 text-sm font-normal">
-                          구매 요청일
+                          Request Date
                         </div>
                       </div>
                       <div className="flex-1 h-12 px-4 py-2 border-b border-primary-200 flex justify-start items-center gap-2">
@@ -250,7 +256,9 @@ const OrderHistoryPage = () => {
                     </div>
                     <div className="self-stretch inline-flex justify-start items-center">
                       <div className="w-36 h-12 p-2 border-r border-b border-primary-200 flex justify-start items-center gap-2">
-                        <div className="text-center justify-center text-primary-800 text-sm font-normal">요청인</div>
+                        <div className="text-center justify-center text-primary-800 text-sm font-normal">
+                          Requested By
+                        </div>
                       </div>
                       <div className="flex-1 h-12 px-4 py-2 border-b border-primary-200 flex justify-start items-center gap-2">
                         <div className="text-center justify-center text-primary-950 text-sm font-bold">
@@ -258,7 +266,9 @@ const OrderHistoryPage = () => {
                         </div>
                         {item.status === "INSTANT_APPROVED" && (
                           <div className="px-1 py-1 bg-blue-50 rounded-[100px] flex justify-center items-center gap-1">
-                            <div className="justify-center text-secondary-500 text-xs font-bold">즉시 구매</div>
+                            <div className="justify-center text-secondary-500 text-xs font-bold">
+                              Instant Purchase
+                            </div>
                           </div>
                         )}
                       </div>
@@ -268,7 +278,7 @@ const OrderHistoryPage = () => {
                     <div className="self-stretch inline-flex justify-start items-center">
                       <div className="w-36 self-stretch px-2 py-4 border-r border-b border-primary-200 flex justify-start items-start gap-2">
                         <div className="text-center justify-center text-primary-800 text-sm font-normal">
-                          구매 승인일
+                          Approval Date
                         </div>
                       </div>
                       <div className="flex-1 self-stretch p-4 border-b border-primary-200 flex justify-start items-start gap-2">
@@ -279,7 +289,7 @@ const OrderHistoryPage = () => {
                     </div>
                     <div className="self-stretch inline-flex justify-start items-start">
                       <div className="w-36 self-stretch px-2 py-4 border-r border-b border-primary-200 flex justify-start items-start gap-2">
-                        <div className="text-center justify-center text-primary-800 text-sm font-normal">담당자</div>
+                        <div className="text-center justify-center text-primary-800 text-sm font-normal">Approver</div>
                       </div>
                       <div className="flex-1 p-4 border-b border-primary-200 flex justify-start items-center gap-2">
                         <div className="flex-1 justify-center text-primary-950 text-sm font-bold leading-snug">
@@ -292,7 +302,7 @@ const OrderHistoryPage = () => {
               ))
             : emptyOrdersContent}
         </section>
-        <nav className="self-stretch h-10 flex justify-between items-center px-4" aria-label="페이지 이동">
+        <nav className="self-stretch h-10 flex justify-between items-center px-4" aria-label="Pagination">
           {/* Mobile Pagination */}
           <div className="text-primary-800 text-base font-normal">
             {currentPage} of {totalPages}
@@ -325,18 +335,18 @@ const OrderHistoryPage = () => {
       {/* Tablet Layout */}
       <main
         className="min-h-screen w-full relative bg-white overflow-hidden hidden sm:block md:hidden"
-        aria-label="구매 내역 태블릿 화면"
+        aria-label="Purchase history tablet view"
       >
         <header className="self-stretch flex justify-between items-center pt-8 px-8 pb-6" role="banner">
-          <h1 className="text-primary-800 text-lg font-bold flex-shrink-0">구매 내역 확인</h1>
-          <nav aria-label="정렬 옵션" className="flex-shrink-0">
+          <h1 className="text-primary-800 text-lg font-bold flex-shrink-0">Purchase History</h1>
+          <nav aria-label="Sort options" className="flex-shrink-0">
             <div className="relative custom-sort-dropdown w-auto" role="region">
               <Dropdown
                 options={["Newest", "Lowest Price", "Highest Price"]}
                 onChange={(selectedOption: string) => {
-                  if (selectedOption === "최신순") setSortBy("latest");
-                  else if (selectedOption === "낮은 가격순") setSortBy("priceLow");
-                  else if (selectedOption === "높은 가격순") setSortBy("priceHigh");
+                  if (selectedOption === "Newest") setSortBy("latest");
+                  else if (selectedOption === "Lowest Price") setSortBy("priceLow");
+                  else if (selectedOption === "Highest Price") setSortBy("priceHigh");
                 }}
               />
             </div>
@@ -344,21 +354,23 @@ const OrderHistoryPage = () => {
         </header>
         <section className="w-full flex flex-col gap-5 px-8" aria-labelledby="budget-section-tablet">
           <h2 id="budget-section-tablet" className="sr-only">
-            예산 현황
+            Budget Overview
           </h2>
           {/* Tablet Budget Cards */}
           <div className="self-stretch pb-5 inline-flex justify-start items-center gap-5">
             <div className="flex-1 min-w-0 self-stretch p-5 bg-primary-50 rounded inline-flex flex-col justify-between items-start overflow-hidden">
               <div className="self-stretch flex flex-col justify-start items-start gap-2.5">
-                <div className="self-stretch justify-center text-primary-800 text-lg font-bold">이번 달 예산</div>
+                <div className="self-stretch justify-center text-primary-800 text-lg font-bold">
+                  Current Month Budget
+                </div>
                 <div className="justify-center text-primary-800 text-2xl font-extrabold">
                   {safeBudgetData ? formatNumber(safeBudgetData.currentMonthBudget) : formatCurrency(0)}
                 </div>
               </div>
               <div className="justify-center text-primary-600 text-base font-normal leading-relaxed">
-                지난 달 예산은
+                Last month's budget was
                 <br />
-                {safeBudgetData ? formatNumber(safeBudgetData.previousMonthBudget) : formatCurrency(0)}이었어요
+                {safeBudgetData ? formatNumber(safeBudgetData.previousMonthBudget) : formatCurrency(0)}.
               </div>
             </div>
             <div
@@ -369,13 +381,15 @@ const OrderHistoryPage = () => {
               onTouchEnd={() => setIsHoveredTablet(false)}
             >
               <div className="self-stretch flex flex-col justify-start items-start gap-2.5">
-                <div className="self-stretch justify-center text-primary-800 text-lg font-bold">이번 달 지출액</div>
+                <div className="self-stretch justify-center text-primary-800 text-lg font-bold">
+                  Current Month Spending
+                </div>
                 <div className="justify-center text-primary-800 text-2xl font-extrabold">
                   {safeBudgetData ? formatNumber(safeBudgetData.currentMonthExpense) : formatCurrency(0)}
                 </div>
               </div>
               <div className="justify-center text-primary-600 text-base font-normal">
-                지난 달: {safeBudgetData ? formatNumber(safeBudgetData.previousMonthExpense) : formatCurrency(0)}
+                Last month: {safeBudgetData ? formatNumber(safeBudgetData.previousMonthExpense) : formatCurrency(0)}
               </div>
               <div className="self-stretch inline-flex justify-left items-center gap-2.5">
                 <div className="w-36 h-1.5 bg-primary-200 rounded-md overflow-hidden">
@@ -402,7 +416,9 @@ const OrderHistoryPage = () => {
               <div className="flex flex-col justify-start items-start gap-2.5">
                 <div className="inline-flex justify-start items-center gap-3.5">
                   <div className="inline-flex flex-col justify-start items-start gap-2">
-                    <div className="self-stretch justify-center text-primary-800 text-lg font-bold">올해 총 지출액</div>
+                    <div className="self-stretch justify-center text-primary-800 text-lg font-bold">
+                      Total Spending This Year
+                    </div>
                   </div>
                 </div>
                 <div className="justify-center text-primary-800 text-2xl font-extrabold">
@@ -410,7 +426,7 @@ const OrderHistoryPage = () => {
                 </div>
               </div>
               <div className="self-stretch justify-center text-primary-600 text-base font-normal leading-relaxed">
-                작년보다{" "}
+                You spent{" "}
                 {safeBudgetData
                   ? formatCurrency(
                       Math.abs(safeBudgetData.currentYearTotalExpense - safeBudgetData.previousYearTotalExpense),
@@ -418,15 +434,16 @@ const OrderHistoryPage = () => {
                   : formatCurrency(0)}
                 <br />
                 {safeBudgetData && safeBudgetData.currentYearTotalExpense - safeBudgetData.previousYearTotalExpense > 0
-                  ? "더 지출했어요"
-                  : "덜 지출했어요"}
+                  ? "more"
+                  : "less"}{" "}
+                than last year.
               </div>
             </div>
           </div>
         </section>
         <section className="w-full flex flex-col gap-2 px-8" aria-labelledby="purchase-list-tablet" role="list">
           <h2 id="purchase-list-tablet" className="sr-only">
-            구매 내역 목록
+            Purchase History List
           </h2>
           {/* Tablet Purchase List */}
           {currentItems.length > 0
@@ -446,7 +463,7 @@ const OrderHistoryPage = () => {
                         {item.item}
                       </button>
                       <div className="text-primary-500 text-xs font-normal ml-2">
-                        총 수량 {getProductTypeCount(item.productName)}개
+                        Total Quantity: {getProductTypeCount(item.productName)}
                       </div>
                     </div>
                     <div className="text-center justify-center text-primary-800 text-base font-extrabold">
@@ -458,7 +475,7 @@ const OrderHistoryPage = () => {
                       <div className="flex-1 flex justify-start items-center">
                         <div className="w-36 h-12 p-2 border-r border-b border-primary-200 flex justify-start items-center gap-2">
                           <div className="text-center justify-center text-primary-800 text-base font-normal">
-                            구매 요청일
+                            Request Date
                           </div>
                         </div>
                         <div className="flex-1 h-12 px-5 py-2 border-r border-b border-primary-200 flex justify-start items-center gap-2">
@@ -470,7 +487,7 @@ const OrderHistoryPage = () => {
                       <div className="flex-1 flex justify-start items-center">
                         <div className="w-36 h-12 px-5 py-2 border-r border-b border-primary-200 flex justify-start items-center gap-2">
                           <div className="text-center justify-center text-primary-800 text-base font-normal">
-                            요청인
+                            Requested By
                           </div>
                         </div>
                         <div className="flex-1 h-12 px-5 py-2 border-b border-primary-200 flex justify-start items-center gap-2">
@@ -480,7 +497,9 @@ const OrderHistoryPage = () => {
                             </div>
                             {item.status === "INSTANT_APPROVED" && (
                               <div className="px-1 py-1 bg-blue-50 rounded-[100px] flex justify-center items-center gap-1">
-                                <div className="justify-center text-secondary-500 text-xs font-bold">즉시 구매</div>
+                                <div className="justify-center text-secondary-500 text-xs font-bold">
+                                  Instant Purchase
+                                </div>
                               </div>
                             )}
                           </div>
@@ -491,7 +510,7 @@ const OrderHistoryPage = () => {
                       <div className="flex-1 flex justify-start items-center">
                         <div className="w-36 h-12 p-2 border-r border-b border-primary-200 flex justify-start items-center gap-2">
                           <div className="text-center justify-center text-primary-800 text-base font-normal">
-                            구매 승인일
+                            Approval Date
                           </div>
                         </div>
                         <div className="flex-1 h-12 px-5 py-2 border-r border-b border-primary-200 flex justify-start items-center gap-2">
@@ -503,7 +522,7 @@ const OrderHistoryPage = () => {
                       <div className="flex-1 flex justify-start items-center">
                         <div className="w-36 h-12 px-5 py-2 border-r border-b border-primary-200 flex justify-start items-center gap-2">
                           <div className="text-center justify-center text-primary-800 text-base font-normal">
-                            담당자
+                            Approver
                           </div>
                         </div>
                         <div className="flex-1 h-12 px-5 py-2 border-b border-primary-200 flex justify-start items-center gap-2">
@@ -518,7 +537,7 @@ const OrderHistoryPage = () => {
               ))
             : emptyOrdersContent}
         </section>
-        <nav className="self-stretch h-10 flex justify-between items-center px-8" aria-label="페이지 이동">
+        <nav className="self-stretch h-10 flex justify-between items-center px-8" aria-label="Pagination">
           {/* Tablet Pagination */}
           <div className="text-primary-800 text-base font-normal">
             {currentPage} of {totalPages}
@@ -551,18 +570,18 @@ const OrderHistoryPage = () => {
       {/* Desktop Layout */}
       <main
         className="min-h-screen w-full relative bg-white overflow-hidden hidden md:block"
-        aria-label="구매 내역 데스크탑 화면"
+        aria-label="Purchase history desktop view"
       >
         <header className="self-stretch flex justify-between items-center pt-10 px-10 pb-8" role="banner">
-          <h1 className="text-primary-800 text-lg font-bold flex-shrink-0">구매 내역 확인</h1>
-          <nav aria-label="정렬 옵션" className="flex-shrink-0">
+          <h1 className="text-primary-800 text-lg font-bold flex-shrink-0">Purchase History</h1>
+          <nav aria-label="Sort options" className="flex-shrink-0">
             <div className="relative custom-sort-dropdown w-auto" role="region">
               <Dropdown
                 options={["Newest", "Lowest Price", "Highest Price"]}
                 onChange={(selectedOption: string) => {
-                  if (selectedOption === "최신순") setSortBy("latest");
-                  else if (selectedOption === "낮은 가격순") setSortBy("priceLow");
-                  else if (selectedOption === "높은 가격순") setSortBy("priceHigh");
+                  if (selectedOption === "Newest") setSortBy("latest");
+                  else if (selectedOption === "Lowest Price") setSortBy("priceLow");
+                  else if (selectedOption === "Highest Price") setSortBy("priceHigh");
                 }}
               />
             </div>
@@ -570,22 +589,22 @@ const OrderHistoryPage = () => {
         </header>
         <section className="w-full flex flex-col gap-7 px-10" aria-labelledby="budget-section-desktop">
           <h2 id="budget-section-desktop" className="sr-only">
-            예산 현황
+            Budget Overview
           </h2>
           {/* Desktop Budget Cards */}
           <div className="self-stretch inline-flex justify-start items-center gap-7 pb-10">
             <div className="flex-1 min-w-0 self-stretch pl-7 pr-10 py-7 bg-primary-50 rounded inline-flex flex-col justify-center items-start gap-5 relative">
               <div className="self-stretch inline-flex justify-between items-start">
-                <div className="justify-center text-primary-800 text-lg font-bold">이번 달 예산</div>
+                <div className="justify-center text-primary-800 text-lg font-bold">Current Month Budget</div>
                 <div className="justify-center text-primary-800 text-2xl font-extrabold">
                   {safeBudgetData ? formatNumber(safeBudgetData.currentMonthBudget) : formatCurrency(0)}
                 </div>
               </div>
               <div className="flex flex-col justify-start items-start gap-2">
                 <div className="justify-center text-primary-600 text-base font-normal leading-relaxed">
-                  지난 달 예산은
+                  Last month's budget was
                   <br />
-                  {safeBudgetData ? formatNumber(safeBudgetData.previousMonthBudget) : formatCurrency(0)}이었어요
+                  {safeBudgetData ? formatNumber(safeBudgetData.previousMonthBudget) : formatCurrency(0)}.
                 </div>
               </div>
             </div>
@@ -599,9 +618,11 @@ const OrderHistoryPage = () => {
               <div className="self-stretch inline-flex justify-between items-start">
                 <div className="flex justify-start items-center gap-3.5">
                   <div className="inline-flex flex-col justify-start items-start gap-2">
-                    <div className="self-stretch justify-center text-primary-800 text-lg font-bold">이번 달 지출액</div>
+                    <div className="self-stretch justify-center text-primary-800 text-lg font-bold">
+                      Current Month Spending
+                    </div>
                     <div className="justify-center text-[16px] font-normal leading-normal tracking-[-0.4px] text-primary-600">
-                      지난 달 지출액:{" "}
+                      Last month:{" "}
                       {safeBudgetData ? formatNumber(safeBudgetData.previousMonthExpense) : formatCurrency(0)}
                     </div>
                   </div>
@@ -635,7 +656,9 @@ const OrderHistoryPage = () => {
               <div className="self-stretch inline-flex justify-between items-center">
                 <div className="flex justify-start items-center gap-3.5">
                   <div className="inline-flex flex-col justify-start items-start gap-2">
-                    <div className="self-stretch justify-center text-primary-800 text-lg font-bold">올해 총 지출액</div>
+                    <div className="self-stretch justify-center text-primary-800 text-lg font-bold">
+                      Total Spending This Year
+                    </div>
                   </div>
                 </div>
                 <div className="justify-center text-primary-800 text-2xl font-extrabold">
@@ -643,35 +666,35 @@ const OrderHistoryPage = () => {
                 </div>
               </div>
               <div className="justify-center text-primary-600 text-base font-normal leading-relaxed">
-                올해 작년보다
-                <br />
+                You spent{" "}
                 {safeBudgetData
                   ? formatCurrency(
                       Math.abs(safeBudgetData.currentYearTotalExpense - safeBudgetData.previousYearTotalExpense),
                     )
                   : formatCurrency(0)}{" "}
                 {safeBudgetData && safeBudgetData.currentYearTotalExpense - safeBudgetData.previousYearTotalExpense > 0
-                  ? "더 지출했어요"
-                  : "덜 지출했어요"}
+                  ? "more"
+                  : "less"}{" "}
+                than last year.
               </div>
             </div>
           </div>
         </section>
         <section className="w-full flex flex-col gap-2 px-10 pb-5" aria-labelledby="purchase-list-desktop" role="list">
           <h2 id="purchase-list-desktop" className="sr-only">
-            구매 내역 목록
+            Purchase History List
           </h2>
           {/* Desktop Purchase List - Table Format */}
           <div className="self-stretch flex flex-col justify-start items-start">
             <div className="self-stretch px-10 py-5 border-t border-b border-primary-200 inline-flex justify-between items-center">
-              <div className="w-32 justify-start text-primary-500 text-base font-bold">구매 요청일</div>
-              <div className="w-32 justify-start text-primary-500 text-base font-bold">요청인</div>
-              <div className="w-44 justify-start text-primary-500 text-base font-bold">상품 정보</div>
-              <div className="w-32 justify-start text-primary-500 text-base font-bold">주문 금액</div>
+              <div className="w-32 justify-start text-primary-500 text-base font-bold">Request Date</div>
+              <div className="w-32 justify-start text-primary-500 text-base font-bold">Requested By</div>
+              <div className="w-44 justify-start text-primary-500 text-base font-bold">Product</div>
+              <div className="w-32 justify-start text-primary-500 text-base font-bold">Order Total</div>
               <div className="flex justify-start items-center gap-2">
-                <div className="w-32 justify-start text-primary-500 text-base font-bold">구매 승인일</div>
+                <div className="w-32 justify-start text-primary-500 text-base font-bold">Approval Date</div>
               </div>
-              <div className="w-24 justify-start text-primary-500 text-base font-bold">담당자</div>
+              <div className="w-24 justify-start text-primary-500 text-base font-bold">Approver</div>
             </div>
             <div className="self-stretch flex flex-col justify-start items-start">
               {currentItems.length > 0
@@ -691,7 +714,7 @@ const OrderHistoryPage = () => {
                         {item.status === "INSTANT_APPROVED" && (
                           <div className="px-2 py-1 bg-blue-50 rounded-[100px] flex justify-center items-center gap-1 whitespace-nowrap">
                             <div className="justify-center items-center text-center text-secondary-500 text-xs font-bold w-12 whitespace-nowrap overflow-hidden text-ellipsis">
-                              즉시 구매
+                              Instant Purchase
                             </div>
                           </div>
                         )}
@@ -705,7 +728,7 @@ const OrderHistoryPage = () => {
                           {item.item}
                         </button>
                         <div className="justify-start text-primary-500 text-sm font-normal">
-                          총 수량 {getProductTypeCount(item.productName)}개
+                          Total Quantity: {getProductTypeCount(item.productName)}
                         </div>
                       </div>
                       <div className="w-32 justify-start text-primary-800 text-base font-normal">
@@ -723,7 +746,7 @@ const OrderHistoryPage = () => {
             </div>
           </div>
         </section>
-        <nav className="self-stretch h-10 flex justify-between items-center px-10" aria-label="페이지 이동">
+        <nav className="self-stretch h-10 flex justify-between items-center px-10" aria-label="Pagination">
           {/* Desktop Pagination */}
           <div className="flex items-center">
             <div className="text-center justify-start text-primary-800 text-base font-normal">
