@@ -11,6 +11,7 @@ export type TPurchaseItem = {
   status?: "PENDING" | "APPROVED" | "REJECTED" | "CANCELED" | "INSTANT_APPROVED";
   item: string;
   amount: string;
+  amountInCents: number | null;
   approvalDate: string;
   manager: string;
   adminMessage?: string;
@@ -25,7 +26,7 @@ export const useOrderHistory = (sortByDefault: string = "latest", itemsPerPage: 
 
   // Fetch budget data.
   const { data: budgetData, isLoading: budgetLoading, isError: budgetIsError, error: budgetErrorObj } = useBudgets();
-  const budgetError = budgetIsError ? (budgetErrorObj as Error)?.message || "예산 데이터를 불러오지 못했습니다." : null;
+  const budgetError = budgetIsError ? (budgetErrorObj as Error)?.message || "Failed to load budget data." : null;
 
   // Fetch approved purchase history and cache the full dataset client-side.
   const {
@@ -62,22 +63,30 @@ export const useOrderHistory = (sortByDefault: string = "latest", itemsPerPage: 
     products?: Array<{ quantity: number }>;
   };
 
-  const parse = (item: TOrderItem): TPurchaseItem => ({
-    id: String(item.id),
-    requestDate: item.requestDate ? formatDate(item.requestDate) : item.createdAt ? formatDate(item.createdAt) : "-",
-    requester: item.requesterName || item.requester || "-",
-    status: item.status,
-    item: item.productName || item.itemSummary || item.item || "-",
-    amount:
+  const parse = (item: TOrderItem): TPurchaseItem => {
+    const amountInCents =
       typeof item.productsPriceTotal === "number" && typeof item.deliveryFee === "number"
-        ? formatCurrency(item.productsPriceTotal + item.deliveryFee)
-        : "-",
-    approvalDate: item.approvalDate ? formatDate(item.approvalDate) : item.updatedAt ? formatDate(item.updatedAt) : "-",
-    manager: item.approver || item.managerName || item.manager || "-",
-    adminMessage: item.adminMessage,
-    totalQuantity: item.products?.reduce((sum, product) => sum + product.quantity, 0) || 0,
-    productName: item.productName,
-  });
+        ? item.productsPriceTotal + item.deliveryFee
+        : null;
+    return {
+      id: String(item.id),
+      requestDate: item.requestDate ? formatDate(item.requestDate) : item.createdAt ? formatDate(item.createdAt) : "-",
+      requester: item.requesterName || item.requester || "-",
+      status: item.status,
+      item: item.productName || item.itemSummary || item.item || "-",
+      approvalDate: item.approvalDate
+        ? formatDate(item.approvalDate)
+        : item.updatedAt
+          ? formatDate(item.updatedAt)
+          : "-",
+      manager: item.approver || item.managerName || item.manager || "-",
+      adminMessage: item.adminMessage,
+      totalQuantity: item.products?.reduce((sum, product) => sum + product.quantity, 0) || 0,
+      productName: item.productName,
+      amountInCents,
+      amount: amountInCents !== null ? formatCurrency(amountInCents) : "-",
+    };
+  };
 
   // Parse all items into the UI-facing shape.
   const allPurchaseItems: TPurchaseItem[] = ((approvedData as { orders?: TOrderItem[] })?.orders || []).map(
@@ -97,14 +106,14 @@ export const useOrderHistory = (sortByDefault: string = "latest", itemsPerPage: 
         });
       case "priceLow":
         return items.sort((a, b) => {
-          const priceA = parseFloat(a.amount.replace(/[^0-9]/g, "")) || 0;
-          const priceB = parseFloat(b.amount.replace(/[^0-9]/g, "")) || 0;
+          const priceA = a.amountInCents ?? 0;
+          const priceB = b.amountInCents ?? 0;
           return priceA - priceB; // Lowest price first.
         });
       case "priceHigh":
         return items.sort((a, b) => {
-          const priceA = parseFloat(a.amount.replace(/[^0-9]/g, "")) || 0;
-          const priceB = parseFloat(b.amount.replace(/[^0-9]/g, "")) || 0;
+          const priceA = a.amountInCents ?? 0;
+          const priceB = b.amountInCents ?? 0;
           return priceB - priceA; // Highest price first.
         });
       default:
