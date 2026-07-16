@@ -1,8 +1,9 @@
 import React from "react";
 import Image from "next/image";
 import { TGetCartItemsResponse } from "@/types/cart.types";
-import { formatPrice } from "@/lib/utils/formatPrice.util";
+import { formatCurrency } from "@/lib/utils/currency.util";
 import DogSpinner from "@/components/common/DogSpinner";
+import { STANDARD_DELIVERY_FEE_CENTS } from "@/lib/constants/money";
 
 type TOrderItemProps = {
   cartItems: TGetCartItemsResponse | undefined;
@@ -49,7 +50,7 @@ export default function OrderItem({ isPending, cartItems }: TOrderItemProps) {
                           {item.product.name}
                         </p>
                         <p className="font-bold text-[14px]/[17px] tracking-tight text-primary-950 sm:text-[16px]/[20px]">
-                          ${formatPrice(item.product.price)}
+                          {formatCurrency(item.product.price)}
                         </p>
                         <p className="hidden sm:block sm:font-bold sm:text-[16px]/[20px] sm:tracking-normal sm:text-primary-500 sm:mt-[20px]">
                           Quantity {item.quantity}
@@ -61,7 +62,7 @@ export default function OrderItem({ isPending, cartItems }: TOrderItemProps) {
                           Quantity {item.quantity}
                         </p>
                         <p className="font-extrabold text-[16px]/[20px] tracking-tight text-primary-700 sm:min-w-[89px] sm:text-[20px]/[32px] sm:tracking-normal">
-                          ${formatPrice(item.product.price * item.quantity)}
+                          {formatCurrency(item.product.price * item.quantity)}
                         </p>
                       </div>
                     </div>
@@ -78,7 +79,7 @@ export default function OrderItem({ isPending, cartItems }: TOrderItemProps) {
               Order Amount
             </p>
             <p className="font-bold text-[14px]/[17px] tracking-tight text-primary-700 sm:text-[16px]/[20px]">
-              ${formatPrice(totalPrice)}
+              {formatCurrency(totalPrice)}
             </p>
           </div>
 
@@ -86,13 +87,15 @@ export default function OrderItem({ isPending, cartItems }: TOrderItemProps) {
             <p className="font-bold text-[14px]/[17px] tracking-tight text-primary-700 sm:text-[16px]/[20px]">
               Shipping Fee
             </p>
-            <p className="font-bold text-[14px]/[17px] tracking-tight text-primary-700 sm:text-[16px]/[20px]">$3,000</p>
+            <p className="font-bold text-[14px]/[17px] tracking-tight text-primary-700 sm:text-[16px]/[20px]">
+              {formatCurrency(STANDARD_DELIVERY_FEE_CENTS)}
+            </p>
           </div>
 
           <div className="flex justify-between items-center w-full">
             <p className="font-bold text-[18px]/[22px] tracking-tight text-primary-950">Total Order Amount</p>
             <p className="font-extrabold text-[18px]/[22px] tracking-tight text-primary-950 sm:text-[24px]/[30px]">
-              ${formatPrice(totalPrice ? totalPrice + 5 : 0)}
+              {formatCurrency(totalPrice ? totalPrice + STANDARD_DELIVERY_FEE_CENTS : 0)}
             </p>
           </div>
         </div>

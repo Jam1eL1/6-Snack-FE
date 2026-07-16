@@ -17,6 +17,7 @@ import { useDeviceType } from "@/hooks/useDeviceType";
 import clsx from "clsx";
 import { formatPrice } from "@/lib/utils/formatPrice.util";
 import { queryKeys } from "@/lib/queryKeys";
+import { STANDARD_DELIVERY_FEE_CENTS } from "@/lib/constants/money";
 
 export default function CartPage() {
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
@@ -58,7 +59,10 @@ export default function CartPage() {
 
   // Whether the selected items are within budget
   const canPurchase =
-    currentMonthBudget - currentMonthExpense - (selectedTotalPrice ? selectedTotalPrice + 3000 : 0) >= 0;
+    currentMonthBudget -
+      currentMonthExpense -
+      (selectedTotalPrice ? selectedTotalPrice + STANDARD_DELIVERY_FEE_CENTS : 0) >=
+    0;
 
   // Remaining budget
   const remainingBudget = cartItems?.budget ? currentMonthBudget - currentMonthExpense : 0;
@@ -159,7 +163,7 @@ export default function CartPage() {
                   Order Total
                 </p>
                 <p className="font-extrabold text-[24px]/[30px] tracking-tight text-primary-950 sm:text-[30px]/[37px]">
-                  ₩{formatPrice(selectedTotalPrice ? selectedTotalPrice + 3000 : 0)}
+                  ₩{formatPrice(selectedTotalPrice ? selectedTotalPrice + STANDARD_DELIVERY_FEE_CENTS : 0)}
                 </p>
               </div>
               <div className="flex flex-col gap-[6px]">

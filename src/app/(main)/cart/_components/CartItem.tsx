@@ -10,10 +10,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/providers/AuthProvider";
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
-import { formatPrice } from "@/lib/utils/formatPrice.util";
+import { formatCurrency } from "@/lib/utils/currency.util";
 import { queryKeys } from "@/lib/queryKeys";
 import Link from "next/link";
 import DogSpinner from "@/components/common/DogSpinner";
+import { STANDARD_DELIVERY_FEE_CENTS } from "@/lib/constants/money";
 
 type TCartItemProps = {
   cartItems: TGetCartItemsResponse | undefined;
@@ -187,7 +188,7 @@ export default function CartItem({
                         {item.product.name}
                       </Link>
                       <p className="font-extrabold text-[14px]/[17px] tracking-tight text-primary-950 sm:font-bold sm:text-[16px]/[20px] sm:text-[#1f1f1f]">
-                        ${formatPrice(item.product.price)}
+                        {formatCurrency(item.product.price)}
                       </p>
                     </div>
 
@@ -198,17 +199,17 @@ export default function CartItem({
                       />
 
                       <p className="hidden sm:block sm:font-extrabold sm:text-[24px]/[32px] sm:text-[#1f1f1f] md:tracking-tight md:leading-[30px]">
-                        Total ${formatPrice(item.product.price * item.quantity)}
+                        Total {formatCurrency(item.product.price * item.quantity)}
                       </p>
                     </div>
                   </div>
 
                   <div className="flex justify-between items-center sm:items-start">
                     <p className="font-normal text-[13px]/[16px] tracking-tight text-[#6b6b6b] sm:hidden">
-                      Shipping ₩3,000
+                      Shipping {formatCurrency(STANDARD_DELIVERY_FEE_CENTS)}
                     </p>
                     <p className="hidden sm:block sm:font-normal sm:text-[14px]/[17px] tracking-tight text-[#6b6b6b]">
-                      Shipping fee ₩3,000
+                      Shipping fee {formatCurrency(STANDARD_DELIVERY_FEE_CENTS)}
                     </p>
                     <Button
                       onClick={() => {
