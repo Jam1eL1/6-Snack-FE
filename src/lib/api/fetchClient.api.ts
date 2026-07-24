@@ -1,9 +1,23 @@
 import { refreshAccessToken } from "./auth.api";
 import { SessionExpiredError } from "./auth.errors";
+import { ApiError } from "./api.errors";
 
 type CookieFetchOptions = RequestInit & { shouldRefreshOn401?: boolean };
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 let refreshPromise: Promise<unknown> | null = null;
+
+const createApiError = async (response: Response) => {
+  const data: unknown = await response.json().catch(() => null);
+  const message =
+    typeof data === "object" &&
+    data !== null &&
+    "message" in data &&
+    typeof data.message === "string"
+      ? data.message
+      : `HTTP error! status: ${response.status}`;
+
+  return new ApiError(message, response.status, data);
+};
 
 const waitForRefresh = () => {
   if (!refreshPromise) {
@@ -50,8 +64,7 @@ export const cookieFetch = async <T>(
   }
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    throw await createApiError(response);
   }
 
   if (response.status === 204) {
@@ -72,8 +85,7 @@ export const defaultFetch = async <T>(path: string, options: RequestInit = {}): 
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    throw await createApiError(response);
   }
 
   if (response.status === 204) {
