@@ -42,7 +42,8 @@ export const queryKeys = {
   user: {
     all: ["user"] as const,
   },
-  paymentOrder: {
-    detail: (orderId: string) => ["order", orderId] as const,
+  payments: {
+    all: ["payments"] as const,
+    detail: (paymentId: number) => [...queryKeys.payments.all, "detail", paymentId] as const,
   },
 };
