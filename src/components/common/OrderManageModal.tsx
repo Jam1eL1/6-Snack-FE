@@ -12,15 +12,13 @@ import { TToastVariant } from "@/types/toast.types";
 type TOrderManageModalProps = {
   type: "reject" | "approve";
   order: TAdminOrderDetail;
-  onClick: () => void;
-  onUpdateOrderStatus: (variables: { orderId: string; status: "APPROVED" | "REJECTED"; adminMessage?: string }) => void;
+  onUpdateOrderStatus: (variables: { orderId: string; status: "REJECTED"; adminMessage?: string }) => void;
   showToast: (message: string, variant: TToastVariant) => void;
 };
 
 export default function OrderManageModal({
   type,
   order,
-  onClick,
   onUpdateOrderStatus,
   showToast,
 }: TOrderManageModalProps) {
@@ -215,21 +213,13 @@ export default function OrderManageModal({
                   status: "REJECTED",
                   adminMessage,
                 });
-                onClick();
                 closeModal();
                 showToast("Purchase request rejected.", "success");
                 return;
               }
 
-              // Temporarily continue to purchase history until the replacement payment flow is ready.
               if (type === "approve") {
-                onUpdateOrderStatus({
-                  orderId: String(order.id),
-                  status: "APPROVED",
-                  adminMessage,
-                });
-                onClick();
-                closeModal();
+                showToast("Payment processing will be connected in the next step.", "error");
                 return;
               }
               closeModal();

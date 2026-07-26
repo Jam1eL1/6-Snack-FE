@@ -63,34 +63,13 @@ export default function OrderManageDetailPage() {
     }, 3000);
   };
 
-  const handleApprove = async () => {
-    try {
-      if (budgetAfterPurchase < 0 && remainingBudget !== undefined) {
-        showToast("Insufficient budget.", "error", remainingBudget);
-        return;
-      }
-      await updateOrderMutation.mutateAsync({
-        orderId: orderId,
-        status: "APPROVED",
-      });
-
-      openModal(
-        <OrderActionModal
-          modalTitle="Approval Complete"
-          modalDescription="Approval has been completed!<br />Check shipping status through purchase history"
-          leftButtonText="Go Home"
-          rightButtonText="Purchase History"
-          onLeftClick={() => {
-            router.push("/products");
-          }}
-          onRightClick={() => {
-            router.push("/order-history");
-          }}
-        />,
-      );
-    } catch {
-      showToast("Failed to process approval.", "error");
+  const handleApprove = () => {
+    if (budgetAfterPurchase < 0 && remainingBudget !== undefined) {
+      showToast("Insufficient budget.", "error", remainingBudget);
+      return;
     }
+
+    showToast("Payment processing will be connected in the next step.", "error");
   };
 
   const handleReject = async () => {
