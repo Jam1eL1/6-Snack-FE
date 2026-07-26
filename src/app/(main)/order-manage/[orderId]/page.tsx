@@ -16,9 +16,9 @@ import OrderDetailSkeleton from "./_components/OrderDetailSkeleton";
 import { useProcessOrderPayment } from "@/hooks/useProcessOrderPayment";
 
 export default function OrderManageDetailPage() {
-  const params = useParams();
+  const params = useParams<{ orderId: string }>();
   const router = useRouter();
-  const orderId: string = params.orderId as string;
+  const orderId: string = params.orderId;
 
   const { data: orderRequest, isLoading, error } = useOrderDetail(orderId);
   const updateOrderMutation = useOrderStatusUpdate();
