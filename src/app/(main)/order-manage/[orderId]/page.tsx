@@ -13,6 +13,7 @@ import { useOrderStatusUpdate } from "@/hooks/useOrderStatusUpdate";
 import { useModal } from "@/providers/ModalProvider";
 import OrderActionModal from "../_components/OrderActionModal";
 import OrderDetailSkeleton from "./_components/OrderDetailSkeleton";
+import { useProcessOrderPayment } from "@/hooks/useProcessOrderPayment";
 
 export default function OrderManageDetailPage() {
   const params = useParams();
@@ -63,13 +64,30 @@ export default function OrderManageDetailPage() {
     }, 3000);
   };
 
+  const { processOrderPayment, isPending: isPaymentPending } = useProcessOrderPayment({
+    onPaymentReady: (paymentId) => {
+      router.push(`/payments/${paymentId}`);
+    },
+    onPaymentBlocked: () => {
+      showToast("Another admin is currently processing this order.", "error");
+    },
+    onPaymentAlreadyPaid: () => {
+      showToast("This order has already been paid.", "error");
+    },
+    onProcessOrderPaymentError: (error) => {
+      showToast(error.message || "Failed to process payment.", "error");
+    },
+  });
+
   const handleApprove = () => {
     if (budgetAfterPurchase < 0 && remainingBudget !== undefined) {
       showToast("Insufficient budget.", "error", remainingBudget);
       return;
     }
 
-    showToast("Payment processing will be connected in the next step.", "error");
+    if (!orderRequest) return;
+
+    processOrderPayment(orderRequest);
   };
 
   const handleReject = async () => {
@@ -359,11 +377,11 @@ export default function OrderManageDetailPage() {
         />
         <Button
           type="primary"
-          label={updateOrderMutation.isPending ? "Processing..." : "Approve Request"}
+          label={isPaymentPending ? "Processing..." : "Approve Request"}
           className="w-full h-16 md:max-w-[300px]"
           onClick={handleApprove}
-          disabled={updateOrderMutation.isPending}
-          aria-label={updateOrderMutation.isPending ? "Processing" : "Approve purchase request"}
+          disabled={isPaymentPending}
+          aria-label={isPaymentPending ? "Processing" : "Approve purchase request"}
         />
       </section>
     </div>
