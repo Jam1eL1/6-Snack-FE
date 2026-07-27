@@ -7,6 +7,7 @@ export type TPaymentOrder = {
   status: "PENDING" | "APPROVED" | "REJECTED" | "CANCELED" | "INSTANT_APPROVED";
   paymentAssigneeId: string | null;
   paymentClaimExpiresAt: string | null;
+  productName: string;
 };
 
 export type TPaymentClaim = {
