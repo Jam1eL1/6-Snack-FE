@@ -23,7 +23,7 @@ export default function PaymentPageState({
     <main className="flex min-h-[70vh] items-center justify-center px-4">
       <div className="w-full max-w-md rounded-xl border border-primary-100 bg-white p-8 text-center shadow-[0_12px_40px_rgba(34,34,34,0.08)]">
         <Icon
-          className={`mx-auto size-10 ${variant === "success" ? "text-secondary-500" : "text-primary-400"}`}
+          className={`mx-auto size-10 ${variant === "success" ? "text-secondary-500" : "text-error-500"}`}
           aria-hidden="true"
         />
         <p className="mt-4 text-sm font-semibold text-primary-500">{eyebrow}</p>

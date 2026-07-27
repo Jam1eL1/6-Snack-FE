@@ -1,4 +1,5 @@
 import { completePayment, failPayment, getPayment, retryPayment } from "@/lib/api/payment.api";
+import { ApiError } from "@/lib/api/api.errors";
 import { queryKeys } from "@/lib/queryKeys";
 import { TFailPaymentBody, TPaymentDetail } from "@/types/payment.types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -30,6 +31,7 @@ export const usePayment = (paymentId: number) => {
     queryKey: queryKeys.payments.detail(paymentId),
     queryFn: () => getPayment(paymentId),
     enabled: isValidPaymentId,
+    refetchOnWindowFocus: "always",
   });
 };
 // Retry Payment
@@ -50,7 +52,21 @@ export const useRetryPayment = ({ onRetryPaymentSuccess, onRetryPaymentError }: 
       });
       onRetryPaymentSuccess?.(data);
     },
-    onError: (error) => {
+    onError: (error, paymentId) => {
+      if (error instanceof ApiError && error.status === 409) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.payments.detail(paymentId),
+        });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.adminOrders.all,
+        });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.adminOrders.detailPrefix,
+        });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.pendingOrders.all,
+        });
+      }
       onRetryPaymentError?.(error);
     },
   });
@@ -73,7 +89,21 @@ export const useFailPayment = ({ onFailPaymentSuccess, onFailPaymentError }: TUs
       });
       onFailPaymentSuccess?.(data);
     },
-    onError: (error) => {
+    onError: (error, variables) => {
+      if (error instanceof ApiError && error.status === 409) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.payments.detail(variables.paymentId),
+        });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.adminOrders.all,
+        });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.adminOrders.detailPrefix,
+        });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.pendingOrders.all,
+        });
+      }
       onFailPaymentError?.(error);
     },
   });
@@ -112,7 +142,24 @@ export const useCompletePayment = ({
       });
       onCompletePaymentSuccess?.(data);
     },
-    onError: (error) => {
+    onError: (error, paymentId) => {
+      if (error instanceof ApiError && error.status === 409) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.payments.detail(paymentId),
+        });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.adminOrders.all,
+        });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.adminOrders.detailPrefix,
+        });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.pendingOrders.all,
+        });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.budgets.all,
+        });
+      }
       onCompletePaymentError?.(error);
     },
   });

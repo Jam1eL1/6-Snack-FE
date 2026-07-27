@@ -1,5 +1,6 @@
 import { useRetryPayment } from "@/hooks/usePayment";
 import { useStartOrderPayment } from "@/hooks/useStartOrderPayment";
+import { ApiError } from "@/lib/api/api.errors";
 import { getOrderPaymentAction } from "@/lib/utils/getOrderPaymentAction.util";
 import type { TAdminOrderPaymentFields } from "@/types/order.types";
 
@@ -20,17 +21,26 @@ export const useProcessOrderPayment = ({
   onPaymentAlreadyPaid,
   onProcessOrderPaymentError,
 }: TUseProcessOrderPaymentOptions = {}) => {
+  const handleProcessOrderPaymentError = (error: Error) => {
+    if (error instanceof ApiError && error.status === 409) {
+      onPaymentBlocked?.();
+      return;
+    }
+
+    onProcessOrderPaymentError?.(error);
+  };
+
   const startOrderPaymentMutation = useStartOrderPayment({
     onStartOrderPaymentSuccess: (data) => {
       onPaymentReady?.(data.paymentId);
     },
-    onStartOrderPaymentError: onProcessOrderPaymentError,
+    onStartOrderPaymentError: handleProcessOrderPaymentError,
   });
   const retryPaymentMutation = useRetryPayment({
     onRetryPaymentSuccess: (payment) => {
       onPaymentReady?.(payment.id);
     },
-    onRetryPaymentError: onProcessOrderPaymentError,
+    onRetryPaymentError: handleProcessOrderPaymentError,
   });
 
   const processOrderPayment = (order: TProcessOrderPaymentOrder) => {

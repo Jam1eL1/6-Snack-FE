@@ -15,5 +15,6 @@ export const usePendingOrders = ({ offset, limit, orderBy }: TUsePendingOrdersPa
     queryFn: () => getPendingOrders({ offset, limit, orderBy }),
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: "always",
   });
 };

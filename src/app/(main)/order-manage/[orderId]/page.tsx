@@ -14,6 +14,8 @@ import { useModal } from "@/providers/ModalProvider";
 import OrderActionModal from "../_components/OrderActionModal";
 import OrderDetailSkeleton from "./_components/OrderDetailSkeleton";
 import { useProcessOrderPayment } from "@/hooks/useProcessOrderPayment";
+import { isOrderPaymentProcessingByAnotherAdmin } from "@/lib/utils/getOrderPaymentAction.util";
+import { SessionExpiredError } from "@/lib/api/auth.errors";
 
 export default function OrderManageDetailPage() {
   const params = useParams<{ orderId: string }>();
@@ -75,6 +77,8 @@ export default function OrderManageDetailPage() {
       showToast("This order has already been paid.", "error");
     },
     onProcessOrderPaymentError: (error) => {
+      if (error instanceof SessionExpiredError) return;
+
       showToast(error.message || "Failed to process payment.", "error");
     },
   });
@@ -137,6 +141,10 @@ export default function OrderManageDetailPage() {
   const currentMonthExpense = orderRequest.budget.currentMonthExpense || 0;
   const remainingBudget = currentMonthBudget - currentMonthExpense;
   const budgetAfterPurchase = remainingBudget - finalTotal;
+  const isProcessingByAnotherAdmin = isOrderPaymentProcessingByAnotherAdmin({
+    payment: orderRequest.payment,
+    paymentClaim: orderRequest.paymentClaim,
+  });
 
   return (
     <div className="min-h-screen bg-white">
@@ -370,18 +378,18 @@ export default function OrderManageDetailPage() {
         <Button
           type="white"
           label={updateOrderMutation.isPending ? "Processing..." : "Reject Request"}
-          className="w-full h-16 md:max-w-[300px]"
+          className="w-full h-16 disabled:cursor-not-allowed md:max-w-[300px]"
           onClick={handleReject}
-          disabled={updateOrderMutation.isPending}
+          disabled={updateOrderMutation.isPending || isProcessingByAnotherAdmin}
           aria-label={updateOrderMutation.isPending ? "Processing" : "Reject purchase request"}
         />
         <Button
           type="primary"
-          label={isPaymentPending ? "Processing..." : "Approve Request"}
-          className="w-full h-16 md:max-w-[300px]"
+          label={isPaymentPending || isProcessingByAnotherAdmin ? "Processing..." : "Approve Request"}
+          className="w-full h-16 disabled:cursor-not-allowed md:max-w-[300px]"
           onClick={handleApprove}
-          disabled={isPaymentPending}
-          aria-label={isPaymentPending ? "Processing" : "Approve purchase request"}
+          disabled={isPaymentPending || isProcessingByAnotherAdmin}
+          aria-label={isPaymentPending || isProcessingByAnotherAdmin ? "Processing" : "Approve purchase request"}
         />
       </section>
     </div>

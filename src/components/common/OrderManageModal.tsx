@@ -10,6 +10,8 @@ import clsx from "clsx";
 import { TToastVariant } from "@/types/toast.types";
 import { useProcessOrderPayment } from "@/hooks/useProcessOrderPayment";
 import { useRouter } from "next/navigation";
+import { isOrderPaymentProcessingByAnotherAdmin } from "@/lib/utils/getOrderPaymentAction.util";
+import { SessionExpiredError } from "@/lib/api/auth.errors";
 
 type TOrderManageModalProps = {
   type: "reject" | "approve";
@@ -33,6 +35,7 @@ export default function OrderManageModal({
       router.push(`/payments/${paymentId}`);
     },
     onPaymentBlocked: () => {
+      closeModal();
       showToast("Another admin is currently processing this order.", "error");
     },
     onPaymentAlreadyPaid: () => {
@@ -40,6 +43,8 @@ export default function OrderManageModal({
       showToast("This order has already been paid.", "error");
     },
     onProcessOrderPaymentError: (error) => {
+      if (error instanceof SessionExpiredError) return;
+
       showToast(error.message || "Failed to process payment.", "error");
     },
   });
@@ -48,6 +53,10 @@ export default function OrderManageModal({
   const currentMonthExpense = order.budget.currentMonthExpense ?? 0;
   const remainingBudget =
     currentMonthBudget - currentMonthExpense - order.productsPriceTotal - order.deliveryFee;
+  const isProcessingByAnotherAdmin = isOrderPaymentProcessingByAnotherAdmin({
+    payment: order.payment,
+    paymentClaim: order.paymentClaim,
+  });
 
   return (
     <div
@@ -246,9 +255,15 @@ export default function OrderManageModal({
               closeModal();
             }}
             type="black"
-            label={isPaymentPending && type === "approve" ? "Processing..." : type === "approve" ? "Approve" : "Reject"}
-            className="flex justify-center items-center w-full min-w-[153.5px] max-w-[230px] h-[64px] py-[12px] px-[16px] font-bold"
-            disabled={isPaymentPending && type === "approve"}
+            label={
+              type === "approve" && (isPaymentPending || isProcessingByAnotherAdmin)
+                ? "Processing..."
+                : type === "approve"
+                  ? "Approve"
+                  : "Reject"
+            }
+            className="flex justify-center items-center w-full min-w-[153.5px] max-w-[230px] h-[64px] py-[12px] px-[16px] font-bold disabled:cursor-not-allowed"
+            disabled={isProcessingByAnotherAdmin || (isPaymentPending && type === "approve")}
             aria-label={type === "approve" ? "Approve purchase request" : "Reject purchase request"}
           />
         </footer>

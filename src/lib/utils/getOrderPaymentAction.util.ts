@@ -7,6 +7,13 @@ type TGetOrderPaymentActionParams = {
 
 export type TOrderPaymentAction = "START" | "RETRY" | "OPEN" | "BLOCKED" | "PAID";
 
+export const isOrderPaymentProcessingByAnotherAdmin = ({
+  payment,
+  paymentClaim,
+}: TGetOrderPaymentActionParams) => {
+  return payment?.status === "PENDING" && paymentClaim.status === "PROCESSING" && !paymentClaim.isMine;
+};
+
 export const getOrderPaymentAction = ({
   payment,
   paymentClaim,
