@@ -4,16 +4,22 @@ import { ArrowLeft, CreditCard, LockKeyhole, ShieldCheck } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { usePayment } from "@/hooks/usePayment";
+import { useCompletePayment, useFailPayment, usePayment } from "@/hooks/usePayment";
 import { formatCurrency } from "@/lib/utils/currency.util";
 import { ApiError } from "@/lib/api/api.errors";
 import { paymentCardSchema, TPaymentCardFormData } from "@/lib/schemas/payment.schema";
+import Toast from "@/components/common/Toast";
 import InvalidPaymentState from "./_components/InvalidPaymentState";
 import PaymentLoadingState from "./_components/PaymentLoadingState";
 import PaymentPageState from "./_components/PaymentPageState";
+import { SessionExpiredError } from "@/lib/api/auth.errors";
+import { useEffect, useRef, useState } from "react";
 
 const fieldClassName =
   "h-11 w-full rounded-md border border-primary-200 bg-white px-3 text-sm text-primary-950 outline-none transition placeholder:text-primary-400 focus-within:border-primary-700";
+
+const SUCCESSFUL_DUMMY_CARD_NUMBER = "0000000000000000";
+const FAILED_DUMMY_CARD_NUMBER = "1111111111111111";
 
 const formatCardNumber = (value: string) => {
   return value
@@ -51,15 +57,85 @@ export default function PaymentPage() {
       cardCvc: "",
     },
   });
+  const [toast, setToast] = useState<{
+    isVisible: boolean;
+    text: string;
+    variant: "success" | "error";
+  }>({
+    isVisible: false,
+    text: "",
+    variant: "error",
+  });
+
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const showToast = (text: string, variant: "success" | "error") => {
+    if (toastTimerRef.current) {
+      clearTimeout(toastTimerRef.current);
+    }
+
+    setToast({ isVisible: true, text, variant });
+    toastTimerRef.current = setTimeout(() => {
+      setToast((currentToast) => ({
+        ...currentToast,
+        isVisible: false,
+      }));
+      toastTimerRef.current = null;
+    }, 3000);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) {
+        clearTimeout(toastTimerRef.current);
+      }
+    };
+  }, []);
+  const completePaymentMutation = useCompletePayment({
+    onCompletePaymentSuccess: () => {
+      router.push("/order-history");
+    },
+    onCompletePaymentError: (error) => {
+      if (error instanceof SessionExpiredError) return;
+
+      showToast("Payment could not be completed.", "error");
+    },
+  });
+  const failPaymentMutation = useFailPayment({
+    onFailPaymentError: (error) => {
+      if (error instanceof SessionExpiredError) return;
+
+      showToast("Payment failure could not be recorded.", "error");
+    },
+  });
   const isValidPaymentId = paymentId > 0 && Number.isInteger(paymentId);
 
   if (!isValidPaymentId) {
     return <InvalidPaymentState onReturnToOrders={() => router.push("/order-manage")} />;
   }
 
-  const handleValidSubmit = () => {
-    // TODO: Call the complete Payment mutation after the Payment data is connected.
+  const handleValidSubmit = (formData: TPaymentCardFormData) => {
+    const normalizedCardNumber = formData.cardNumber.replace(/\s/g, "");
+
+    if (normalizedCardNumber === SUCCESSFUL_DUMMY_CARD_NUMBER) {
+      completePaymentMutation.mutate(paymentId);
+      return;
+    }
+
+    if (normalizedCardNumber === FAILED_DUMMY_CARD_NUMBER) {
+      failPaymentMutation.mutate({
+        paymentId,
+        body: {
+          failureReason: "Dummy payment was declined.",
+        },
+      });
+      return;
+    }
+
+    showToast("Use one of the dummy card numbers shown below.", "error");
   };
+
+  const isProcessingPayment = completePaymentMutation.isPending || failPaymentMutation.isPending;
 
   if (isLoading) {
     return <PaymentLoadingState />;
@@ -128,6 +204,7 @@ export default function PaymentPage() {
 
   return (
     <main className="min-h-screen bg-primary-25 px-4 py-8 sm:px-6 sm:py-12">
+      <Toast text={toast.text} variant={toast.variant} isVisible={toast.isVisible} />
       <div className="mx-auto w-full max-w-[1040px]">
         <button
           type="button"
@@ -318,18 +395,27 @@ export default function PaymentPage() {
                 </fieldset>
 
                 <div className="rounded-md border border-secondary-500/20 bg-secondary-100 px-4 py-3">
-                  <p className="text-xs leading-5 text-primary-700">
-                    Please use 0000 0000 0000 0000 for successful payment. Otherwise, it will show payment error.
-                  </p>
+                  <div className="space-y-1 text-xs leading-5 text-primary-700">
+                    <p className="pb-1">
+                      Use one of the test card numbers below. Enter any name, a future expiration date, and any
+                      three-digit CVC.
+                    </p>
+                    <p>
+                      <strong>Successful payment:</strong> 0000 0000 0000 0000
+                    </p>
+                    <p>
+                      <strong>Declined payment:</strong> 1111 1111 1111 1111
+                    </p>
+                  </div>
                 </div>
 
                 <button
                   type="submit"
-                  disabled={!isValid}
+                  disabled={!isValid || isProcessingPayment}
                   className="flex h-12 w-full items-center justify-center gap-2 rounded-md bg-primary-950 px-4 text-sm font-bold text-white transition hover:bg-primary-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-primary-200 disabled:text-primary-400"
                 >
                   <LockKeyhole className="size-4" aria-hidden="true" />
-                  Complete payment
+                  {isProcessingPayment ? "Processing..." : "Complete payment"}
                 </button>
                 {/* <p className="text-center text-xs leading-5 text-primary-400">
                   Completing payment will approve the related order.
