@@ -192,8 +192,8 @@ export default function PaymentPage() {
         {paymentToast}
         <PaymentPageState
           eyebrow="Payment Complete"
-          title="This order has already been paid"
-          description="No further payment action is needed for this order."
+          title="Payment completed successfully"
+          description="The order has been approved and the payment is complete."
           actionLabel="View Order History"
           onAction={() => router.push("/order-history")}
           variant="success"
