@@ -13,11 +13,14 @@ import { useOrderStatusUpdate } from "@/hooks/useOrderStatusUpdate";
 import { useModal } from "@/providers/ModalProvider";
 import OrderActionModal from "../_components/OrderActionModal";
 import OrderDetailSkeleton from "./_components/OrderDetailSkeleton";
+import { useProcessOrderPayment } from "@/hooks/useProcessOrderPayment";
+import { isOrderPaymentProcessingByAnotherAdmin } from "@/lib/utils/getOrderPaymentAction.util";
+import { SessionExpiredError } from "@/lib/api/auth.errors";
 
 export default function OrderManageDetailPage() {
-  const params = useParams();
+  const params = useParams<{ orderId: string }>();
   const router = useRouter();
-  const orderId: string = params.orderId as string;
+  const orderId: string = params.orderId;
 
   const { data: orderRequest, isLoading, error } = useOrderDetail(orderId);
   const updateOrderMutation = useOrderStatusUpdate();
@@ -63,34 +66,32 @@ export default function OrderManageDetailPage() {
     }, 3000);
   };
 
-  const handleApprove = async () => {
-    try {
-      if (budgetAfterPurchase < 0 && remainingBudget !== undefined) {
-        showToast("Insufficient budget.", "error", remainingBudget);
-        return;
-      }
-      await updateOrderMutation.mutateAsync({
-        orderId: orderId,
-        status: "APPROVED",
-      });
+  const { processOrderPayment, isPending: isPaymentPending } = useProcessOrderPayment({
+    onPaymentReady: (paymentId) => {
+      router.push(`/payments/${paymentId}`);
+    },
+    onPaymentBlocked: () => {
+      showToast("Another admin is currently processing this order.", "error");
+    },
+    onPaymentAlreadyPaid: () => {
+      showToast("This order has already been paid.", "error");
+    },
+    onProcessOrderPaymentError: (error) => {
+      if (error instanceof SessionExpiredError) return;
 
-      openModal(
-        <OrderActionModal
-          modalTitle="Approval Complete"
-          modalDescription="Approval has been completed!<br />Check shipping status through purchase history"
-          leftButtonText="Go Home"
-          rightButtonText="Purchase History"
-          onLeftClick={() => {
-            router.push("/products");
-          }}
-          onRightClick={() => {
-            router.push("/order-history");
-          }}
-        />,
-      );
-    } catch {
-      showToast("Failed to process approval.", "error");
+      showToast(error.message || "Failed to process payment.", "error");
+    },
+  });
+
+  const handleApprove = () => {
+    if (budgetAfterPurchase < 0 && remainingBudget !== undefined) {
+      showToast("Insufficient budget.", "error", remainingBudget);
+      return;
     }
+
+    if (!orderRequest) return;
+
+    processOrderPayment(orderRequest);
   };
 
   const handleReject = async () => {
@@ -140,6 +141,10 @@ export default function OrderManageDetailPage() {
   const currentMonthExpense = orderRequest.budget.currentMonthExpense || 0;
   const remainingBudget = currentMonthBudget - currentMonthExpense;
   const budgetAfterPurchase = remainingBudget - finalTotal;
+  const isProcessingByAnotherAdmin = isOrderPaymentProcessingByAnotherAdmin({
+    payment: orderRequest.payment,
+    paymentClaim: orderRequest.paymentClaim,
+  });
 
   return (
     <div className="min-h-screen bg-white">
@@ -373,18 +378,18 @@ export default function OrderManageDetailPage() {
         <Button
           type="white"
           label={updateOrderMutation.isPending ? "Processing..." : "Reject Request"}
-          className="w-full h-16 md:max-w-[300px]"
+          className="w-full h-16 disabled:cursor-not-allowed md:max-w-[300px]"
           onClick={handleReject}
-          disabled={updateOrderMutation.isPending}
+          disabled={updateOrderMutation.isPending || isProcessingByAnotherAdmin}
           aria-label={updateOrderMutation.isPending ? "Processing" : "Reject purchase request"}
         />
         <Button
           type="primary"
-          label={updateOrderMutation.isPending ? "Processing..." : "Approve Request"}
-          className="w-full h-16 md:max-w-[300px]"
+          label={isPaymentPending || isProcessingByAnotherAdmin ? "Processing..." : "Approve Request"}
+          className="w-full h-16 disabled:cursor-not-allowed md:max-w-[300px]"
           onClick={handleApprove}
-          disabled={updateOrderMutation.isPending}
-          aria-label={updateOrderMutation.isPending ? "Processing" : "Approve purchase request"}
+          disabled={isPaymentPending || isProcessingByAnotherAdmin}
+          aria-label={isPaymentPending || isProcessingByAnotherAdmin ? "Processing" : "Approve purchase request"}
         />
       </section>
     </div>

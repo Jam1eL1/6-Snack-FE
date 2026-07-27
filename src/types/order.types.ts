@@ -1,3 +1,4 @@
+import type { TPaymentStatus } from "./payment.types";
 export type TOrderSort = "latest" | "priceLow" | "priceHigh";
 
 export type TOrdersMeta = {
@@ -24,7 +25,7 @@ export type TOrderBase = {
   updatedAt: string;
   status: string;
   requester: string;
-};
+} & TAdminOrderPaymentFields;
 
 export type TOrderSummary = TOrderBase & {
   productName: string;
@@ -62,7 +63,8 @@ export type TAdminOrderDetail = {
     currentMonthBudget: number | null;
     currentMonthExpense: number | null;
   };
-};
+} & TAdminOrderPaymentFields;
+
 export type TOrderRequestBody = {
   requestMessage?: string;
   cartItemIds: number[];
@@ -74,7 +76,7 @@ export type TOrderNowBody = {
 
 export type TOrderNowResponse = {
   message: string;
-  data: TUpdateOrderStatusData;
+  data: TStartOrderPaymentData;
 };
 
 export type TAdminOrdersResponse = {
@@ -192,4 +194,34 @@ export type TCancelOrderData = Omit<TMyOrdersItemData, "status"> & {
 export type TCancelOrderResponse = {
   message: string;
   data: TCancelOrderData;
+};
+
+export type TAdminOrderPaymentSummary = {
+  id: number;
+  status: TPaymentStatus;
+  amount: number;
+  authorizedPayerId: string;
+} | null;
+
+export type TAdminOrderPaymentClaim = {
+  status: "AVAILABLE" | "PROCESSING";
+  assigneeId: string | null;
+  assigneeName: string | null;
+  expiresAt: string | null;
+  isMine: boolean;
+};
+
+export type TAdminOrderPaymentFields = {
+  payment: TAdminOrderPaymentSummary;
+  paymentClaim: TAdminOrderPaymentClaim;
+};
+
+export type TStartOrderPaymentData = {
+  orderId: string;
+  paymentId: number;
+};
+
+export type TStartOrderPaymentResponse = {
+  message: string;
+  data: TStartOrderPaymentData;
 };

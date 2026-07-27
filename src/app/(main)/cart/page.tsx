@@ -12,7 +12,7 @@ import { TGetCartItemsResponse } from "@/types/cart.types";
 import { useRouter } from "next/navigation";
 import Toast from "@/components/common/Toast";
 import { orderNow } from "@/lib/api/order.api";
-import { TUpdateOrderStatusData } from "@/types/order.types";
+import { TStartOrderPaymentData } from "@/types/order.types";
 import { useDeviceType } from "@/hooks/useDeviceType";
 import clsx from "clsx";
 import { formatCurrency } from "@/lib/utils/currency.util";
@@ -38,7 +38,7 @@ export default function CartPage() {
     queryFn: () => getCartItems(),
   });
 
-  const { mutate: orderRequest } = useMutation<TUpdateOrderStatusData, Error, number[]>({
+  const { mutate: orderRequest } = useMutation<TStartOrderPaymentData, Error, number[]>({
     mutationFn: orderNow,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.cartItems.all });

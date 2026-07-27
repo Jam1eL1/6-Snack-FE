@@ -153,7 +153,6 @@ export default function Order() {
                   <OrderManageModal
                     order={fullOrder}
                     type="reject"
-                    onClick={() => {}}
                     onUpdateOrderStatus={updateOrderStatusMutation}
                     showToast={showToast}
                   />,
@@ -165,9 +164,6 @@ export default function Order() {
                   <OrderManageModal
                     order={fullOrder}
                     type="approve"
-                    onClick={() => {
-                      router.push("/order-history");
-                    }}
                     onUpdateOrderStatus={updateOrderStatusMutation}
                     showToast={showToast}
                   />,

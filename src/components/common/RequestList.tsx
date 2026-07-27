@@ -5,6 +5,7 @@ import Button from "../ui/Button";
 import { formatDate } from "@/lib/utils/formatDate.util";
 import { formatCurrency } from "@/lib/utils/currency.util";
 import { TOrderSummary } from "@/types/order.types";
+import { isOrderPaymentProcessingByAnotherAdmin } from "@/lib/utils/getOrderPaymentAction.util";
 
 type TRequestListProps = {
   orderRequests: TOrderSummary[];
@@ -18,6 +19,17 @@ export default function RequestList({ orderRequests, onClickReject, onClickAppro
   const handleProductNameClick = (orderId: string, status: string) => {
     router.push(`/order-manage/${orderId}?status=${status}`);
   };
+
+  const ordersProcessingByAnotherAdmin = new Set(
+    orderRequests
+      .filter((request) =>
+        isOrderPaymentProcessingByAnotherAdmin({
+          payment: request.payment,
+          paymentClaim: request.paymentClaim,
+        }),
+      )
+      .map((request) => request.id),
+  );
 
   return (
     <section aria-label="Order request list" role="region">
@@ -124,15 +136,21 @@ export default function RequestList({ orderRequests, onClickReject, onClickAppro
                       type="white"
                       label="Reject"
                       onClick={() => onClickReject(request)}
-                      className="w-full flex justify-center items-center border-[1px] border-primary-300 min-w-[160px] h-[40px] py-[10px] px-[20px] font-normal text-[16px]/[20px] tracking-tight"
+                      className="w-full flex justify-center items-center border-[1px] border-primary-300 min-w-[160px] h-[40px] py-[10px] px-[20px] font-normal text-[16px]/[20px] tracking-tight disabled:cursor-not-allowed disabled:bg-primary-100 disabled:text-primary-400"
+                      disabled={ordersProcessingByAnotherAdmin.has(request.id)}
                       aria-label={`Reject ${request.productName} order request`}
                     />
                     <Button
                       type="black"
-                      label="Approve"
+                      label={ordersProcessingByAnotherAdmin.has(request.id) ? "Processing" : "Approve"}
                       onClick={() => onClickApprove(request)}
-                      className="w-full flex justify-center items-center min-w-[160px] h-[40px] py-[10px] px-[20px] font-normal text-[16px]/[20px] tracking-tight"
-                      aria-label={`Approve ${request.productName} order request`}
+                      className="w-full flex justify-center items-center min-w-[160px] h-[40px] py-[10px] px-[20px] font-normal text-[16px]/[20px] tracking-tight disabled:cursor-not-allowed disabled:bg-primary-200 disabled:text-primary-400"
+                      disabled={ordersProcessingByAnotherAdmin.has(request.id)}
+                      aria-label={
+                        ordersProcessingByAnotherAdmin.has(request.id)
+                          ? `${request.productName} order request is being processed`
+                          : `Approve ${request.productName} order request`
+                      }
                     />
                   </footer>
                 </div>
@@ -185,15 +203,21 @@ export default function RequestList({ orderRequests, onClickReject, onClickAppro
                     type="white"
                     label="Reject"
                     onClick={() => onClickReject(request)}
-                    className="flex justify-center items-center border-[1px] border-primary-300 w-[80px] h-[40px] py-[10px] px-[20px] font-normal text-[16px]/[20px] tracking-tight"
+                    className="flex justify-center items-center border-[1px] border-primary-300 w-[80px] h-[40px] py-[10px] px-[20px] font-normal text-[16px]/[20px] tracking-tight disabled:cursor-not-allowed disabled:bg-primary-100 disabled:text-primary-400"
+                    disabled={ordersProcessingByAnotherAdmin.has(request.id)}
                     aria-label={`Reject ${request.productName} order request`}
                   />
                   <Button
                     type="black"
-                    label="Approve"
+                    label={ordersProcessingByAnotherAdmin.has(request.id) ? "Processing" : "Approve"}
                     onClick={() => onClickApprove(request)}
-                    className="flex justify-center items-center w-[80px] h-[40px] py-[10px] px-[20px] font-normal text-[16px]/[20px] tracking-tight"
-                    aria-label={`Approve ${request.productName} order request`}
+                    className="flex justify-center items-center w-[80px] h-[40px] py-[10px] px-[20px] font-normal text-[16px]/[20px] tracking-tight disabled:cursor-not-allowed disabled:bg-primary-200 disabled:text-primary-400"
+                    disabled={ordersProcessingByAnotherAdmin.has(request.id)}
+                    aria-label={
+                      ordersProcessingByAnotherAdmin.has(request.id)
+                        ? `${request.productName} order request is being processed`
+                        : `Approve ${request.productName} order request`
+                    }
                   />
                 </div>
               </div>

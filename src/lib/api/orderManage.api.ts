@@ -7,6 +7,8 @@ import {
   TUpdateOrderStatusRequest,
   TUpdateOrderStatusData,
   TUpdateOrderStatusResponse,
+  TStartOrderPaymentData,
+  TStartOrderPaymentResponse,
 } from "@/types/order.types";
 import { cookieFetch } from "./fetchClient.api";
 
@@ -56,5 +58,12 @@ export const getOrderDetail = async (
   status: "pending" | "approved" = "pending",
 ): Promise<TAdminOrderDetail> => {
   const response = await cookieFetch<TAdminOrderDetailResponse>(`/admin/orders/${orderId}?status=${status}`);
+  return response.data;
+};
+
+export const startOrderPayment = async (orderId: string): Promise<TStartOrderPaymentData> => {
+  const response = await cookieFetch<TStartOrderPaymentResponse>(`/admin/orders/${orderId}/payment`, {
+    method: "POST",
+  });
   return response.data;
 };

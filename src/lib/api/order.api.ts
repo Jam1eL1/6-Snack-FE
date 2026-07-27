@@ -6,7 +6,7 @@ import {
   TOrderNowResponse,
   TOrderRequestBody,
   TOrderSort,
-  TUpdateOrderStatusData,
+  TStartOrderPaymentData,
 } from "@/types/order.types";
 import { cookieFetch } from "./fetchClient.api";
 
@@ -44,7 +44,7 @@ export const createOrder = async ({ requestMessage, cartItemIds }: TOrderRequest
 };
 
 // Instant purchase from cart - admins only
-export const orderNow = async (cartItemIds: number[]): Promise<TUpdateOrderStatusData> => {
+export const orderNow = async (cartItemIds: number[]): Promise<TStartOrderPaymentData> => {
   const response = await cookieFetch<TOrderNowResponse>("/admin/orders/instant", {
     method: "POST",
     body: JSON.stringify({ cartItemIds }),

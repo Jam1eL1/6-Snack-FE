@@ -11,6 +11,7 @@ export const useOrderDetail = (orderId: string, status: "pending" | "approved" =
     enabled: !!orderId, // Only run the query when orderId is available
     staleTime: 5 * 60 * 1000, // Keep the data fresh for 5 minutes
     gcTime: 10 * 60 * 1000, // Keep the cache for 10 minutes
+    refetchOnWindowFocus: "always",
   });
 };
 

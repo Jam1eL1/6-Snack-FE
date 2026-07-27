@@ -8,29 +8,55 @@ import TextArea from "./TextArea";
 import { formatCurrency } from "@/lib/utils/currency.util";
 import clsx from "clsx";
 import { TToastVariant } from "@/types/toast.types";
+import { useProcessOrderPayment } from "@/hooks/useProcessOrderPayment";
+import { useRouter } from "next/navigation";
+import { isOrderPaymentProcessingByAnotherAdmin } from "@/lib/utils/getOrderPaymentAction.util";
+import { SessionExpiredError } from "@/lib/api/auth.errors";
 
 type TOrderManageModalProps = {
   type: "reject" | "approve";
   order: TAdminOrderDetail;
-  onClick: () => void;
-  onUpdateOrderStatus: (variables: { orderId: string; status: "APPROVED" | "REJECTED"; adminMessage?: string }) => void;
+  onUpdateOrderStatus: (variables: { orderId: string; status: "REJECTED"; adminMessage?: string }) => void;
   showToast: (message: string, variant: TToastVariant) => void;
 };
 
 export default function OrderManageModal({
   type,
   order,
-  onClick,
   onUpdateOrderStatus,
   showToast,
 }: TOrderManageModalProps) {
   const { closeModal } = useModal();
+  const router = useRouter();
   const [adminMessage, setAdminMessage] = useState("");
+  const { processOrderPayment, isPending: isPaymentPending } = useProcessOrderPayment({
+    onPaymentReady: (paymentId) => {
+      closeModal();
+      router.push(`/payments/${paymentId}`);
+    },
+    onPaymentBlocked: () => {
+      closeModal();
+      showToast("Another admin is currently processing this order.", "error");
+    },
+    onPaymentAlreadyPaid: () => {
+      closeModal();
+      showToast("This order has already been paid.", "error");
+    },
+    onProcessOrderPaymentError: (error) => {
+      if (error instanceof SessionExpiredError) return;
+
+      showToast(error.message || "Failed to process payment.", "error");
+    },
+  });
 
   const currentMonthBudget = order.budget.currentMonthBudget ?? 0;
   const currentMonthExpense = order.budget.currentMonthExpense ?? 0;
   const remainingBudget =
     currentMonthBudget - currentMonthExpense - order.productsPriceTotal - order.deliveryFee;
+  const isProcessingByAnotherAdmin = isOrderPaymentProcessingByAnotherAdmin({
+    payment: order.payment,
+    paymentClaim: order.paymentClaim,
+  });
 
   return (
     <div
@@ -180,17 +206,19 @@ export default function OrderManageModal({
             </section>
           )}
 
-          <section aria-label="Admin message" className="flex flex-col justify-center items-start w-full gap-[12px]">
-            <label className="font-bold text-[16px]/[20px] tracking-tight text-primary-950">
-              {type === "approve" ? "Approval Message" : "Rejection Message"}
-            </label>
-            <TextArea
-              className="w-full max-w-[480px] h-[140px] p-[24px] rounded-[2px] resize-none placeholder:font-normal placeholder:text-[16px]/[26px] placeholder:tracking-tight placeholder:text-[#929292]"
-              placeholder={type === "approve" ? "Enter an approval message." : "Enter a rejection message."}
-              value={adminMessage}
-              onChange={(e) => setAdminMessage(e.target.value)}
-            />
-          </section>
+          {type === "reject" && (
+            <section aria-label="Admin message" className="flex flex-col justify-center items-start w-full gap-[12px]">
+              <label className="font-bold text-[16px]/[20px] tracking-tight text-primary-950">
+                Rejection Message
+              </label>
+              <TextArea
+                className="w-full max-w-[480px] h-[140px] p-[24px] rounded-[2px] resize-none placeholder:font-normal placeholder:text-[16px]/[26px] placeholder:tracking-tight placeholder:text-[#929292]"
+                placeholder="Enter a rejection message."
+                value={adminMessage}
+                onChange={(e) => setAdminMessage(e.target.value)}
+              />
+            </section>
+          )}
         </div>
 
         <footer className="flex justify-center items-center w-full max-w-[480px] gap-[20px]">
@@ -215,28 +243,27 @@ export default function OrderManageModal({
                   status: "REJECTED",
                   adminMessage,
                 });
-                onClick();
                 closeModal();
                 showToast("Purchase request rejected.", "success");
                 return;
               }
 
-              // Temporarily continue to purchase history until the replacement payment flow is ready.
               if (type === "approve") {
-                onUpdateOrderStatus({
-                  orderId: String(order.id),
-                  status: "APPROVED",
-                  adminMessage,
-                });
-                onClick();
-                closeModal();
+                processOrderPayment(order);
                 return;
               }
               closeModal();
             }}
             type="black"
-            label={type === "approve" ? "Approve" : "Reject"}
-            className="flex justify-center items-center w-full min-w-[153.5px] max-w-[230px] h-[64px] py-[12px] px-[16px] font-bold"
+            label={
+              type === "approve" && (isPaymentPending || isProcessingByAnotherAdmin)
+                ? "Processing..."
+                : type === "approve"
+                  ? "Approve"
+                  : "Reject"
+            }
+            className="flex justify-center items-center w-full min-w-[153.5px] max-w-[230px] h-[64px] py-[12px] px-[16px] font-bold disabled:cursor-not-allowed"
+            disabled={isProcessingByAnotherAdmin || (isPaymentPending && type === "approve")}
             aria-label={type === "approve" ? "Approve purchase request" : "Reject purchase request"}
           />
         </footer>
