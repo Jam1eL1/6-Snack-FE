@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// JWT 토큰에서 사용자 역할 추출하는 함수
+// Extract the user role from the JWT.
 function getUserRoleFromToken(token: string): string | null {
   try {
-    // JWT의 payload 부분 디코딩 (base64url 디코딩)
+    // Decode the JWT payload using base64url.
     const payload = JSON.parse(atob(token.split(".")[1]));
     return payload.role || null;
   } catch {
@@ -13,14 +13,14 @@ function getUserRoleFromToken(token: string): string | null {
 }
 
 export function middleware(request: NextRequest) {
-  // 현재 URL 경로 가져오기
+  // Get the current URL path.
   const { pathname } = request.nextUrl;
 
-  // 쿠키에서 인증 토큰 확인
+  // Read the authentication tokens from cookies.
   const authToken = request.cookies.get("accessToken")?.value;
   const refreshToken = request.cookies.get("refreshToken")?.value;
 
-  // 로그인을 아예 안한 유저(둘 다 없음)는 랜딩, 로그인, 회원가입(하위포함)만 허용
+  // Users without either token may access only landing, sign-in, and sign-up paths.
   if (!authToken && !refreshToken) {
     const allowedPaths = ["/", "/signin"];
     const isSignupPath = pathname === "/signup" || pathname.startsWith("/signup/");
@@ -30,51 +30,49 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  // JWT 토큰에서 사용자 역할 추출
+  // Extract the user role from the access token.
   const userRole = authToken ? getUserRoleFromToken(authToken) : null;
 
-  // 인증 상태 확인 : 쿠키만료기한과 토큰만료기한이 같으므로 토큰존재여부로 인증상태확인 가능
+  // The cookie and token expire together, so token presence represents authentication here.
   const isAuthenticated = !!authToken;
 
-  // 인증 관련 경로 확인 - 라우트 그룹으로 인해 URL은 /signin, /signup
+  // Route groups do not affect the /signin and /signup URLs.
   const authPaths = ["/signin", "/signup"];
   const isAuthRoute = authPaths.some((path) => pathname === path);
 
-  // 로그인한 사용자가 인증 경로(로그인, 회원가입)에 접근하는 경우
+  // Handle authenticated users visiting sign-in or sign-up pages.
   if (isAuthRoute && isAuthenticated) {
-    // 인증된 사용자는 메인 페이지로 리디렉션
+    // Redirect authenticated users to the main page.
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  // accessToken이 없어도 보호 경로 차단하지 않음 (자동 재발급을 위해)
+  // Allow protected paths without an access token so automatic refresh can run.
 
-  // 역할 기반 접근 제어 (인증된 사용자만)
+  // Apply role-based access control only to authenticated users.
   if (isAuthenticated && userRole) {
-    // SUPER_ADMIN만 접근 가능한 경로
-    const superAdminOnlyPaths = [
-      "/manage/users",
-      "/manage/budgets",
-    ];
+    // Paths available only to SUPER_ADMIN users.
+    const superAdminOnlyPaths = ["/manage/users", "/manage/budgets"];
 
-    // USER, ADMIN 모두 접근 불가 (SUPER_ADMIN만 접근 가능)
+    // Block USER and ADMIN roles from SUPER_ADMIN-only paths.
     const isSuperAdminOnly = superAdminOnlyPaths.some((path) => pathname === path || pathname.startsWith(path + "/"));
     if ((userRole === "USER" || userRole === "ADMIN") && isSuperAdminOnly) {
       return NextResponse.redirect(new URL("/unauthorized", request.url));
     }
 
-    // 일반유저(USER)가 접근할 수 없는 경로들 (SUPER_ADMIN 전용 제외)
+    // Paths unavailable to USER accounts, excluding SUPER_ADMIN-only paths.
     const userRestrictedPaths = [
-      "/order-manage", // 구매요청관리
-      "/order-history", // 구매내역확인
+      "/order-manage", // Purchase request management
+      "/order-history", // Purchase history
+      "/payments",
     ];
     const isUserRestricted = userRestrictedPaths.some((path) => pathname === path || pathname.startsWith(path + "/"));
     if (userRole === "USER" && isUserRestricted) {
       return NextResponse.redirect(new URL("/unauthorized", request.url));
     }
 
-    // 일반유저가 아닌 경우 제한 체크 (장바구니-주문 접근 불가)
+    // Prevent non-USER accounts from accessing the cart checkout.
     const nonUserRestrictedPaths = [
-      "/cart/order", // 장바구니-주문
+      "/cart/order", // Cart checkout
     ];
     const isNonUserRestricted = nonUserRestrictedPaths.some(
       (path) => pathname === path || pathname.startsWith(path + "/"),
@@ -84,19 +82,19 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  // 로그인한 사용자가 "/"로 접근하는 경우 /products로 리디렉션
+  // Redirect authenticated users from "/" to "/products".
   if (pathname === "/" && isAuthenticated) {
     return NextResponse.redirect(new URL("/products", request.url));
   }
 
-  // 그 외의 경우는 정상적으로 진행
+  // Continue for all other requests.
   return NextResponse.next();
 }
 
-// 미들웨어가 적용될 경로 패턴 지정
+// Define the paths where middleware runs.
 export const config = {
   matcher: [
-    // API 경로와 정적 파일은 제외
+    // Exclude API routes and static files.
     "/((?!api|_next/static|_next/image|favicon.ico).*)",
   ],
 };
