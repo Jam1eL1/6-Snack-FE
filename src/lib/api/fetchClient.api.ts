@@ -40,13 +40,13 @@ export const cookieFetch = async <T>(
     const isFormData = requestOptions.body instanceof FormData;
 
     return await fetch(`${API_BASE_URL}${path}`, {
+      ...requestOptions,
       credentials: "include",
       cache: "no-store",
       headers: {
         ...(isFormData ? {} : { "Content-Type": "application/json" }),
         ...(requestOptions.headers || {}),
       },
-      ...requestOptions,
     });
   };
 
@@ -54,11 +54,9 @@ export const cookieFetch = async <T>(
 
   if (response.status === 401 && shouldRefreshOn401 && !hasRetried) {
     try {
-      console.log("Attempting to refresh access token");
       await waitForRefresh();
       return cookieFetch<T>(path, options, true);
-    } catch (refreshError) {
-      console.error("Access token refresh failed:", refreshError);
+    } catch {
       throw new SessionExpiredError();
     }
   }

@@ -43,6 +43,7 @@ export const logout = async (): Promise<void> => {
 export const refreshAccessToken = async (): Promise<TRefreshAccessTokenResponse> => {
   return cookieFetch<TRefreshAccessTokenResponse>("/auth/refresh-token", {
     method: "POST",
+    shouldRefreshOn401: false,
   });
 };
 
