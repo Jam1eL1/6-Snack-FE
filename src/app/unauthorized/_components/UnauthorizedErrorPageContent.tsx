@@ -18,8 +18,8 @@ export default function UnauthorizedErrorPageContent({ from }: TErrorPageContent
   const router = useRouter();
 
   const requiredRole = {
-    USER: "관리자 이상만 접근",
-    ADMIN: "최고 관리자 이상만 접근",
+    USER: "administrators or higher",
+    ADMIN: "super administrators",
   } as const;
 
   const handleClick = () => {
@@ -36,19 +36,24 @@ export default function UnauthorizedErrorPageContent({ from }: TErrorPageContent
         <>
           <section className="flex flex-col gap-[16px] justify-center items-center">
             <div className="relative w-[40vw] h-[30vh] max-w-[300px] aspect-[7/8]">
-              <Image src={img_dog_error} alt="에러를 나타내는 강아지 이미지" fill className="object-contain" />
+              <Image
+                src={img_dog_error}
+                alt="Dog illustration indicating an access error"
+                fill
+                className="object-contain"
+              />
             </div>
 
             <div role="status" className="text-center font-medium text-[16px]/[24px] sm:text-[20px]/[30px]">
               {from === "order" && user.role !== "USER" ? (
                 <>
-                  <h2>이 페이지는 일반 사용자 전용입니다. </h2>
-                  <p>관리자 이상 권한으로는 이용할 수 없습니다.</p>
+                  <h2>This page is for regular users only.</h2>
+                  <p>Administrators cannot access this page.</p>
                 </>
               ) : (
                 <>
-                  <h2>접근이 제한된 페이지입니다.</h2>
-                  <p>이 페이지는 {requiredRole[user?.role as TRole]}할 수 있습니다.</p>
+                  <h2>You don’t have access to this page.</h2>
+                  <p>Only {requiredRole[user.role as TRole]} can access it.</p>
                 </>
               )}
             </div>
@@ -56,7 +61,7 @@ export default function UnauthorizedErrorPageContent({ from }: TErrorPageContent
 
           <Button
             type="black"
-            label="돌아가기"
+            label="Go back"
             onClick={handleClick}
             className="font-semibold text-[16px]/[20px] tracking-tight w-full max-w-[230px] min-h-[56px] sm:max-w-[310px] sm:h-[64px]"
           />
