@@ -9,10 +9,7 @@ let refreshPromise: Promise<unknown> | null = null;
 const createApiError = async (response: Response) => {
   const data: unknown = await response.json().catch(() => null);
   const message =
-    typeof data === "object" &&
-    data !== null &&
-    "message" in data &&
-    typeof data.message === "string"
+    typeof data === "object" && data !== null && "message" in data && typeof data.message === "string"
       ? data.message
       : `HTTP error! status: ${response.status}`;
 
@@ -34,19 +31,22 @@ export const cookieFetch = async <T>(
   hasRetried = false,
 ): Promise<T> => {
   const { shouldRefreshOn401 = true, ...requestOptions } = options;
+  const headers = new Headers(requestOptions.headers);
+
+  if (requestOptions.body instanceof FormData) {
+    headers.delete("Content-Type");
+  } else if (requestOptions.body && !headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
   // Keep the fetch call in a helper so retries reuse the same request setup.
   const request = async () => {
     // Let the browser set the multipart boundary for FormData requests.
-    const isFormData = requestOptions.body instanceof FormData;
 
     return await fetch(`${API_BASE_URL}${path}`, {
       ...requestOptions,
       credentials: "include",
       cache: "no-store",
-      headers: {
-        ...(isFormData ? {} : { "Content-Type": "application/json" }),
-        ...(requestOptions.headers || {}),
-      },
+      headers,
     });
   };
 
