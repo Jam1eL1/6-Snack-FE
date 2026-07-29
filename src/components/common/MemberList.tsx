@@ -77,8 +77,9 @@ export default function MemberList({ id, name, email, role, onClickDeleteUser, o
         <Badge type={role === "ADMIN" ? "admin" : "user"} />
 
         <div className="flex gap-2">
-          <div
-            className="w-24 px-5 py-3 bg-white rounded-xs outline-1 outline-offset-[-1px] outline-primary-300 flex justify-center items-center cursor-pointer"
+          <button
+            type="button"
+            className="flex min-w-28 cursor-pointer items-center justify-center rounded-xs bg-white px-3 py-2.5 text-sm font-semibold whitespace-nowrap text-primary-900 outline-1 outline-offset-[-1px] outline-primary-300 transition focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
             onClick={() => {
               openModal(
                 <InviteMemberModal
@@ -93,10 +94,11 @@ export default function MemberList({ id, name, email, role, onClickDeleteUser, o
               );
             }}
           >
-            <div className="text-center text-primary-900 text-base whitespace-nowrap leading-none">Change Role</div>
-          </div>
-          <div
-            className="w-24 px-5 py-3 bg-red flex justify-center items-center rounded-xs cursor-pointer"
+            Change Role
+          </button>
+          <button
+            type="button"
+            className="flex min-w-28 cursor-pointer items-center justify-center rounded-xs bg-red px-3 py-2.5 text-sm font-semibold whitespace-nowrap text-white transition focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
             onClick={() =>
               openModal(
                 <DeleteAccountConfirmModal
@@ -111,8 +113,8 @@ export default function MemberList({ id, name, email, role, onClickDeleteUser, o
               )
             }
           >
-            <div className="text-white text-base whitespace-nowrap leading-none">Remove User</div>
-          </div>
+            Remove User
+          </button>
         </div>
       </div>
     </>
