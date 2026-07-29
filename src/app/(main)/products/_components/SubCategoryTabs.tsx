@@ -4,11 +4,11 @@ import { useRouter } from "next/navigation";
 import React from "react";
 
 export default function SubCategoryTabs() {
-  // 우선 categoryStore로 children category 정보가져오기
+  // Read the child categories from the category store.
   const { childrenCategories, selectedChild } = useCategoryStore();
   const router = useRouter();
 
-  // children category 없는 현재 parent category이면 여기 아래아이템 모두 primary-400 으로 보여야함,
+  // Dim the tabs when the selected parent category has no child categories.
   return (
     <div className="max-w-full border-b border-primary-100 inline-flex justify-start items-center gap-2 sm:hidden category-tabs-scroll -mx-6 px-6">
       {childrenCategories.map((child) => (

@@ -31,10 +31,10 @@ export default function ProductsPageContent() {
   const { selectedCategory, clearSelectedCategory, findCategoryPath } = useCategoryStore();
 
   const sortOptions = [
-    { label: "최신순", value: "latest" as const },
-    { label: "판매순", value: "popular" as const },
-    { label: "낮은 가격순", value: "low" as const },
-    { label: "높은 가격순", value: "high" as const },
+    { label: "Newest", value: "latest" as const },
+    { label: "Best selling", value: "popular" as const },
+    { label: "Price: Low to high", value: "low" as const },
+    { label: "Price: High to low", value: "high" as const },
   ];
 
   const searchParams = useSearchParams();
@@ -63,10 +63,10 @@ export default function ProductsPageContent() {
 
   const handleSortChange = (selectedValue: string) => {
     const sortValueMap: Record<string, TSortOptions> = {
-      최신순: "latest",
-      판매순: "popular",
-      "낮은 가격순": "low",
-      "높은 가격순": "high",
+      Newest: "latest",
+      "Best selling": "popular",
+      "Price: Low to high": "low",
+      "Price: High to low": "high",
     };
 
     const sortValue = sortValueMap[selectedValue];
@@ -93,9 +93,9 @@ export default function ProductsPageContent() {
     <main
       className="w-full flex items-start justify-center sm:gap-5 md:gap-10 md:mt-[80px]"
       role="main"
-      aria-label="상품 목록 페이지"
+      aria-label="Product catalog"
     >
-      <aside className="hidden sm:block" role="complementary" aria-label="카테고리 네비게이션">
+      <aside className="hidden sm:block" role="complementary" aria-label="Product categories">
         <SubCategoryItem categories={categories} />
       </aside>
 
@@ -103,38 +103,38 @@ export default function ProductsPageContent() {
         <SubCategoryTabs />
 
         <div className="flex flex-col sm:flex-row sm:justify-between">
-          <nav role="navigation" aria-label="카테고리 탐색">
+          <nav role="navigation" aria-label="Category navigation">
             <CategoryNavigation parentCategory={selectedCategory?.parent} childCategory={selectedCategory?.child} />
           </nav>
 
           <div
             className="flex items-center w-full justify-between sm:justify-end sm:gap-[30px] pb-5 border-b border-primary-100 sm:border-0"
             role="toolbar"
-            aria-label="상품 정렬 및 등록 도구"
+            aria-label="Product sorting and registration tools"
           >
             <Dropdown
               options={sortOptions.map((option) => option.label)}
               onChange={handleSortChange}
-              aria-label="상품 정렬 옵션"
+              aria-label="Sort products"
             />
             <Button
               type="black"
               label={
                 <div className="flex gap-[6px]">
                   <PlusToggleIconSvg className="w-4 h-4 text-white" aria-hidden="true" />
-                  <p className="text-primary-50 text-sm/[17px] font-semibold">상품 등록</p>
+                  <p className="text-primary-50 text-sm/[17px] font-semibold">Add product</p>
                 </div>
               }
               onClick={handleProductRegistration}
               className="h-[44px] py-[10px] rounded"
-              aria-label="새 상품 등록하기"
+              aria-label="Add a new product"
             />
           </div>
         </div>
 
         <section className="container mx-auto pt-[20px] sm:pt-[30px]" aria-labelledby="products-section-title">
           <h2 id="products-section-title" className="sr-only">
-            {selectedCategory?.child || selectedCategory?.parent || "전체"} 상품 목록
+            {selectedCategory?.child || selectedCategory?.parent || "All"} products
           </h2>
 
           {isLoading ? (
@@ -144,7 +144,7 @@ export default function ProductsPageContent() {
               <ProductGrid
                 products={allProducts}
                 currentCategoryId={selectedCategory?.id}
-                aria-label={`${allProducts.length}개의 상품이 있습니다`}
+                aria-label={`${allProducts.length} products available`}
               />
 
               {hasNextPage && (
@@ -153,14 +153,14 @@ export default function ProductsPageContent() {
                     type="white"
                     label={
                       <div className="flex items-center justify-center gap-2 whitespace-nowrap flex-shrink-0">
-                        <p>더보기</p>
+                        <p>Load more</p>
                         <ArrowIconSvg direction="down" className="w-5 h-5 text-black" aria-hidden="true" />
                       </div>
                     }
                     onClick={handleLoadMore}
                     className="w-full h-[44px] sm:h-[64px] px-6 py-4 text-sm/[17px] font-medium tracking-tight"
                     disabled={isFetchingNextPage}
-                    aria-label={isFetchingNextPage ? "더 많은 상품을 불러오는 중입니다" : "더 많은 상품 보기"}
+                    aria-label={isFetchingNextPage ? "Loading more products" : "Load more products"}
                   />
                 </div>
               )}
@@ -169,7 +169,7 @@ export default function ProductsPageContent() {
 
           {isError && (
             <div className="flex justify-center items-center py-16" role="alert" aria-live="assertive">
-              <div className="text-error-500">에러가 발생했습니다: {error.message}</div>
+              <div className="text-error-500">Something went wrong: {error.message}</div>
             </div>
           )}
         </section>

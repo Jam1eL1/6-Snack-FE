@@ -6,7 +6,7 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import IcSearch from "@/assets/icons/ic_search.svg";
 import { TSearchBarProps } from "@/types/searchBar.types";
 
-export default function SearchBar({ placeholder = "이름으로 검색하세요", initialValue = "" }: TSearchBarProps) {
+export default function SearchBar({ placeholder = "Search by name", initialValue = "" }: TSearchBarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -48,9 +48,9 @@ export default function SearchBar({ placeholder = "이름으로 검색하세요"
 
   return (
     <div className="w-full py-3 px-2 md:py-2 border-b h-12 border-zinc-800 flex items-center gap-2">
-      <button onClick={handleSearch} aria-label="검색" type="button">
+      <button onClick={handleSearch} aria-label="Search" type="button">
         <div className="relative w-[24px] h-[24px]">
-          <Image src={IcSearch} alt="검색 아이콘" className="flex justify-center items-center object-contain" fill />
+          <Image src={IcSearch} alt="" className="flex justify-center items-center object-contain" fill />
         </div>
       </button>
       <input

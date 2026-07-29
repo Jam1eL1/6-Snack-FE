@@ -61,7 +61,7 @@ export default function ProductList({ products }: TProductListProps) {
               <div className="flex gap-[20px]">
                 <div className="flex justify-center items-center min-w-[90px] h-[90px] p-[24px] rounded-[2px] bg-primary-50">
                   <div className="relative w-[29px] h-[50px]">
-                    <Image src={item.imageUrl} alt="상품" fill className="object-contain" />
+                    <Image src={item.imageUrl} alt={item.name} fill className="object-contain" />
                   </div>
                 </div>
                 <div className="flex flex-col min-w-[217px] gap-[10px]">
@@ -87,7 +87,7 @@ export default function ProductList({ products }: TProductListProps) {
                 <div className="flex justify-start items-center w-[320px] h-[40px] gap-[20px]">
                   <div className="flex justify-center items-center w-[40px] h-[40px] px-[12px] rounded-[2px] bg-primary-50">
                     <div className="relative w-[16px] h-[27.77px]">
-                      <Image src={item.imageUrl} alt="상품" fill className="object-contain" />
+                      <Image src={item.imageUrl} alt={item.name} fill className="object-contain" />
                     </div>
                   </div>
                   <p className="font-normal text-[16px]/[20px] tracking-tight text-primary-950 line-clamp-2">

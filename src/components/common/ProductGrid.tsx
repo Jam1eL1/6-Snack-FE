@@ -14,7 +14,7 @@ type TProductWithFavorite = TProductGrid & {
 
 type ProductGridProps = {
   products: TProductWithFavorite[];
-  currentCategoryId?: number; // 현재 선택된 카테고리 ID 추가
+  currentCategoryId?: number;
 };
 
 export default function ProductGrid({ products, currentCategoryId }: ProductGridProps) {
@@ -23,10 +23,10 @@ export default function ProductGrid({ products, currentCategoryId }: ProductGrid
   if (!products || products.length === 0) {
     return (
       <NoContent
-        title="상품이 존재하지 않습니다"
-        subText1="원하는 상품을"
-        subText2="상품 리스트에 추가 해보세요."
-        buttonText="전체 상품 보기"
+        title="No products found"
+        subText1="Can’t find what you’re looking for?"
+        subText2="Add it to the product catalog."
+        buttonText="View all products"
         onClick={() => router.push("/products")}
         className="sm:mt-[150px] md:mt-[170px]"
       />
@@ -36,8 +36,8 @@ export default function ProductGrid({ products, currentCategoryId }: ProductGrid
   return (
     <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 sm:gap-x-3.5 sm:gap-y-7.5 md:grid-cols-3 md:gap-x-10 md:gap-y-15 justify-items-center pb-[30px] sm:pb-[40px]">
       {products.map((product: TProductWithFavorite) => {
-        // 상품 상세 페이지 URL 생성 (카테고리 파라미터 포함)
-        // 현재 선택된 카테고리가 있으면 그것을 사용, 없으면 상품의 카테고리 ID 사용
+        // Keep the selected category in the product detail URL.
+        // Fall back to the product category when no category is selected.
         const categoryId = currentCategoryId || product.categoryId;
         const productDetailUrl = `/products/${product.id}?category=${categoryId}`;
 
@@ -62,14 +62,14 @@ export default function ProductGrid({ products, currentCategoryId }: ProductGrid
               <div className="flex justify-center items-center md:gap-2 ">
                 <div className="text-base/[20px] md:text-lg/[22px] font-normal tracking-tight">{product.name}</div>
                 <div className=" text-secondary-500 text-[13px]/[16px] md:text-sm/[17px] font-bold hidden md:block">
-                  {product.cumulativeSales}회 구매
+                  {product.cumulativeSales} purchases
                 </div>
               </div>
               <div className="justify-start text-base/[20px] md:text-lg/[22px] font-extrabold tracking-tight">
                 {formatCurrency(product.price)}
               </div>
               <div className="justify-center text-secondary-500 text-[13px]/[16px] md:text-sm/[17px] font-bold md:hidden">
-                {product.cumulativeSales}회 구매
+                {product.cumulativeSales} purchases
               </div>
             </div>
           </Link>
