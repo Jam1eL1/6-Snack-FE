@@ -36,40 +36,24 @@ export default function RequestList({ orderRequests, onClickReject, onClickAppro
       {/* Desktop table header */}
       <header className="flex justify-center w-full" role="banner" aria-label="Order request list header">
         <div
-          className="hidden sm:flex justify-between items-center w-full max-w-[1352px] h-[100px] border-b border-neutral-200 md:px-[40px]"
+          className="hidden h-[60px] w-full grid-cols-[100px_minmax(140px,1fr)_100px_108px_168px] items-center gap-3 border-y border-primary-100 sm:grid md:grid-cols-[142px_minmax(220px,1fr)_142px_134px_168px] md:gap-6 md:px-[40px]"
           role="row"
           aria-label="Table header"
         >
-          <div
-            className="font-bold text-primary-500 text-base w-[100px] md:w-[142px]"
-            role="columnheader"
-            aria-label="Request date"
-          >
+          <div className="font-bold text-primary-500 text-base" role="columnheader" aria-label="Request date">
             Request Date
           </div>
-          <div
-            className="font-bold text-primary-500 text-base w-[140px] md:w-[360px]"
-            role="columnheader"
-            aria-label="Product information"
-          >
+          <div className="font-bold text-primary-500 text-base" role="columnheader" aria-label="Product information">
             Product
           </div>
-          <div
-            className="font-bold text-primary-500 text-base w-[100px] md:w-[142px]"
-            role="columnheader"
-            aria-label="Order amount"
-          >
+          <div className="font-bold text-primary-500 text-base" role="columnheader" aria-label="Order amount">
             Order Amount
           </div>
-          <div
-            className="font-bold text-primary-500 text-base w-[108px] md:w-[134px]"
-            role="columnheader"
-            aria-label="Requester"
-          >
+          <div className="font-bold text-primary-500 text-base" role="columnheader" aria-label="Requester">
             Requester
           </div>
           <div
-            className="font-bold text-primary-500 text-base w-[168px] h-[40px] flex items-center"
+            className="flex h-[40px] items-center font-bold text-primary-500 text-base"
             role="columnheader"
             aria-label="Actions"
           >
@@ -80,12 +64,7 @@ export default function RequestList({ orderRequests, onClickReject, onClickAppro
 
       <main role="main" aria-label="Order request list body">
         {orderRequests.map((request) => (
-          <article
-            key={request.id}
-            className="border-b-[1px] border-primary-100"
-            role="article"
-            aria-label={`${request.productName} order request`}
-          >
+          <article key={request.id} role="article" aria-label={`${request.productName} order request`}>
             {/* Mobile view */}
             <Mobile>
               <div className="border-b-[1px] border-primary-100">
@@ -160,19 +139,19 @@ export default function RequestList({ orderRequests, onClickReject, onClickAppro
             {/* Desktop view */}
             <div className="flex justify-center w-full">
               <div
-                className="hidden sm:flex justify-between items-center w-full max-w-[1352px] h-24 md:px-[40px] border-b border-neutral-200"
+                className="hidden h-[100px] w-full grid-cols-[100px_minmax(140px,1fr)_100px_108px_168px] items-center gap-3 border-b border-primary-100 sm:grid md:grid-cols-[142px_minmax(220px,1fr)_142px_134px_168px] md:gap-6 md:px-[40px]"
                 role="row"
                 aria-label="Order request row"
               >
                 <div
-                  className="font-normal text-[16px]/[20px] tracking-tight text-primary-950 w-[100px] md:w-[142px]"
+                  className="font-normal text-[16px]/[20px] tracking-tight text-primary-950"
                   role="cell"
                   aria-label="Request date"
                 >
                   {formatDate(request.createdAt)}
                 </div>
                 <button
-                  className="font-normal flex text-[16px]/[20px] tracking-tight text-blue-600 w-[145px] md:w-[360px] truncate cursor-pointer hover:text-blue-800"
+                  className="flex min-w-0 cursor-pointer truncate text-left font-normal text-[16px]/[20px] tracking-tight text-blue-600 hover:text-blue-800"
                   onClick={() => handleProductNameClick(request.id, request.status.toLowerCase())}
                   role="cell"
                   aria-label="Product information"
@@ -180,13 +159,13 @@ export default function RequestList({ orderRequests, onClickReject, onClickAppro
                   {request.productName}
                 </button>
                 <div
-                  className="font-normal text-[16px]/[20px] tracking-tight text-primary-950 w-[100px] md:w-[142px]"
+                  className="font-normal text-[16px]/[20px] tracking-tight text-primary-950"
                   role="cell"
                   aria-label="Order amount"
                 >
                   {formatCurrency(request.productsPriceTotal + request.deliveryFee)}
                 </div>
-                <div className="flex justify-center items-center gap-[12px]" role="cell" aria-label="Requester">
+                <div className="flex min-w-0 items-center gap-[12px]" role="cell" aria-label="Requester">
                   <div
                     className="flex justify-center items-center w-[32px] h-[32px] rounded-full py-[10px] px-[9.5px] bg-primary-50 font-medium text-[10px]/[12px] tracking-tight"
                     role="img"
@@ -194,7 +173,7 @@ export default function RequestList({ orderRequests, onClickReject, onClickAppro
                   >
                     {request.requester.slice(0, 1)}
                   </div>
-                  <span className="font-normal text-[16px]/[20px] tracking-tight text-primary-950 w-[64px] md:w-[90px] truncate">
+                  <span className="min-w-0 truncate font-normal text-[16px]/[20px] tracking-tight text-primary-950">
                     {request.requester}
                   </span>
                 </div>

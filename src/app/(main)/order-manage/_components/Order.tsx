@@ -116,7 +116,7 @@ export default function Order() {
 
   if (error) {
     return (
-      <section className="pt-[30px] w-full relative" role="region" aria-label="Order management">
+      <section className="relative w-full" role="region" aria-label="Order management">
         <div className="text-center py-12 text-red-600" role="alert" aria-live="polite">
           Failed to load order data.
         </div>
@@ -125,8 +125,8 @@ export default function Order() {
   }
 
   return (
-    <section className="pt-[30px] w-full relative" role="region" aria-label="Order management">
-      <header className="w-full flex justify-between items-center gap-3 pb-3">
+    <section className="relative w-full" role="region" aria-label="Order management">
+      <header className="flex w-full items-center justify-between gap-3 pt-[10px] pb-[20px] md:pt-0 md:pb-[40px]">
         <h1 className="text-[18px]/[22px] font-bold text-primary-950">Manage Requests</h1>
         <div role="group" aria-label="Sort options">
           <Dropdown
