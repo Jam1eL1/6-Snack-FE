@@ -1,12 +1,12 @@
 import { z } from "zod";
 
-// 이메일 유효성 검사 스키마
+// Email validation schema
 export const emailSchema = z
   .string()
-  .nonempty({ message: "이메일을 입력해주세요." })
-  .email({ message: "유효하지 않은 이메일입니다." });
+  .nonempty({ message: "Enter your email address." })
+  .email({ message: "Enter a valid email address." });
 
-// 이메일 유효성 검사 함수
+// Validate an email address
 export const validateEmail = (email: string): { isValid: boolean; error?: string } => {
   const result = emailSchema.safeParse(email);
 
@@ -15,7 +15,7 @@ export const validateEmail = (email: string): { isValid: boolean; error?: string
   } else {
     return {
       isValid: false,
-      error: result.error.issues[0]?.message || "유효하지 않은 이메일입니다.",
+      error: result.error.issues[0]?.message || "Enter a valid email address.",
     };
   }
 };

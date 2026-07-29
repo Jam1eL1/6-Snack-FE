@@ -12,26 +12,29 @@ import Input from "@/components/common/Input";
 import Toast from "@/components/common/Toast";
 import { TToastVariant } from "@/types/toast.types";
 
-// 리액트 훅폼에 연결할 zod 스키마 정의
+// Define the Zod schema used by React Hook Form
 const signUpSchema = z
   .object({
-    email: z.string().email("유효한 이메일을 입력해주세요."),
-    name: z.string().min(1, "이름을 입력해주세요."),
+    email: z.string().email("Enter a valid email address."),
+    name: z.string().min(1, "Enter your name."),
     companyName: z
       .string()
-      .min(1, "회사명을 입력해주세요.")
-      .regex(/^[가-힣a-zA-Z\d().,_\- ]+$/, "회사명에는 한글, 영문, 숫자, (, ), ., -, _만 사용할 수 있습니다."),
-    bizNumber: z.string().regex(/^[0-9]{10}$/, "사업자 번호 10자리를 입력해주세요."),
+      .min(1, "Enter your company name.")
+      .regex(
+        /^[가-힣a-zA-Z\d().,_\- ]+$/,
+        "Company name can contain Korean or English letters, numbers, spaces, and (), . , - _.",
+      ),
+    bizNumber: z.string().regex(/^[0-9]{10}$/, "Enter a 10-digit business registration number."),
     password: z
       .string()
-      .min(8, "8자 이상 입력해주세요.")
-      .regex(/[a-zA-Z]/, "비밀번호는 영문자를 포함해야 합니다.")
-      .regex(/[0-9]/, "비밀번호는 숫자를 포함해야 합니다.")
-      .regex(/[^a-zA-Z0-9]/, "비밀번호는 특수문자를 포함해야 합니다."),
+      .min(8, "Password must be at least 8 characters.")
+      .regex(/[a-zA-Z]/, "Password must include a letter.")
+      .regex(/[0-9]/, "Password must include a number.")
+      .regex(/[^a-zA-Z0-9]/, "Password must include a special character."),
     passwordConfirm: z.string(),
   })
   .refine((data) => data.password === data.passwordConfirm, {
-    message: "비밀번호가 일치하지 않습니다.",
+    message: "Passwords do not match.",
     path: ["passwordConfirm"],
   });
 
@@ -54,41 +57,41 @@ export default function SuperAdminSignUpPage() {
     mode: "onChange",
   });
 
-  // register 결과 저장
+  // Keep registration handlers for custom inputs
   const emailReg = register("email");
   const passwordReg = register("password");
   const passwordConfirmReg = register("passwordConfirm");
   const companyNameReg = register("companyName");
   const bizNumberReg = register("bizNumber");
 
-  // Toast를 보여주는 함수
+  // Show a temporary toast
   const showToast = (message: string, variant: TToastVariant = "error") => {
     setToastMessage(message);
     setToastVariant(variant);
     setToastVisible(true);
 
-    // 3초 후 자동으로 숨김
+    // Hide automatically after three seconds
     setTimeout(() => {
       setToastVisible(false);
     }, 3000);
   };
 
-  // 회원가입 처리
+  // Create the company administrator account
   const onSubmit = async (data: TSignUpFormData) => {
     setIsLoading(true);
     try {
       await superAdminSignUp(data);
-      // 성공 시 바로 로그인 페이지로 이동
+      // Continue to sign-in after account creation
       router.push("/signin");
     } catch {
       setIsLoading(false);
-      showToast("회원가입에 실패했습니다. 다시 시도해주세요.", "error");
+      showToast("Account creation failed. Please try again.", "error");
     }
   };
 
   return (
     <>
-      {/* Toast 컴포넌트 */}
+      {/* Toast */}
       <div role="alert" aria-live="polite">
         <Toast text={toastMessage} variant={toastVariant} isVisible={toastVisible} />
       </div>
@@ -105,8 +108,8 @@ export default function SuperAdminSignUpPage() {
           role="banner"
         >
           <div className="flex justify-center items-center w-full sm:max-w-[500px] h-[140px] sm:h-[214px] py-[38.18px] sm:py-[58.4px] px-[50.92px] sm:px-[77.86px]">
-            <Link href="/" aria-label="홈으로 이동">
-              <SnackIconSvg className="w-[225.16px] h-[63.64px] sm:w-[344px] sm:h-[97.3px]" aria-label="스낙 로고" />
+            <Link href="/" aria-label="Go to home">
+              <SnackIconSvg className="w-[225.16px] h-[63.64px] sm:w-[344px] sm:h-[97.3px]" aria-label="Snack logo" />
             </Link>
           </div>
           <div className="sm:hidden">
@@ -115,13 +118,13 @@ export default function SuperAdminSignUpPage() {
                 id="signup-heading"
                 className="text-lg/[22px] sm:text-2xl/[30px] font-bold tracking-tight text-left align-middle"
               >
-                기업 담당자 회원가입
+                Create a company administrator account
               </h1>
               <p
                 className="text-primary-600 text-sm/[17px] sm:text-base/[20px] tracking-tight text-center align-middle"
                 role="note"
               >
-                * 그룹 내 유저는 기업 담당자의 초대 메일을 통해 가입이 가능합니다.
+                * Team members can create accounts through invitation emails sent by their company administrator.
               </p>
             </div>
           </div>
@@ -138,13 +141,13 @@ export default function SuperAdminSignUpPage() {
                 id="signup-form-heading"
                 className="text-lg/[22px] sm:text-2xl/[30px] font-bold tracking-tight text-left align-middle"
               >
-                기업 담당자 회원가입
+                Create a company administrator account
               </h1>
               <p
                 className="text-primary-600 text-sm/[17px] sm:text-base/[20px] tracking-tight text-left align-middle"
                 role="note"
               >
-                * 그룹 내 유저는 기업 담당자의 초대 메일을 통해 가입이 가능합니다.
+                * Team members can create accounts through invitation emails sent by their company administrator.
               </p>
             </div>
           </div>
@@ -152,73 +155,73 @@ export default function SuperAdminSignUpPage() {
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col w-full mb-[8px] gap-[20px]"
             role="form"
-            aria-label="기업 담당자 회원가입 폼"
+            aria-label="Company administrator account form"
           >
-            {/* 이메일 입력 필드 */}
+            {/* Email */}
             <Input
               {...emailReg}
               ref={emailReg.ref}
               type="email"
-              label="이메일"
-              placeholder="이메일을 입력해주세요."
+              label="Email"
+              placeholder="Enter your email address"
               error={errors.email?.message}
             />
 
-            {/* 이름 입력 필드 추가 */}
+            {/* Name */}
             <Input
               {...register("name")}
               ref={register("name").ref}
               type="text"
-              label="이름"
-              placeholder="이름을 입력해주세요."
+              label="Name"
+              placeholder="Enter your name"
               error={errors.name?.message}
             />
 
-            {/* 비밀번호 input wrapper*/}
+            {/* Password */}
             <Input
               {...passwordReg}
               ref={passwordReg.ref}
               type="password"
-              label="비밀번호"
-              placeholder="비밀번호를 입력해주세요."
+              label="Password"
+              placeholder="Enter your password"
               showPasswordToggle={true}
               error={errors.password?.message}
             />
 
-            {/* 비밀번호 확인 input wrapper*/}
+            {/* Password confirmation */}
             <Input
               {...passwordConfirmReg}
               ref={passwordConfirmReg.ref}
               type="password"
-              label="비밀번호 확인"
-              placeholder="비밀번호를 한 번 더 입력해주세요."
+              label="Confirm password"
+              placeholder="Enter your password again"
               showPasswordToggle={true}
               error={errors.passwordConfirm?.message}
             />
 
-            {/* 회사명 입력 필드 */}
+            {/* Company name */}
             <Input
               {...companyNameReg}
               ref={companyNameReg.ref}
               type="text"
-              label="회사명"
-              placeholder="회사명을 입력해주세요."
+              label="Company name"
+              placeholder="Enter your company name"
               error={errors.companyName?.message}
               isCompanyName={true}
             />
 
-            {/* 사업자 번호 입력 필드 */}
+            {/* Business registration number */}
             <Input
               {...bizNumberReg}
               ref={bizNumberReg.ref}
               type="text"
-              label="사업자 번호"
-              placeholder="사업자 번호를 입력해주세요."
+              label="Business registration number"
+              placeholder="Enter your business registration number"
               error={errors.bizNumber?.message}
               isBizNumber={true}
             />
 
-            {/* 가입 버튼 - 직접 button 태그로 대체 */}
+            {/* Submit account creation */}
             <button
               type="submit"
               className={clsx(
@@ -230,12 +233,12 @@ export default function SuperAdminSignUpPage() {
               )}
               disabled={isSubmitting || !isValid || isLoading}
               aria-describedby={!isValid ? "form-validation-message" : undefined}
-              aria-label={isSubmitting || isLoading ? "회원가입 처리 중" : "회원가입 하기"}
+              aria-label={isSubmitting || isLoading ? "Creating account" : "Create account"}
             >
               {isSubmitting || isLoading ? (
-                "처리 중"
+                "Creating account..."
               ) : (
-                "가입하기"
+                "Create account"
               )}
             </button>
           </form>
@@ -243,17 +246,17 @@ export default function SuperAdminSignUpPage() {
           {/* validation message for screen readers */}
           {!isValid && (
             <div id="form-validation-message" className="sr-only" aria-live="polite">
-              필수 입력 항목을 모두 채워주세요
+              Complete all required fields.
             </div>
           )}
 
           {/* login link */}
-          <nav aria-label="계정 관련 링크" className="w-full flex justify-center">
+          <nav aria-label="Account links" className="w-full flex justify-center">
             <p className="text-primary-500 text-base/[20px] tracking-tight text-center w-full">
-              이미 계정이 있으신가요?
-              <Link href="/signin" aria-label="로그인 페이지로 이동">
+              Already have an account?{" "}
+              <Link href="/signin" aria-label="Go to sign in">
                 <span className="text-primary-950 text-base/[20px] tracking-tight font-bold underline decoration-primary-950 underline-offset-2">
-                  로그인
+                  Sign in
                 </span>
               </Link>
             </p>

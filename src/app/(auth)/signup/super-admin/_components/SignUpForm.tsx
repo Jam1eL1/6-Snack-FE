@@ -23,76 +23,67 @@ const SignUpForm = () => {
   });
 
   const onSubmit = async (data: TSignUpForm) => {
-    console.log("폼이 제출되었습니다!");
-    console.log("폼 데이터:", data);
-
-    // FormData 객체 생성 및 데이터 추가
+    // Map client fields to the backend form fields
     const formData = new FormData();
-    formData.append("email", data.id); // 클라이언트의 'id'를 백엔드의 'email'로 매핑
+    formData.append("email", data.id);
     formData.append("name", data.name);
     formData.append("password", data.password);
     formData.append("confirmPassword", data.passwordConfirm);
     formData.append("companyName", data.companyName);
-    formData.append("bizNumber", data.companyNumber); // 클라이언트의 'companyNumber'를 백엔드의 'bizNumber'로 매핑
+    formData.append("bizNumber", data.companyNumber);
 
     try {
-      // 서버 액션 호출
+      // Submit through the server action
       const result = await adminSignUp(formData);
 
       if (result?.error) {
-        console.error("회원가입 실패:", result.error);
+        alert(`Account creation failed: ${result.error}`);
 
-        // alert창으로 오류 메시지 표시
-        alert(`회원가입 실패: ${result.error}`);
-
-        // 백엔드 에러 메시지에 따른 처리
-        if (result.error.includes("이미 등록된 이메일")) {
-          setError("id", { type: "manual", message: "이미 등록된 이메일입니다." });
-        } else if (result.error.includes("이미 등록된 사업자")) {
-          setError("companyNumber", { type: "manual", message: "이미 등록된 사업자 등록 번호입니다." });
-        } else if (result.error.includes("모두 입력해야 합니다")) {
-          // 일반적인 필수 필드 누락 에러
-          console.log("필수 필드가 누락되었습니다.");
-        } else {
-          // 기타 오류
-          console.log(`회원가입 중 오류가 발생했습니다: ${result.error}`);
+        // Map known backend errors to their fields
+        if (result.error.includes("This email is already registered.")) {
+          setError("id", { type: "manual", message: "This email is already registered." });
+        } else if (result.error.includes("business registration number is already registered")) {
+          setError("companyNumber", {
+            type: "manual",
+            message: "This business registration number is already registered.",
+          });
         }
       } else {
-        // 성공 시 처리 (리다이렉트는 서버 액션에서 처리됨)
-        console.log("회원가입이 성공했습니다!");
-        alert("회원가입이 성공했습니다!");
+        // The server action handles the redirect
+        alert("Account created successfully.");
       }
     } catch (error) {
-      console.error("예상치 못한 오류:", error);
-      console.log("회원가입 중 예상치 못한 오류가 발생했습니다.");
-
-      // 예상치 못한 오류도 alert로 표시
       if (error instanceof Error) {
-        alert(`예상치 못한 오류가 발생했습니다: ${error.message}`);
+        alert(`Unexpected error: ${error.message}`);
       } else {
-        alert("예상치 못한 오류가 발생했습니다.");
+        alert("An unexpected error occurred.");
       }
     }
   };
 
   const formFields = [
-    { id: "name", label: "이름(기업 담당자)을 입력해주세요", type: "text", name: "name" },
-    { id: "id", label: "아이디(이메일)를 입력해주세요", type: "email", name: "id" },
-    { id: "password", label: "비밀번호를 입력해주세요", type: "password", name: "password" },
+    { id: "name", label: "Enter the company administrator's name", type: "text", name: "name" },
+    { id: "id", label: "Enter your email address", type: "email", name: "id" },
+    { id: "password", label: "Enter your password", type: "password", name: "password" },
     {
       id: "passwordConfirm",
-      label: "비밀번호를 한 번 더 입력해주세요",
+      label: "Enter your password again",
       type: "password",
       name: "passwordConfirm",
     },
-    { id: "companyName", label: "회사명을 입력해주세요", type: "text", name: "companyName" },
-    { id: "companyNumber", label: "사업자 번호를 입력해주세요", type: "text", name: "companyNumber" },
+    { id: "companyName", label: "Enter your company name", type: "text", name: "companyName" },
+    {
+      id: "companyNumber",
+      label: "Enter your business registration number",
+      type: "text",
+      name: "companyNumber",
+    },
   ];
 
   return (
     <div>
       <div className="flex justify-center items-center h-16">
-        <Image src={img_logo} alt="우리 회사 로고" width={344} height={97} priority />
+        <Image src={img_logo} alt="Snack logo" width={344} height={97} priority />
       </div>
       <div
         className={clsx(
@@ -122,7 +113,7 @@ const SignUpForm = () => {
               "align-middle",
             )}
           >
-            기업 담당자 회원가입
+            Create a company administrator account
           </h2>
           <p
             className={clsx(
@@ -135,7 +126,7 @@ const SignUpForm = () => {
               "align-middle",
             )}
           >
-            * 그룹 내 유저는 기업 담당자의 초대 메일을 통해 가입이 가능합니다.
+            * Team members can create accounts through invitation emails sent by their company administrator.
           </p>
         </div>
 
@@ -187,12 +178,12 @@ const SignUpForm = () => {
               isSubmitting && "opacity-70 cursor-not-allowed",
             )}
           >
-            {isSubmitting ? "가입 중..." : "가입하기"}
+            {isSubmitting ? "Creating account..." : "Create account"}
           </button>
         </form>
 
         <p className={clsx("text-center", "mt-6", "text-sm", "text-[--color-primary-700]")}>
-          이미 계정이 있으신가요?{" "}
+          Already have an account?{" "}
           <a
             href="/signin"
             className={clsx(
@@ -202,7 +193,7 @@ const SignUpForm = () => {
               "hover:text-[--color-primary-700]",
             )}
           >
-            로그인
+            Sign in
           </a>
         </p>
       </div>

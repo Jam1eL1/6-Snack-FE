@@ -41,11 +41,11 @@ export default function LoginPage() {
     mode: "onChange",
   });
 
-  // label 렌더링
+  // Control floating labels
   const hasEmailValue = watch("email");
   const hasPasswordValue = watch("password");
 
-  // 언마운트 시 타이머 클린업
+  // Clear the toast timer when the page unmounts
   useEffect(() => {
     return () => {
       if (timerRef.current) {
@@ -54,7 +54,7 @@ export default function LoginPage() {
     };
   }, []);
 
-  // 로그인 함수
+  // Submit sign-in credentials
   const onSubmit = async (body: TSignInFormData) => {
     const { email, password } = body;
 
@@ -67,10 +67,10 @@ export default function LoginPage() {
       if (e instanceof Error) {
         setIsToastVisible(true);
 
-        if (e.message === "이메일 또는 비밀번호가 일치하지 않습니다.") {
-          setToastText("이메일 또는 비밀번호가 일치하지 않습니다.");
+        if (e.message === "Email or password is incorrect.") {
+          setToastText("Email or password is incorrect.");
         } else {
-          setToastText("로그인 요청이 실패했습니다.");
+          setToastText("Sign-in failed. Please try again.");
         }
 
         if (timerRef.current) clearTimeout(timerRef.current);
@@ -96,7 +96,7 @@ export default function LoginPage() {
         </nav>
         <section className="flex flex-col justify-center max-w-[600px] sm:shadow-[0px_0px_40px_0px_rgba(0,0,0,0.1)] sm:h-[400px] sm:py-[40px] sm:px-[60px]">
           <h2 className="mb-[10px] font-bold text-[20px]/[25px] tracking-tight text-[#1f1f1f] sm:mb-[20px] sm:text-[24px]/[30px]">
-            로그인
+            Sign in
           </h2>
           <form
             onSubmit={handleSubmit(onSubmit)}
@@ -118,14 +118,14 @@ export default function LoginPage() {
                       "absolute left-[4px] top-[8px] font-normal text-[12px]/[15px] tracking-tight text-primary-600 transition-all duration-300",
                     )}
                   >
-                    이메일
+                    Email
                   </label>
 
                   <input
                     {...register("email")}
                     id="email"
                     type="email"
-                    placeholder="이메일을 입력해주세요"
+                    placeholder="Enter your email address"
                     className={clsx(
                       "z-10 w-full max-w-[480px] font-normal text-[16px]/[20px] tracking-tight text-primary-950 outline-none placeholder:font-normal placeholder:text-[16px]/[20px] placeholder:tracking-tight placeholder:text-primary-500",
                     )}
@@ -151,14 +151,14 @@ export default function LoginPage() {
                         "absolute left-[4px] top-[8px] font-normal text-[12px]/[15px] tracking-tight text-primary-600 transition-all duration-300",
                       )}
                     >
-                      비밀번호
+                      Password
                     </label>
 
                     <input
                       {...register("password")}
                       id="password"
                       type={isPasswordVisible ? "text" : "password"}
-                      placeholder="비밀번호를 입력해주세요"
+                      placeholder="Enter your password"
                       className={clsx(
                         isPasswordVisible ? "tracking-tight" : "tracking-[0.25em]",
                         "z-10 w-full max-w-[480px] font-normal text-[16px]/[20px] text-primary-950 outline-none placeholder:font-normal placeholder:text-[16px]/[20px] placeholder:tracking-tight placeholder:text-primary-500",
@@ -184,7 +184,7 @@ export default function LoginPage() {
 
             <Button
               type="black"
-              label={isDisabled ? "로그인 중..." : "로그인"}
+              label={isDisabled ? "Signing in..." : "Sign in"}
               disabled={isDisabled}
               className={clsx(
                 isDisabled && "text-primary-300 bg-primary-100 cursor-default",
@@ -194,9 +194,13 @@ export default function LoginPage() {
           </form>
 
           <nav className="flex justify-center items-center gap-[4px]">
-            <p className="font-normal text-[16px]/[20px] tracking-tight text-[#999999]">기업 담당자이신가요? </p>
+            <p className="font-normal text-[16px]/[20px] tracking-tight text-[#999999]">
+              Are you a company administrator?{" "}
+            </p>
             <Link href="/signup/super-admin">
-              <p className="font-bold text-[16px]/[20px] tracking-tight text-primary-950 underline">가입하기</p>
+              <p className="font-bold text-[16px]/[20px] tracking-tight text-primary-950 underline">
+                Create account
+              </p>
             </Link>
           </nav>
         </section>
