@@ -40,11 +40,11 @@ export default function CartPage() {
 
   const { mutate: orderRequest } = useMutation<TStartOrderPaymentData, Error, number[]>({
     mutationFn: orderNow,
-    onSuccess: () => {
+    onSuccess: ({ paymentId }) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.cartItems.all });
       queryClient.invalidateQueries({ queryKey: queryKeys.adminOrders.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.budgets.all });
-      router.push("/order-history");
+      queryClient.invalidateQueries({ queryKey: queryKeys.pendingOrders.all });
+      router.push(`/payments/${paymentId}`);
     },
     onError: () => setIsDisabled(false),
   });
@@ -143,7 +143,7 @@ export default function CartPage() {
               </>
             )}
             <ArrowIconSvg direction="right" className="hidden sm:block relative w-[24px] h-[24px] text-primary-300" />
-            <p className="text-primary-300">{user?.role === "USER" ? "3. Order Confirmed" : "2. Order Confirmed"}</p>
+            <p className="text-primary-300">{user?.role === "USER" ? "3. Order Confirmed" : "2. Payment"}</p>
           </section>
 
           <CartItem
