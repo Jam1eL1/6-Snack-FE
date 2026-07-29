@@ -1,6 +1,7 @@
 "use client";
 
-import { ArrowLeft, CreditCard, LockKeyhole, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Check, Copy, CreditCard, LockKeyhole, ShieldCheck } from "lucide-react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -66,8 +67,13 @@ export default function PaymentPage() {
     text: "",
     variant: "error",
   });
+  const [copyFeedback, setCopyFeedback] = useState<{
+    cardNumber: string;
+    status: "success" | "error";
+  } | null>(null);
 
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const showToast = (text: string, variant: "success" | "error") => {
     if (toastTimerRef.current) {
@@ -89,6 +95,9 @@ export default function PaymentPage() {
       if (toastTimerRef.current) {
         clearTimeout(toastTimerRef.current);
       }
+      if (copyTimerRef.current) {
+        clearTimeout(copyTimerRef.current);
+      }
     };
   }, []);
 
@@ -101,6 +110,24 @@ export default function PaymentPage() {
     }
 
     showToast(fallbackMessage, "error");
+  };
+
+  const handleCopyCardNumber = async (cardNumber: string) => {
+    if (copyTimerRef.current) {
+      clearTimeout(copyTimerRef.current);
+    }
+
+    try {
+      await navigator.clipboard.writeText(cardNumber);
+      setCopyFeedback({ cardNumber, status: "success" });
+    } catch {
+      setCopyFeedback({ cardNumber, status: "error" });
+    }
+
+    copyTimerRef.current = setTimeout(() => {
+      setCopyFeedback(null);
+      copyTimerRef.current = null;
+    }, 1500);
   };
 
   const completePaymentMutation = useCompletePayment({
@@ -241,14 +268,13 @@ export default function PaymentPage() {
     <main className="min-h-screen bg-primary-25 px-4 py-8 sm:px-6 sm:py-12">
       {paymentToast}
       <div className="mx-auto w-full max-w-[1040px]">
-        <button
-          type="button"
-          onClick={() => router.push(`/order-manage/${payment.orderId}`)}
-          className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-primary-600 transition hover:text-primary-950"
+        <Link
+          href={`/order-manage/${payment.orderId}`}
+          className="mb-6 inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-primary-600 transition hover:text-primary-950"
         >
           <ArrowLeft className="size-4" aria-hidden="true" />
           Back
-        </button>
+        </Link>
 
         <div className="overflow-hidden rounded-xl border border-primary-100 bg-white shadow-[0_12px_40px_rgba(34,34,34,0.08)]">
           <div className="grid md:grid-cols-[0.9fr_1.1fr]">
@@ -435,19 +461,65 @@ export default function PaymentPage() {
                       Use one of the test card numbers below. Enter any name, a future expiration date, and any
                       three-digit CVC.
                     </p>
-                    <p>
-                      <strong>Successful payment:</strong> 0000 0000 0000 0000
-                    </p>
-                    <p>
-                      <strong>Declined payment:</strong> 1111 1111 1111 1111
-                    </p>
+                    <div className="flex flex-col items-start justify-between gap-1 sm:flex-row sm:items-center sm:gap-3">
+                      <strong>Successful payment:</strong>
+                      <button
+                        type="button"
+                        onClick={() => handleCopyCardNumber(SUCCESSFUL_DUMMY_CARD_NUMBER)}
+                        className="inline-flex min-w-[158px] cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded px-2 py-1 font-medium transition hover:bg-secondary-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        aria-label="Copy successful payment card number"
+                        aria-live="polite"
+                      >
+                        {copyFeedback?.cardNumber === SUCCESSFUL_DUMMY_CARD_NUMBER ? (
+                          copyFeedback.status === "success" ? (
+                            <>
+                              Copied
+                              <Check className="size-3.5" aria-hidden="true" />
+                            </>
+                          ) : (
+                            "Copy failed"
+                          )
+                        ) : (
+                          <>
+                            0000 0000 0000 0000
+                            <Copy className="size-3.5" aria-hidden="true" />
+                          </>
+                        )}
+                      </button>
+                    </div>
+                    <div className="flex flex-col items-start justify-between gap-1 sm:flex-row sm:items-center sm:gap-3">
+                      <strong>Declined payment:</strong>
+                      <button
+                        type="button"
+                        onClick={() => handleCopyCardNumber(FAILED_DUMMY_CARD_NUMBER)}
+                        className="inline-flex min-w-[158px] cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded px-2 py-1 font-medium transition hover:bg-secondary-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        aria-label="Copy declined payment card number"
+                        aria-live="polite"
+                      >
+                        {copyFeedback?.cardNumber === FAILED_DUMMY_CARD_NUMBER ? (
+                          copyFeedback.status === "success" ? (
+                            <>
+                              Copied
+                              <Check className="size-3.5" aria-hidden="true" />
+                            </>
+                          ) : (
+                            "Copy failed"
+                          )
+                        ) : (
+                          <>
+                            1111 1111 1111 1111
+                            <Copy className="size-3.5" aria-hidden="true" />
+                          </>
+                        )}
+                      </button>
+                    </div>
                   </div>
                 </div>
 
                 <button
                   type="submit"
                   disabled={!isValid || isProcessingPayment}
-                  className="flex h-12 w-full items-center justify-center gap-2 rounded-md bg-primary-950 px-4 text-sm font-bold text-white transition hover:bg-primary-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-primary-200 disabled:text-primary-400"
+                  className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-primary-950 px-4 text-sm font-bold text-white transition hover:bg-primary-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-primary-200 disabled:text-primary-400"
                 >
                   <LockKeyhole className="size-4" aria-hidden="true" />
                   {isProcessingPayment ? "Processing..." : "Complete payment"}
