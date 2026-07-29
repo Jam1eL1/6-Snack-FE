@@ -44,22 +44,22 @@ export default function MyProductsPage() {
 
   const handleSort = (option: string) => {
     const orderByMap: Record<string, "latest" | "priceLow" | "priceHigh"> = {
-      최신순: "latest",
-      "낮은 가격순": "priceLow",
-      "높은 가격순": "priceHigh",
+      Newest: "latest",
+      "Lowest Price": "priceLow",
+      "Highest Price": "priceHigh",
     };
 
     setParams((prev) => ({ ...prev, orderBy: orderByMap[option] }));
   };
 
   if (error) {
-    return <p role="alert">에러 발생 : {error.message}</p>;
+    return <p role="alert">Something went wrong: {error.message}</p>;
   }
 
   return (
     <div className="md:px-[24px]">
       <div className="flex justify-between items-center pt-[10px] pb-[20px] md:mt-[80px] md:pt-0 md:pb-[40px]">
-        <h2 className="font-bold text-[18px]/[22px] tracking-tight text-primary-950">상품 등록 내역</h2>
+        <h2 className="font-bold text-[18px]/[22px] tracking-tight text-primary-950">My Products</h2>
         <Dropdown onChange={handleSort} options={["Newest", "Lowest Price", "Highest Price"]} />
       </div>
       <div className="mx-[-24px] outline-1 outline-[#e6e6e6] md:hidden"></div>
@@ -69,10 +69,10 @@ export default function MyProductsPage() {
         </div>
       ) : !products?.items?.length ? (
         <NoContent
-          title="등록한 상품이 없어요"
-          subText1="구매 요청하고 싶은"
-          subText2="상품을 등록하세요"
-          buttonText="상품 리스트로 이동"
+          title="You haven’t added any products yet"
+          subText1="Have a product you’d like to request?"
+          subText2="Add it to the product catalog."
+          buttonText="Browse products"
           onClick={() => router.push("/products")}
         />
       ) : (
@@ -81,18 +81,18 @@ export default function MyProductsPage() {
             <aside className="flex justify-center w-full">
               <div className="flex justify-start items-center w-full h-[60px] px-[40px] py-[20px] gap-[80px] border-y-[1px] border-[#e6e6e6]">
                 <p className="ml-[60px] w-[260px] font-bold text-[16px]/[20px] tracking-tight text-primary-500">
-                  상품명
+                  Product
                 </p>
-                <p className="w-[180px] font-bold text-[16px]/[20px] tracking-tight text-primary-500">등록일</p>
-                <p className="w-[180px] font-bold text-[16px]/[20px] tracking-tight text-primary-500">카테고리</p>
-                <p className="w-[160px] font-bold text-[16px]/[20px] tracking-tight text-primary-500">가격</p>
-                <p className="w-[112px] font-bold text-[16px]/[20px] tracking-tight text-primary-500">제품 링크</p>
+                <p className="w-[180px] font-bold text-[16px]/[20px] tracking-tight text-primary-500">Date added</p>
+                <p className="w-[180px] font-bold text-[16px]/[20px] tracking-tight text-primary-500">Category</p>
+                <p className="w-[160px] font-bold text-[16px]/[20px] tracking-tight text-primary-500">Price</p>
+                <p className="w-[112px] font-bold text-[16px]/[20px] tracking-tight text-primary-500">Product link</p>
               </div>
             </aside>
           </Desktop>
           <section className="flex flex-col gap-[10px] my-[20px] sm:mb-[30px] md:mt-0">
             <p className="font-bold text-[14px]/[17px] tracking-tight text-primary-950 sm:text-[16px]/[20px] md:hidden">
-              총 등록한 상품 {products.meta.totalCount}개
+              {products.meta.totalCount} products added
             </p>
             <ProductList products={products} />
           </section>

@@ -21,15 +21,15 @@ export default function NoContent({
   onClick,
 }: TNoContentProps) {
   return (
-    <section className="flex flex-1 justify-center" role="status" aria-label="빈 상태">
+    <section className="flex flex-1 justify-center" role="status" aria-label="Empty state">
       <div
         className={twMerge(
           "sm:w-80 inline-flex flex-col justify-start items-center gap-7 pt-12 mt-[58px] sm:mt-[222px] md:mt-[191px]",
           className,
         )}
       >
-        <div className="w-24 h-24 relative" role="img" aria-label="주문 내역 없음 아이콘">
-          <Image src={ic_no_order} alt="주문 내역 없음" fill className="object-contain" />
+        <div className="w-24 h-24 relative" role="img" aria-label="No content available">
+          <Image src={ic_no_order} alt="" fill className="object-contain" />
         </div>
         <div className="self-stretch flex flex-col justify-start items-center gap-12">
           <div className="w-72 flex flex-col justify-start items-center gap-2.5">

@@ -62,28 +62,33 @@ export default function MyFavoritesPage() {
   if (!favorites || favorites.pages.length === 0) {
     return (
       <div>
-        <p>아직 상품을 찜하지 않았습니다.</p>
-        <p>원하는 상품을 찜해보세요!</p>
+        <p>You haven’t saved any products yet.</p>
+        <p>Save products you’d like to find again.</p>
       </div>
     );
   }
 
   if (error) {
-    return <p role="alert">에러 발생 : {error.message}</p>;
+    return <p role="alert">Something went wrong: {error.message}</p>;
   }
 
   return (
     <section className="flex justify-center">
       <div className="flex flex-col w-full max-w-[1200px]">
         <h2 className="pt-[10px] pb-[20px] md:mt-[80px] font-bold text-[18px]/[22px] tracking-tight text-primary-950">
-          나의 찜목록
+          My Favorites
         </h2>
         <div className="mx-[-24px] outline-1 outline-[#e6e6e6] md:mx-0"></div>
         <figure className="pt-[20px] sm:pt-[30px]">
           <ProductGrid products={products} />
         </figure>
         {hasNextPage && (
-          <div aria-live="polite" aria-label="추가 상품 로딩 중" ref={ref} className="flex justify-center items-center">
+          <div
+            aria-live="polite"
+            aria-label="Loading more products"
+            ref={ref}
+            className="flex justify-center items-center"
+          >
             {isFetchingNextPage && (
               <div className="size-[20px] border-[3px] border-t-[3px] border-secondary-gray-200 border-t-primary-100 rounded-full animate-spin"></div>
             )}
