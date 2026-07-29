@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Check, Copy, CreditCard, LockKeyhole, ShieldCheck } from "lucide-react";
+import { ArrowLeft, CreditCard, LockKeyhole, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -67,13 +67,7 @@ export default function PaymentPage() {
     text: "",
     variant: "error",
   });
-  const [copyFeedback, setCopyFeedback] = useState<{
-    cardNumber: string;
-    status: "success" | "error";
-  } | null>(null);
-
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const showToast = (text: string, variant: "success" | "error") => {
     if (toastTimerRef.current) {
@@ -95,9 +89,6 @@ export default function PaymentPage() {
       if (toastTimerRef.current) {
         clearTimeout(toastTimerRef.current);
       }
-      if (copyTimerRef.current) {
-        clearTimeout(copyTimerRef.current);
-      }
     };
   }, []);
 
@@ -110,24 +101,6 @@ export default function PaymentPage() {
     }
 
     showToast(fallbackMessage, "error");
-  };
-
-  const handleCopyCardNumber = async (cardNumber: string) => {
-    if (copyTimerRef.current) {
-      clearTimeout(copyTimerRef.current);
-    }
-
-    try {
-      await navigator.clipboard.writeText(cardNumber);
-      setCopyFeedback({ cardNumber, status: "success" });
-    } catch {
-      setCopyFeedback({ cardNumber, status: "error" });
-    }
-
-    copyTimerRef.current = setTimeout(() => {
-      setCopyFeedback(null);
-      copyTimerRef.current = null;
-    }, 1500);
   };
 
   const completePaymentMutation = useCompletePayment({
@@ -150,6 +123,39 @@ export default function PaymentPage() {
     return <InvalidPaymentState onReturnToOrders={() => router.push("/order-manage")} />;
   }
 
+  const populateTestCard = (cardNumber: string) => {
+    const expiryDate = new Date();
+    expiryDate.setFullYear(expiryDate.getFullYear() + 2);
+    const expiryInput = `${String(expiryDate.getMonth() + 1).padStart(2, "0")} / ${String(
+      expiryDate.getFullYear(),
+    ).slice(-2)}`;
+    const cvcInput = String(Math.floor(Math.random() * 900) + 100);
+    const cardFormData: TPaymentCardFormData = {
+      cardholderName: "Test User",
+      cardNumber,
+      cardExpiry: expiryInput,
+      cardCvc: cvcInput,
+    };
+    setValue("cardholderName", cardFormData.cardholderName, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+
+    setValue("cardNumber", cardFormData.cardNumber, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+
+    setValue("cardExpiry", cardFormData.cardExpiry, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+
+    setValue("cardCvc", cardFormData.cardCvc, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+  };
   const handleValidSubmit = (formData: TPaymentCardFormData) => {
     const normalizedCardNumber = formData.cardNumber.replace(/\s/g, "");
 
@@ -457,60 +463,29 @@ export default function PaymentPage() {
 
                 <div className="rounded-md border border-secondary-500/20 bg-secondary-100 px-4 py-3">
                   <div className="space-y-1 text-xs leading-5 text-primary-700">
-                    <p className="pb-1">
-                      Use one of the test card numbers below. Enter any name, a future expiration date, and any
-                      three-digit CVC.
-                    </p>
+                    <p className="pb-1">Autofill the form with details for a successful or declined test payment.</p>
                     <div className="flex flex-col items-start justify-between gap-1 sm:flex-row sm:items-center sm:gap-3">
                       <strong>Successful payment:</strong>
                       <button
                         type="button"
-                        onClick={() => handleCopyCardNumber(SUCCESSFUL_DUMMY_CARD_NUMBER)}
-                        className="inline-flex min-w-[158px] cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded px-2 py-1 font-medium transition hover:bg-secondary-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                        aria-label="Copy successful payment card number"
-                        aria-live="polite"
+                        onClick={() => populateTestCard(SUCCESSFUL_DUMMY_CARD_NUMBER)}
+                        className="inline-flex min-w-[190px] cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border border-primary-200 bg-white px-3 py-2 font-semibold text-primary-900 shadow-xs transition hover:border-primary-500 hover:bg-secondary-200"
+                        aria-label="Autofill successful payment details"
                       >
-                        {copyFeedback?.cardNumber === SUCCESSFUL_DUMMY_CARD_NUMBER ? (
-                          copyFeedback.status === "success" ? (
-                            <>
-                              Copied
-                              <Check className="size-3.5" aria-hidden="true" />
-                            </>
-                          ) : (
-                            "Copy failed"
-                          )
-                        ) : (
-                          <>
-                            0000 0000 0000 0000
-                            <Copy className="size-3.5" aria-hidden="true" />
-                          </>
-                        )}
+                        <CreditCard className="size-4" aria-hidden="true" />
+                        Autofill card details
                       </button>
                     </div>
                     <div className="flex flex-col items-start justify-between gap-1 sm:flex-row sm:items-center sm:gap-3">
                       <strong>Declined payment:</strong>
                       <button
                         type="button"
-                        onClick={() => handleCopyCardNumber(FAILED_DUMMY_CARD_NUMBER)}
-                        className="inline-flex min-w-[158px] cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded px-2 py-1 font-medium transition hover:bg-secondary-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                        aria-label="Copy declined payment card number"
-                        aria-live="polite"
+                        onClick={() => populateTestCard(FAILED_DUMMY_CARD_NUMBER)}
+                        className="inline-flex min-w-[190px] cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border border-primary-200 bg-white px-3 py-2 font-semibold text-primary-900 shadow-xs transition hover:border-primary-500 hover:bg-secondary-200 "
+                        aria-label="Autofill declined payment details"
                       >
-                        {copyFeedback?.cardNumber === FAILED_DUMMY_CARD_NUMBER ? (
-                          copyFeedback.status === "success" ? (
-                            <>
-                              Copied
-                              <Check className="size-3.5" aria-hidden="true" />
-                            </>
-                          ) : (
-                            "Copy failed"
-                          )
-                        ) : (
-                          <>
-                            1111 1111 1111 1111
-                            <Copy className="size-3.5" aria-hidden="true" />
-                          </>
-                        )}
+                        <CreditCard className="size-4" aria-hidden="true" />
+                        Autofill card details
                       </button>
                     </div>
                   </div>
@@ -524,9 +499,6 @@ export default function PaymentPage() {
                   <LockKeyhole className="size-4" aria-hidden="true" />
                   {isProcessingPayment ? "Processing..." : "Complete payment"}
                 </button>
-                {/* <p className="text-center text-xs leading-5 text-primary-400">
-                  Completing payment will approve the related order.
-                </p> */}
               </form>
             </section>
           </div>
