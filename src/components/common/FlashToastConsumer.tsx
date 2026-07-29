@@ -8,16 +8,16 @@ import type { TToastVariant } from "@/types/toast.types";
 export default function FlashToastConsumer() {
   const message = useFlashToast((state) => state.message);
   const consume = useFlashToast((state) => state.consume);
-  const [payload, setPayload] = useState<{ text: string; variant: TToastVariant } | null>(null);
+  const [payload, setPayload] = useState<{ text: string; variant: TToastVariant; budget?: number } | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (!message) return;
 
-    const { message: consumedMessage, variant } = consume();
+    const { message: consumedMessage, variant, budget } = consume();
     if (!consumedMessage) return;
 
-    setPayload({ text: consumedMessage, variant: variant ?? "success" });
+    setPayload({ text: consumedMessage, variant: variant ?? "success", budget });
 
     if (timerRef.current) {
       clearTimeout(timerRef.current);
@@ -39,5 +39,5 @@ export default function FlashToastConsumer() {
 
   if (!payload) return null;
 
-  return <Toast text={payload.text} variant={payload.variant} isVisible />;
+  return <Toast text={payload.text} variant={payload.variant} budget={payload.budget} isVisible />;
 }

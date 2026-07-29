@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import SnackIconSvg from "@/components/svg/SnackIconSvg";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -17,7 +17,7 @@ import Image from "next/image";
 import DogSpinner from "@/components/common/DogSpinner";
 import { inviteSignupSchema, TInviteSignUpFormData } from "@/lib/schemas/inviteSignupSchema";
 import FormErrorMessage from "../../signin/_components/FormErrorMessage";
-import Toast from "@/components/common/Toast";
+import { useFlashToast } from "@/stores/flashToast";
 
 export default function InviteSignUpPage() {
   const params = useParams();
@@ -30,9 +30,7 @@ export default function InviteSignUpPage() {
   const [inviteError, setInviteError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
-  const [isToastVisible, setIsToastVisible] = useState<boolean>(false);
-  const [toastText, setToastText] = useState<string>("");
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const setFlash = useFlashToast((state) => state.setFlash);
   const {
     register,
     handleSubmit,
@@ -46,15 +44,6 @@ export default function InviteSignUpPage() {
 
   const passwordInput = watch("password");
   const passwordConfirmInput = watch("passwordConfirm");
-  // Clean up the timer when unmounting
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-    };
-  }, []);
-
   useEffect(() => {
     if (passwordConfirmInput) {
       trigger("passwordConfirm");
@@ -87,14 +76,7 @@ export default function InviteSignUpPage() {
       await signUpWithInvite(inviteId, data.password, data.passwordConfirm);
       router.push("/signin");
     } catch {
-      setIsToastVisible(true);
-      setToastText("Something went wrong. Please try again.");
-      if (timerRef.current) clearTimeout(timerRef.current);
-
-      timerRef.current = setTimeout(() => {
-        setIsToastVisible(false);
-        timerRef.current = null;
-      }, 3000);
+      setFlash("Something went wrong. Please try again.", "error");
     } finally {
       setIsDisabled(false);
     }
@@ -134,7 +116,6 @@ export default function InviteSignUpPage() {
 
   return (
     <div className="sm:relative flex flex-col items-center justify-center gap-[46px] sm:gap-0 pt-[48px] sm:pt-[160px]">
-      <Toast text={toastText} isVisible={isToastVisible} />
       <div className="sm:absolute sm:top-0 flex flex-col items-center justify-center w-full max-w-[480px] sm:max-w-[600px]">
         <div className="flex justify-center items-center w-full sm:max-w-[500px] h-[140px] sm:h-[214px] py-[38.18px] sm:py-[58.4px] px-[50.92px] sm:px-[77.86px]">
           <Link href="/">

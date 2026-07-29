@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import ArrowIconSvg from "@/components/svg/ArrowIconSvg";
 import { useOrderDetail } from "@/hooks/useOrderDetail";
 import Button from "@/components/ui/Button";
 import Image from "next/image";
-import Toast from "@/components/common/Toast";
 import { formatDate } from "@/lib/utils/formatDate.util";
 import { formatCurrency } from "@/lib/utils/currency.util";
 import { useOrderStatusUpdate } from "@/hooks/useOrderStatusUpdate";
@@ -16,6 +15,7 @@ import OrderDetailSkeleton from "./_components/OrderDetailSkeleton";
 import { useProcessOrderPayment } from "@/hooks/useProcessOrderPayment";
 import { isOrderPaymentProcessingByAnotherAdmin } from "@/lib/utils/getOrderPaymentAction.util";
 import { SessionExpiredError } from "@/lib/api/auth.errors";
+import { useFlashToast } from "@/stores/flashToast";
 
 export default function OrderManageDetailPage() {
   const params = useParams<{ orderId: string }>();
@@ -25,67 +25,30 @@ export default function OrderManageDetailPage() {
   const { data: orderRequest, isLoading, error } = useOrderDetail(orderId);
   const updateOrderMutation = useOrderStatusUpdate();
   const { openModal } = useModal();
+  const setFlash = useFlashToast((state) => state.setFlash);
 
   const [isItemsExpanded, setIsItemsExpanded] = useState<boolean>(true);
-  const [toastConfig, setToastConfig] = useState<{
-    isVisible: boolean;
-    text: string;
-    variant: "success" | "error";
-    budget?: number;
-  }>({
-    isVisible: false,
-    text: "",
-    variant: "success",
-  });
-
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-    };
-  }, []);
-
-  const showToast = (text: string, variant: "success" | "error" = "success", budget?: number) => {
-    setToastConfig({
-      isVisible: true,
-      text,
-      variant,
-      budget,
-    });
-
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-
-    timerRef.current = setTimeout(() => {
-      setToastConfig((prev) => ({ ...prev, isVisible: false }));
-      timerRef.current = null;
-    }, 3000);
-  };
 
   const { processOrderPayment, isPending: isPaymentPending } = useProcessOrderPayment({
     onPaymentReady: (paymentId) => {
       router.push(`/payments/${paymentId}`);
     },
     onPaymentBlocked: () => {
-      showToast("Another admin is currently processing this order.", "error");
+      setFlash("Another admin is currently processing this order.", "error");
     },
     onPaymentAlreadyPaid: () => {
-      showToast("This order has already been paid.", "error");
+      setFlash("This order has already been paid.", "error");
     },
     onProcessOrderPaymentError: (error) => {
       if (error instanceof SessionExpiredError) return;
 
-      showToast(error.message || "Failed to process payment.", "error");
+      setFlash(error.message || "Failed to process payment.", "error");
     },
   });
 
   const handleApprove = () => {
     if (budgetAfterPurchase < 0 && remainingBudget !== undefined) {
-      showToast("Insufficient budget.", "error", remainingBudget);
+      setFlash("Insufficient budget.", "error", remainingBudget);
       return;
     }
 
@@ -116,7 +79,7 @@ export default function OrderManageDetailPage() {
         />,
       );
     } catch {
-      showToast("Failed to process rejection.", "error");
+      setFlash("Failed to process rejection.", "error");
     }
   };
 
@@ -148,12 +111,6 @@ export default function OrderManageDetailPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <Toast
-        text={toastConfig.text}
-        variant={toastConfig.variant}
-        isVisible={toastConfig.isVisible}
-        budget={toastConfig.budget}
-      />
       <main
         className="w-full max-w-[1200px] mx-auto pt-[30px] md:pt-[60px] flex flex-col justify-start items-start gap-[30px]"
         role="main"

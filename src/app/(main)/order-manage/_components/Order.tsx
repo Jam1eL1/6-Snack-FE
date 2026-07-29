@@ -4,7 +4,6 @@ import OrderManageModal from "@/components/common/OrderManageModal";
 import Pagination from "@/components/common/Pagination";
 import RequestList from "@/components/common/RequestList";
 import DogSpinner from "@/components/common/DogSpinner";
-import Toast from "@/components/common/Toast";
 import { useOrderVisibleCount } from "@/hooks/useOrderVisibleCount";
 import { getPendingOrderDetail } from "@/lib/api/orderManage.api";
 import { useModal } from "@/providers/ModalProvider";
@@ -15,7 +14,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/lib/queryKeys";
 import icNoOrder from "@/assets/icons/ic_no_order.svg";
 import { useAuth } from "@/providers/AuthProvider";
-import { TToastVariant } from "@/types/toast.types";
 import { useRouter } from "next/navigation";
 import { TOrderSort } from "@/types/order.types";
 import { useOrderStatusUpdate } from "@/hooks/useOrderStatusUpdate";
@@ -33,25 +31,6 @@ export default function Order() {
   const { user } = useAuth();
   const router = useRouter();
 
-  // Toast state
-  const [toastVisible, setToastVisible] = useState<boolean>(false);
-  const [toastMessage, setToastMessage] = useState<string>("");
-  const [toastVariant, setToastVariant] = useState<TToastVariant>("success");
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Toast helper
-  const showToast = (message: string, variant: TToastVariant) => {
-    // Clear the existing timer if there is one.
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-
-    setToastMessage(message);
-    setToastVariant(variant);
-    setToastVisible(true);
-    timerRef.current = setTimeout(() => setToastVisible(false), 3000);
-  };
-
   const [orderBy, setOrderBy] = useState<TOrderSort>(ORDER_BY_MAP.Newest);
 
   const { visibleCount } = useOrderVisibleCount();
@@ -68,15 +47,6 @@ export default function Order() {
       queryClient.invalidateQueries({ queryKey: queryKeys.budgets.all });
     }
   }, [user?.company?.id, queryClient]);
-
-  // Clear the timer when the component unmounts.
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-    };
-  }, []);
 
   // Fetch the order list
   const offset = (currentPaginationPage - 1) * visibleCount;
@@ -154,7 +124,6 @@ export default function Order() {
                     order={fullOrder}
                     type="reject"
                     onUpdateOrderStatus={updateOrderStatusMutation}
-                    showToast={showToast}
                   />,
                 );
               }}
@@ -165,7 +134,6 @@ export default function Order() {
                     order={fullOrder}
                     type="approve"
                     onUpdateOrderStatus={updateOrderStatusMutation}
-                    showToast={showToast}
                   />,
                 );
               }}
@@ -207,17 +175,6 @@ export default function Order() {
           </section>
         )}
       </div>
-
-      {/* Toast */}
-      {toastVisible && (
-        <Toast
-          text={toastMessage}
-          variant={toastVariant}
-          isVisible={toastVisible}
-          aria-live="polite"
-          aria-atomic="true"
-        />
-      )}
     </section>
   );
 }

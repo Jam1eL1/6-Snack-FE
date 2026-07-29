@@ -2,7 +2,6 @@
 
 import clsx from "clsx";
 import Input from "@/components/common/Input";
-import Toast from "@/components/common/Toast";
 import useSuperAdminSignUp from "../_hooks/useSuperAdminSignUp";
 
 const SuperAdminSignUpForm = () => {
@@ -13,7 +12,6 @@ const SuperAdminSignUpForm = () => {
       formState: { errors, isSubmitting, isValid },
     },
     submit,
-    toast,
   } = useSuperAdminSignUp();
 
   const emailRegistration = register("email");
@@ -25,8 +23,6 @@ const SuperAdminSignUpForm = () => {
 
   return (
     <>
-      <Toast text={toast.message} variant={toast.variant} isVisible={toast.isVisible} />
-
       <form
         onSubmit={handleSubmit(submit)}
         className="flex w-full flex-col gap-5"

@@ -5,17 +5,19 @@ import type { TToastVariant } from "@/types/toast.types";
 type FlashToastState = {
   message?: string;
   variant?: TToastVariant; // "success" | "error"
-  setFlash: (message: string, variant?: TToastVariant) => void;
-  consume: () => { message?: string; variant?: TToastVariant };
+  budget?: number;
+  setFlash: (message: string, variant?: TToastVariant, budget?: number) => void;
+  consume: () => { message?: string; variant?: TToastVariant; budget?: number };
 };
 
 export const useFlashToast = create<FlashToastState>((set, get) => ({
   message: undefined,
   variant: "success",
-  setFlash: (message, variant = "success") => set({ message, variant }),
+  budget: undefined,
+  setFlash: (message, variant = "success", budget) => set({ message, variant, budget }),
   consume: () => {
-    const { message, variant } = get();
-    set({ message: undefined }); // Consume the message once.
-    return { message, variant };
+    const { message, variant, budget } = get();
+    set({ message: undefined, budget: undefined }); // Consume the message once.
+    return { message, variant, budget };
   },
 }));

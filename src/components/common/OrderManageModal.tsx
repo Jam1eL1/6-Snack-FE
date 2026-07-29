@@ -7,27 +7,22 @@ import Button from "../ui/Button";
 import TextArea from "./TextArea";
 import { formatCurrency } from "@/lib/utils/currency.util";
 import clsx from "clsx";
-import { TToastVariant } from "@/types/toast.types";
 import { useProcessOrderPayment } from "@/hooks/useProcessOrderPayment";
 import { useRouter } from "next/navigation";
 import { isOrderPaymentProcessingByAnotherAdmin } from "@/lib/utils/getOrderPaymentAction.util";
 import { SessionExpiredError } from "@/lib/api/auth.errors";
+import { useFlashToast } from "@/stores/flashToast";
 
 type TOrderManageModalProps = {
   type: "reject" | "approve";
   order: TAdminOrderDetail;
   onUpdateOrderStatus: (variables: { orderId: string; status: "REJECTED"; adminMessage?: string }) => void;
-  showToast: (message: string, variant: TToastVariant) => void;
 };
 
-export default function OrderManageModal({
-  type,
-  order,
-  onUpdateOrderStatus,
-  showToast,
-}: TOrderManageModalProps) {
+export default function OrderManageModal({ type, order, onUpdateOrderStatus }: TOrderManageModalProps) {
   const { closeModal } = useModal();
   const router = useRouter();
+  const setFlash = useFlashToast((state) => state.setFlash);
   const [adminMessage, setAdminMessage] = useState("");
   const { processOrderPayment, isPending: isPaymentPending } = useProcessOrderPayment({
     onPaymentReady: (paymentId) => {
@@ -36,16 +31,16 @@ export default function OrderManageModal({
     },
     onPaymentBlocked: () => {
       closeModal();
-      showToast("Another admin is currently processing this order.", "error");
+      setFlash("Another admin is currently processing this order.", "error");
     },
     onPaymentAlreadyPaid: () => {
       closeModal();
-      showToast("This order has already been paid.", "error");
+      setFlash("This order has already been paid.", "error");
     },
     onProcessOrderPaymentError: (error) => {
       if (error instanceof SessionExpiredError) return;
 
-      showToast(error.message || "Failed to process payment.", "error");
+      setFlash(error.message || "Failed to process payment.", "error");
     },
   });
 
@@ -233,7 +228,7 @@ export default function OrderManageModal({
             onClick={() => {
               if (type === "approve" && remainingBudget < 0) {
                 // Show a toast when the budget is insufficient.
-                showToast("Insufficient budget.", "error");
+                setFlash("Insufficient budget.", "error");
                 return;
               }
 
@@ -244,7 +239,7 @@ export default function OrderManageModal({
                   adminMessage,
                 });
                 closeModal();
-                showToast("Purchase request rejected.", "success");
+                setFlash("Purchase request rejected.", "success");
                 return;
               }
 

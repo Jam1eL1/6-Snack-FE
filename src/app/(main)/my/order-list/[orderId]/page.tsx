@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useEffect, useRef, Suspense, lazy } from "react";
+import { Suspense, lazy } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Head from "next/head";
-import Toast from "@/components/common/Toast";
 import { getStatusText, formatDate } from "@/components/common/OrderDetail";
 import DogSpinner from "@/components/common/DogSpinner";
 import { SessionExpiredError } from "@/lib/api/auth.errors";
 import { useReorderToCart } from "@/hooks/useReorderToCart";
 import { useMyOrderDetail } from "@/hooks/useOrderDetail";
+import { useFlashToast } from "@/stores/flashToast";
 
 // Lazy-load the detail sections for finer-grained code splitting.
 const OrderItemsSection = lazy(() => import("@/components/common/OrderDetail/OrderItemsSection"));
@@ -61,59 +61,22 @@ export default function MyOrderDetailPage() {
   const params = useParams();
   const router = useRouter();
   const orderId: string = params.orderId as string;
-
-  const [toast, setToast] = useState<{
-    isVisible: boolean;
-    text: string;
-    variant: "success" | "error";
-  }>({
-    isVisible: false,
-    text: "",
-    variant: "error",
-  });
-
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const setFlash = useFlashToast((state) => state.setFlash);
 
   const { data: orderData, isLoading, isError } = useMyOrderDetail(orderId);
-  // Clear the timer on unmount.
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-    };
-  }, []);
 
   const handleBackToList = () => {
     router.push("/my/order-list");
   };
 
-  const showToast = (text: string, variant: "success" | "error" = "error") => {
-    setToast({
-      isVisible: true,
-      text,
-      variant,
-    });
-
-    // Clear the existing timer if one is already running.
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-
-    // Hide the toast automatically after 3 seconds.
-    timerRef.current = setTimeout(() => {
-      setToast((prev) => ({ ...prev, isVisible: false }));
-    }, 3000);
-  };
-
   const reorderToCartMutation = useReorderToCart({
     onReorderToCartSuccess: () => {
-      showToast("Items added to cart.", "success");
+      setFlash("Items added to cart.", "success");
     },
     onReorderToCartError: (error) => {
       if (error instanceof SessionExpiredError) return;
 
-      showToast("Failed to add items to cart.", "error");
+      setFlash("Failed to add items to cart.", "error");
     },
   });
 
@@ -213,7 +176,6 @@ export default function MyOrderDetailPage() {
         <style dangerouslySetInnerHTML={{ __html: criticalCSS }} />
       </Head>
       <div className="min-h-screen bg-white">
-        <Toast text={toast.text} variant={toast.variant} isVisible={toast.isVisible} />
         <div className="w-full max-w-7xl mx-auto pt-[30px] flex flex-col justify-start items-start gap-[23px]">
           <div className="self-stretch justify-center text-primary-950 text-lg font-bold">Purchase Request History</div>
 

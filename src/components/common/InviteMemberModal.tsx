@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import ArrowIconSvg from "@/components/svg/ArrowIconSvg";
 import { TInviteMemberModalProps, TUserRole } from "@/types/inviteMemberModal.types";
 import { useModal } from "@/providers/ModalProvider";
@@ -7,10 +7,9 @@ import { updateUserRole } from "@/lib/api/superAdmin.api";
 import { queryKeys } from "@/lib/queryKeys";
 import Button from "@/components/ui/Button";
 import Input from "@/components/common/Input";
-import Toast from "@/components/common/Toast";
-import { TToastVariant } from "@/types/toast.types";
 import { emailSchema } from "@/lib/schemas/email.schema";
 import { SessionExpiredError } from "@/lib/api/auth.errors";
+import { useFlashToast } from "@/stores/flashToast";
 
 const roleLabels: Record<TUserRole, string> = {
   USER: "User",
@@ -25,40 +24,13 @@ export default function InviteMemberModal({
 }: TInviteMemberModalProps) {
   const { closeModal } = useModal();
   const queryClient = useQueryClient();
+  const setFlash = useFlashToast((state) => state.setFlash);
   const [name, setName] = useState<string>(defaultValues?.name ?? "");
   const [email, setEmail] = useState<string>(defaultValues?.email ?? "");
   const [selectedRole, setSelectedRole] = useState<TUserRole>(defaultValues?.role ?? "USER");
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [emailError, setEmailError] = useState<string>("");
   const [nameError, setNameError] = useState<string>("");
-
-  // Toast state
-  const [toastVisible, setToastVisible] = useState<boolean>(false);
-  const [toastMessage, setToastMessage] = useState<string>("");
-  const [toastVariant, setToastVariant] = useState<TToastVariant>("success");
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Toast helper
-  const showToast = (message: string, variant: TToastVariant) => {
-    // Clear the existing timer if one is already running.
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-
-    setToastMessage(message);
-    setToastVariant(variant);
-    setToastVisible(true);
-    timerRef.current = setTimeout(() => setToastVisible(false), 3000);
-  };
-
-  // Clear the timer when the component unmounts.
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-    };
-  }, []);
 
   // Role update mutation
   const updateRoleMutation = useMutation({
@@ -71,14 +43,14 @@ export default function InviteMemberModal({
     onError: (error) => {
       if (error instanceof SessionExpiredError) return;
       const errorMessage = error instanceof Error ? error.message : "Failed to update role.";
-      showToast(errorMessage, "error");
+      setFlash(errorMessage, "error");
     },
   });
 
   const handleSubmit = async () => {
     if (mode === "edit") {
       if (!defaultValues) {
-        showToast("Default values are missing.", "error");
+        setFlash("Default values are missing.", "error");
         return;
       }
 
@@ -90,7 +62,7 @@ export default function InviteMemberModal({
       // Name validation
       if (!name.trim()) {
         setNameError("Please enter a name.");
-        showToast("Please enter a name.", "error");
+        setFlash("Please enter a name.", "error");
         return;
       }
       setNameError("");
@@ -99,7 +71,7 @@ export default function InviteMemberModal({
       const emailValidation = emailSchema.safeParse(email);
       if (!emailValidation.success) {
         setEmailError("Please enter a valid email.");
-        showToast("Please enter a valid email.", "error");
+        setFlash("Please enter a valid email.", "error");
         return;
       }
       setEmailError("");
@@ -222,8 +194,6 @@ export default function InviteMemberModal({
           </div>
         </div>
       </div>
-
-      {toastVisible && <Toast text={toastMessage} variant={toastVariant} isVisible={toastVisible} />}
     </>
   );
 }

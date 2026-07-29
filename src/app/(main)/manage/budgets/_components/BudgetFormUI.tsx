@@ -1,9 +1,8 @@
 "use client";
 
 import React from "react";
-import Toast from "@/components/common/Toast";
-import { TToastVariant } from "@/types/toast.types";
 import { formatCurrency, formatDollarInput } from "@/lib/utils/currency.util";
+import { useFlashToast } from "@/stores/flashToast";
 
 interface BudgetFormUIProps {
   savedCurrentMonthBudget?: number;
@@ -29,31 +28,13 @@ const BudgetFormUI: React.FC<BudgetFormUIProps> = ({
   success,
   errors,
 }) => {
-  const [toastVisible, setToastVisible] = React.useState<boolean>(false);
-  const [toastMessage, setToastMessage] = React.useState<string>("");
-  const [toastVariant, setToastVariant] = React.useState<TToastVariant>("success");
-
-  // Show a temporary toast.
-  const showToast = (message: string, variant: TToastVariant = "success") => {
-    setToastMessage(message);
-    setToastVariant(variant);
-    setToastVisible(true);
-
-    // Hide the toast after three seconds.
-    setTimeout(() => {
-      setToastVisible(false);
-    }, 3000);
-  };
+  const setFlash = useFlashToast((state) => state.setFlash);
 
   React.useEffect(() => {
     if (success) {
-      showToast("Budget updated successfully.", "success");
+      setFlash("Budget updated successfully.", "success");
     }
-    // Validation errors can be handled here if an error toast is needed.
-    // if (errors.currentMonthBudget || errors.nextMonthBudget) {
-    //   showToast("Failed to update the budget.", "error");
-    // }
-  }, [success]);
+  }, [success, setFlash]);
 
   // Format the dollar input while preserving an unfinished decimal value.
   function formatNumberWithCommas(value: string): string {
@@ -67,9 +48,6 @@ const BudgetFormUI: React.FC<BudgetFormUIProps> = ({
 
   return (
     <>
-      {/* Toast */}
-      <Toast text={toastMessage} variant={toastVariant} isVisible={toastVisible} />
-
       <div className="flex flex-1 flex-col justify-center sm:flex-row">
         <div className="w-full sm:w-1/2">
           <form onSubmit={onSubmit} className="w-full flex flex-col gap-20 mt-[20px]">

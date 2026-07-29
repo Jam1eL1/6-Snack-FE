@@ -16,7 +16,6 @@ type TProductActionsProps = {
   canEdit: boolean;
   productId: number;
   productName: string;
-  showToast: (message: string, variant?: "success" | "error") => void;
 };
 
 export default function ProductActions({
@@ -25,7 +24,6 @@ export default function ProductActions({
   canEdit,
   productId,
   productName,
-  showToast,
 }: TProductActionsProps) {
   const router = useRouter();
   const { openModal, closeModal } = useModal();
@@ -44,7 +42,7 @@ export default function ProductActions({
       onError: (error) => {
         if (error instanceof SessionExpiredError) return;
 
-        showToast("Failed to delete product.", "error");
+        setFlash("Failed to delete product.", "error");
       },
     });
   };

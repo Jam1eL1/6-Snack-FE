@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import SnackIconSvg from "@/components/svg/SnackIconSvg";
 import Button from "@/components/ui/Button";
 import VisibilityOffIconSvg from "@/components/svg/VisibilityOffIconSvg";
@@ -13,18 +13,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInSchema, TSignInFormData } from "@/lib/schemas/signin.schema";
 import FormErrorMessage from "./_components/FormErrorMessage";
-import Toast from "@/components/common/Toast";
+import { useFlashToast } from "@/stores/flashToast";
 
 export default function LoginPage() {
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
-  const [isToastVisible, setIsToastVisible] = useState<boolean>(false);
-  const [toastText, setToastText] = useState<string>("");
 
   const router = useRouter();
   const { signIn } = useAuth();
-
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const setFlash = useFlashToast((state) => state.setFlash);
 
   const handlePasswordVisible = () => {
     setIsPasswordVisible(!isPasswordVisible);
@@ -45,15 +42,6 @@ export default function LoginPage() {
   const hasEmailValue = watch("email");
   const hasPasswordValue = watch("password");
 
-  // Clear the toast timer when the page unmounts
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-    };
-  }, []);
-
   // Submit sign-in credentials
   const onSubmit = async (body: TSignInFormData) => {
     const { email, password } = body;
@@ -65,20 +53,11 @@ export default function LoginPage() {
       router.push("/products");
     } catch (e) {
       if (e instanceof Error) {
-        setIsToastVisible(true);
-
         if (e.message === "Email or password is incorrect.") {
-          setToastText("Email or password is incorrect.");
+          setFlash("Email or password is incorrect.", "error");
         } else {
-          setToastText("Sign-in failed. Please try again.");
+          setFlash("Sign-in failed. Please try again.", "error");
         }
-
-        if (timerRef.current) clearTimeout(timerRef.current);
-
-        timerRef.current = setTimeout(() => {
-          setIsToastVisible(false);
-          timerRef.current = null;
-        }, 3000);
 
         setIsDisabled(false);
       }
@@ -88,7 +67,6 @@ export default function LoginPage() {
   return (
     <div className="flex justify-center">
       <div className="flex flex-col justify-center w-full max-w-[480px] pt-[48px] sm:max-w-[600px] sm:py-[160px]">
-        <Toast text={toastText} isVisible={isToastVisible} />
         <nav className="z-1 flex justify-center w-full h-[140px] py-[38.18px] px-[50.92px] sm:h-auto sm:pb-0">
           <Link href="/">
             <SnackIconSvg className="w-[225.16px] h-[63.64px] sm:w-[344px] sm:h-[97.3px]" />

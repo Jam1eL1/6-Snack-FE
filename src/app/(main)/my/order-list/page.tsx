@@ -11,37 +11,28 @@ import { TOrderItem } from "@/types/myOrderList.types";
 import { formatDate } from "@/lib/utils/formatDate.util";
 import { convertStatus } from "@/lib/utils/convertStatus.util";
 import { useCancelOrder } from "@/hooks/useCancelOrder";
-import Toast from "@/components/common/Toast";
 import DogSpinner from "@/components/common/DogSpinner";
 import icNoOrder from "@/assets/icons/ic_no_order.svg";
 import { SessionExpiredError } from "@/lib/api/auth.errors";
 import { useMyOrders } from "@/hooks/useMyOrders";
+import { useFlashToast } from "@/stores/flashToast";
 
 const PAGE_SIZE = 5;
 
 export default function MyOrderListPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOption, setSortOption] = useState("Newest");
-  const [toast, setToast] = useState({
-    isVisible: false,
-    text: "",
-    variant: "success" as "success" | "error",
-  });
-  const showToast = (text: string, variant: "success" | "error" = "success") => {
-    setToast({ isVisible: true, text, variant });
-    setTimeout(() => setToast((prev) => ({ ...prev, isVisible: false })), 3000);
-  };
-
+  const setFlash = useFlashToast((state) => state.setFlash);
   const router = useRouter();
 
   const cancelOrderMutation = useCancelOrder({
     onCancelSuccess: () => {
-      showToast("Your request has been canceled.", "success");
+      setFlash("Your request has been canceled.", "success");
     },
     onCancelError: (error) => {
       if (error instanceof SessionExpiredError) return;
 
-      showToast("Failed to cancel request.", "error");
+      setFlash("Failed to cancel request.", "error");
     },
   });
 
@@ -149,8 +140,6 @@ export default function MyOrderListPage() {
           onPageChange={setCurrentPage}
         />
       </div>
-
-      {toast.isVisible && <Toast text={toast.text} variant={toast.variant} isVisible={toast.isVisible} />}
     </main>
   );
 }

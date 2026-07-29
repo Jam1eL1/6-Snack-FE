@@ -4,20 +4,19 @@ import MemberList from "@/components/common/MemberList";
 import Pagination from "@/components/common/Pagination";
 import Button from "@/components/ui/Button";
 import SearchBar from "@/components/ui/SearchBar";
-import Toast from "@/components/common/Toast";
 import NoContent from "@/components/common/NoContent";
 import { fetchAllCompanyUsers } from "@/lib/api/companyUser.api";
 import { sendInvite } from "@/lib/api/invite.api";
 import { deleteUserById } from "@/lib/api/superAdmin.api";
 import { getUser } from "@/lib/api/user.api";
 import { useModal } from "@/providers/ModalProvider";
-import { TToastVariant } from "@/types/toast.types";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useMemo, useState, useRef, useEffect } from "react";
+import { Suspense, useMemo, useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import DogSpinner from "@/components/common/DogSpinner";
 import { SessionExpiredError } from "@/lib/api/auth.errors";
 import { queryKeys } from "@/lib/queryKeys";
+import { useFlashToast } from "@/stores/flashToast";
 
 export default function User() {
   const [currentPaginationPage, setCurrentPaginationPage] = useState<number>(1);
@@ -25,40 +24,13 @@ export default function User() {
   const searchParams = useSearchParams();
   const name = searchParams.get("name") ?? "";
   const queryClient = useQueryClient();
+  const setFlash = useFlashToast((state) => state.setFlash);
   const MEMBERS_PAGE = 5;
 
   // Reset pagination to page 1 when the search term changes
   useEffect(() => {
     setCurrentPaginationPage(1);
   }, [name]);
-
-  // Toast state
-  const [toastVisible, setToastVisible] = useState<boolean>(false);
-  const [toastMessage, setToastMessage] = useState<string>("");
-  const [toastVariant, setToastVariant] = useState<TToastVariant>("success");
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Function to display Toast
-  const showToast = (message: string, variant: TToastVariant) => {
-    // Clear existing timer if any
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-
-    setToastMessage(message);
-    setToastVariant(variant);
-    setToastVisible(true);
-    timerRef.current = setTimeout(() => setToastVisible(false), 3000);
-  };
-
-  // Cleanup timer on component unmount
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-    };
-  }, []);
 
   // Fetch member list
   const {
@@ -83,13 +55,13 @@ export default function User() {
   const deleteUserMutation = useMutation({
     mutationFn: deleteUserById,
     onSuccess: (data) => {
-      showToast(data.message, "success");
+      setFlash(data.message, "success");
       queryClient.invalidateQueries({ queryKey: queryKeys.companyUsers.all });
     },
     onError: (error) => {
       if (error instanceof SessionExpiredError) return;
 
-      showToast("Failed to delete user.", "error");
+      setFlash("Failed to delete user.", "error");
       console.error(error);
     },
   });
@@ -112,9 +84,9 @@ export default function User() {
     },
     onSuccess: (result) => {
       if (result.emailSent) {
-        showToast("Invitation email sent successfully.", "success");
+        setFlash("Invitation email sent successfully.", "success");
       } else {
-        showToast("Invitation link created but email sending failed.", "error");
+        setFlash("Invitation link created but email sending failed.", "error");
       }
       // Invalidate member list cache to refetch
       queryClient.invalidateQueries({ queryKey: queryKeys.companyUsers.all });
@@ -128,9 +100,9 @@ export default function User() {
         /already invited/i.test(message) ||
         /email already registered/i.test(message);
       if (isConflict) {
-        showToast("An invitation history already exists.", "error");
+        setFlash("An invitation history already exists.", "error");
       } else {
-        showToast(message || "Failed to send invitation.", "error");
+        setFlash(message || "Failed to send invitation.", "error");
       }
       console.error(error);
     },
@@ -149,10 +121,11 @@ export default function User() {
     inviteUserMutation.mutate(data);
   };
 
-  // Error handling
-  if (membersError) {
-    showToast(membersError instanceof Error ? membersError.message : "Failed to load member list", "error");
-  }
+  useEffect(() => {
+    if (!membersError) return;
+
+    setFlash(membersError instanceof Error ? membersError.message : "Failed to load member list", "error");
+  }, [membersError, setFlash]);
 
   return (
     <main aria-label="Member Management Page">
@@ -223,7 +196,7 @@ export default function User() {
                 <MemberList
                   {...member}
                   onClickDeleteUser={handleDeleteUser}
-                  onRoleUpdate={() => showToast("Role successfully updated.", "success")}
+                  onRoleUpdate={() => setFlash("Role successfully updated.", "success")}
                 />
               </div>
             ))
@@ -265,7 +238,6 @@ export default function User() {
           />
         </div>
       )}
-      <Toast text={toastMessage} variant={toastVariant} isVisible={toastVisible} />
     </main>
   );
 }

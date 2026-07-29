@@ -25,8 +25,7 @@ export default function ProductInfoSections() {
         isOpen={isDeliveryFeeOpen}
         onToggle={() => setIsDeliveryFeeOpen(!isDeliveryFeeOpen)}
       >
-        $5 flat-rate shipping. Free shipping on orders over $50.{" "}
-        <span className="text-primary-400">Additional fee for remote areas</span>
+        $5 flat-rate shipping.
       </InfoSection>
     </div>
   );

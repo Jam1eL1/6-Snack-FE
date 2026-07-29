@@ -11,13 +11,13 @@ import CartAndLikeButtons from "./ProductDetail/CartAndLikeButtons";
 import ProductInfoSections from "./ProductDetail/ProductInfoSections";
 import { useAuth } from "@/providers/AuthProvider";
 import { useCategoryStore } from "@/stores/categoryStore";
-import Toast from "@/components/common/Toast";
 import { useToggleFavorite } from "@/hooks/useToggleFavorite";
 import DogSpinner from "@/components/common/DogSpinner";
 import icNoOrder from "@/assets/icons/ic_no_order.svg";
 import Image from "next/image";
 import { SessionExpiredError } from "@/lib/api/auth.errors";
 import { useAddToCart } from "@/hooks/useAddToCart";
+import { useFlashToast } from "@/stores/flashToast";
 
 type TProductDetailProps = {
   productId: number;
@@ -29,10 +29,8 @@ export default function ProductDetail({ productId }: TProductDetailProps) {
   const { user } = useAuth();
   const router = useRouter();
   const { setSelectedCategory } = useCategoryStore();
+  const setFlash = useFlashToast((state) => state.setFlash);
 
-  const [toastVisible, setToastVisible] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
-  const [toastVariant, setToastVariant] = useState<"success" | "error">("success");
   const [isFavorite, setIsFavorite] = useState(false);
 
   const toggleFavoriteMutation = useToggleFavorite(productId, {
@@ -45,7 +43,7 @@ export default function ProductDetail({ productId }: TProductDetailProps) {
     onToggleFavoriteError: (error) => {
       if (error instanceof SessionExpiredError) return;
 
-      showToast("Failed to update favorite.", "error");
+      setFlash("Failed to update favorite.", "error");
     },
   });
 
@@ -55,20 +53,13 @@ export default function ProductDetail({ productId }: TProductDetailProps) {
 
   const addToCartMutation = useAddToCart({
     onAddToCartSuccess: () => {
-      showToast("Added to cart", "success");
+      setFlash("Added to cart", "success");
     },
     onAddToCartError: (error) => {
       if (error instanceof SessionExpiredError) return;
-      showToast("Failed to add item to cart", "error");
+      setFlash("Failed to add item to cart", "error");
     },
   });
-
-  const showToast = (message: string, variant: "success" | "error" = "success") => {
-    setToastMessage(message);
-    setToastVariant(variant);
-    setToastVisible(true);
-    setTimeout(() => setToastVisible(false), 2000);
-  };
 
   useEffect(() => {
     if (product?.category?.id) {
@@ -152,7 +143,6 @@ export default function ProductDetail({ productId }: TProductDetailProps) {
                 canEdit={canEdit}
                 productId={product.id}
                 productName={product.name}
-                showToast={showToast}
               />
             </div>
             <div className="flex flex-col justify-center items-center w-full">
@@ -167,7 +157,6 @@ export default function ProductDetail({ productId }: TProductDetailProps) {
           </div>
         </div>
       </div>
-      {toastVisible && <Toast text={toastMessage} variant={toastVariant} isVisible={toastVisible} />}
     </div>
   );
 }

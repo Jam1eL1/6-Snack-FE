@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import CartItem from "./_components/CartItem";
 import Button from "@/components/ui/Button";
 import Link from "next/link";
@@ -10,7 +10,6 @@ import { getCartItems } from "@/lib/api/cart.api";
 import { useAuth } from "@/providers/AuthProvider";
 import { TGetCartItemsResponse } from "@/types/cart.types";
 import { useRouter } from "next/navigation";
-import Toast from "@/components/common/Toast";
 import { orderNow } from "@/lib/api/order.api";
 import { TStartOrderPaymentData } from "@/types/order.types";
 import { useDeviceType } from "@/hooks/useDeviceType";
@@ -18,16 +17,16 @@ import clsx from "clsx";
 import { formatCurrency } from "@/lib/utils/currency.util";
 import { queryKeys } from "@/lib/queryKeys";
 import { STANDARD_DELIVERY_FEE_CENTS } from "@/lib/constants/money";
+import { useFlashToast } from "@/stores/flashToast";
 
 export default function CartPage() {
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
-  const [isToastVisible, setIsToastVisible] = useState<boolean>(false);
   const { isMobile } = useDeviceType();
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const { user } = useAuth();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const setFlash = useFlashToast((state) => state.setFlash);
 
   const {
     data: cartItems,
@@ -70,29 +69,20 @@ export default function CartPage() {
   // Selected cart item IDs
   const checkedCartItemIds = cartItems?.cart.filter((item) => item.isChecked).map((item) => item.id) ?? [];
 
-  // Clear the toast timer on unmount
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-    };
-  }, []);
-
   const handleRequestOrder = () => {
     const isBudgetExceeded = user?.role !== "USER" && !canPurchase;
 
-    // Stop when no items are selected or the purchase exceeds the budget
-    if (checkedCartItemIds.length === 0 || isBudgetExceeded) {
-      setIsToastVisible(true);
+    if (checkedCartItemIds.length === 0) {
+      setFlash("Select at least one item.", "error");
+      return;
+    }
 
-      if (timerRef.current) clearTimeout(timerRef.current);
-
-      timerRef.current = setTimeout(() => {
-        setIsToastVisible(false);
-        timerRef.current = null;
-      }, 3000);
-
+    if (isBudgetExceeded) {
+      setFlash(
+        isMobile ? "Insufficient budget." : "Insufficient budget. Reduce the quantity or remove an item.",
+        "error",
+        remainingBudget,
+      );
       return;
     }
 
@@ -110,25 +100,6 @@ export default function CartPage() {
 
   return (
     <div className="flex flex-col justify-center items-center w-full">
-      {checkedCartItemIds.length === 0 ? (
-        <Toast text="Select at least one item." isVisible={isToastVisible} />
-      ) : (
-        <Toast
-          text={
-            isMobile ? (
-              "Insufficient budget."
-            ) : (
-              <>
-                <p>Insufficient budget.&nbsp;</p>
-                <p>Reduce the quantity or remove an item.</p>
-              </>
-            )
-          }
-          isVisible={isToastVisible}
-          budget={remainingBudget}
-        />
-      )}
-
       <div className="z-2 w-full max-w-[1200px] md:px-[24px]">
         <div className="flex flex-col gap-[40px] mt-[20px] sm:gap-[70px] sm:mt-[60px] sm:pb-[36px] md:mt-[80px]">
           <section className="flex flex-col justify-center items-center gap-[10px] font-bold text-[16px]/[20px] tracking-tight sm:flex-row sm:gap-[20px] sm:text-[18px]/[22px]">

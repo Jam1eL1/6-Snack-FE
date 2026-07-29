@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { profileSchema, TProfileFormData } from "@/lib/schemas/profile.schema";
@@ -9,19 +9,14 @@ import { Role } from "@/types/auth.types";
 import ProfileInfoField from "./ProfileInfoField";
 import ProfilePasswordFields from "./ProfilePasswordFields";
 import ProfileSubmitButton from "./ProfileSubmitButton";
-import Toast from "@/components/common/Toast";
 import { useUpdateCompanyInfo, useUpdatePassword } from "@/hooks/useUpdateProfile";
 import { SessionExpiredError } from "@/lib/api/auth.errors";
 import { TUpdateCompanyInfoRequest, TUpdatePasswordRequest } from "@/lib/api/profile.api";
+import { useFlashToast } from "@/stores/flashToast";
 
 export default function ProfileForm() {
   const { user } = useAuth();
-
-  // Toast state
-  const [toastVisible, setToastVisible] = useState<boolean>(false);
-  const [toastMessage, setToastMessage] = useState<string>("");
-  const [toastVariant, setToastVariant] = useState<"success" | "error">("success");
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const setFlash = useFlashToast((state) => state.setFlash);
 
   // React Hook Form setup
   const {
@@ -53,42 +48,29 @@ export default function ProfileForm() {
   // Form validity
   const isFormValid = Boolean(hasAnyChanges && isValid);
 
-  // Show a toast message
-  const showToast = (message: string, variant: "success" | "error") => {
-    // Clear the previous timer before showing a new toast.
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-
-    setToastMessage(message);
-    setToastVariant(variant);
-    setToastVisible(true);
-    timerRef.current = setTimeout(() => setToastVisible(false), 3000);
-  };
-
   // Mutation for company info update as super admin
   const updateCompanyInfoMutation = useUpdateCompanyInfo({
     onUpdateCompanyInfoSuccess: () => {
       if (hasCompanyChanged && hasPasswordChanged) {
-        showToast("Your information has been updated successfully.", "success");
+        setFlash("Your information has been updated successfully.", "success");
         setValue("password", "");
         setValue("confirmPassword", "");
         return;
       }
 
       if (hasCompanyChanged) {
-        showToast("Company name has been updated successfully.", "success");
+        setFlash("Company name has been updated successfully.", "success");
         return;
       }
       if (hasPasswordChanged) {
-        showToast("Password has been updated successfully.", "success");
+        setFlash("Password has been updated successfully.", "success");
         setValue("password", "");
         setValue("confirmPassword", "");
       }
     },
     onUpdateCompanyInfoError: (error) => {
       if (error instanceof SessionExpiredError) return;
-      showToast("Failed to update company information", "error");
+      setFlash("Failed to update company information", "error");
     },
   });
 
@@ -96,14 +78,14 @@ export default function ProfileForm() {
   const updatePasswordMutation = useUpdatePassword({
     onUpdatePasswordSuccess: () => {
       if (hasPasswordChanged) {
-        showToast("Password updated successfully.", "success");
+        setFlash("Password updated successfully.", "success");
         setValue("password", "");
         setValue("confirmPassword", "");
       }
     },
     onUpdatePasswordError: (error) => {
       if (error instanceof SessionExpiredError) return;
-      showToast("Failed to update password", "error");
+      setFlash("Failed to update password", "error");
     },
   });
 
@@ -121,15 +103,6 @@ export default function ProfileForm() {
     }
   }, [user, reset]);
 
-  // Clean up the toast timer on unmount.
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-    };
-  }, []);
-
   // Convert enum roles into display labels.
   const getRoleLabel = (role?: Role | null) => {
     switch (role) {
@@ -146,12 +119,12 @@ export default function ProfileForm() {
 
   const onSubmit = (data: TProfileFormData) => {
     if (!isFormValid) {
-      showToast("Please review your input and try again.", "error");
+      setFlash("Please review your input and try again.", "error");
       return;
     }
 
     if (!user) {
-      showToast("User information could not be found.", "error");
+      setFlash("User information could not be found.", "error");
       return;
     }
 
@@ -183,8 +156,6 @@ export default function ProfileForm() {
 
   return (
     <main aria-label="Profile settings page" className="w-full sm:w-auto">
-      {toastVisible && <Toast text={toastMessage} variant={toastVariant} isVisible={toastVisible} />}
-
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="w-full sm:w-[600px] py-10 sm:px-14 sm:rounded-sm sm:shadow-[0px_0px_40px_0px_rgba(0,0,0,0.10)] sm:outline-offset-[-1px] inline-flex flex-col justify-center items-start gap-5"
