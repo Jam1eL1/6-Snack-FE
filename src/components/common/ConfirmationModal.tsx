@@ -17,10 +17,10 @@ export default function ConfirmationModal({
   productName,
   onCancel,
   onDelete,
-  modalTitle = "상품을 삭제하시겠어요?",
-  modalDescription = "삭제 후에는 복구할 수 없습니다.",
-  confirmButtonText = "상품 삭제",
-  cancelButtonText = "더 생각해볼게요",
+  modalTitle = "Delete this product?",
+  modalDescription = "This action cannot be undone.",
+  confirmButtonText = "Delete Product",
+  cancelButtonText = "Cancel",
 }: TConfirmationModalProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
 
