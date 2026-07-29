@@ -33,13 +33,13 @@ const BudgetFormUI: React.FC<BudgetFormUIProps> = ({
   const [toastMessage, setToastMessage] = React.useState<string>("");
   const [toastVariant, setToastVariant] = React.useState<TToastVariant>("success");
 
-  // Toast를 보여주는 함수
+  // Show a temporary toast.
   const showToast = (message: string, variant: TToastVariant = "success") => {
     setToastMessage(message);
     setToastVariant(variant);
     setToastVisible(true);
 
-    // 3초 후 자동으로 숨김
+    // Hide the toast after three seconds.
     setTimeout(() => {
       setToastVisible(false);
     }, 3000);
@@ -47,11 +47,11 @@ const BudgetFormUI: React.FC<BudgetFormUIProps> = ({
 
   React.useEffect(() => {
     if (success) {
-      showToast("예산이 성공적으로 수정되었습니다.", "success");
+      showToast("Budget updated successfully.", "success");
     }
-    // 실패 케이스는 errors에 따라 별도 처리 가능
+    // Validation errors can be handled here if an error toast is needed.
     // if (errors.currentMonthBudget || errors.nextMonthBudget) {
-    //   showToast("예산 수정에 실패했습니다.", "error");
+    //   showToast("Failed to update the budget.", "error");
     // }
   }, [success]);
 
@@ -67,7 +67,7 @@ const BudgetFormUI: React.FC<BudgetFormUIProps> = ({
 
   return (
     <>
-      {/* Toast 컴포넌트 */}
+      {/* Toast */}
       <Toast text={toastMessage} variant={toastVariant} isVisible={toastVisible} />
 
       <div className="flex flex-1 flex-col justify-center sm:flex-row">
@@ -75,21 +75,22 @@ const BudgetFormUI: React.FC<BudgetFormUIProps> = ({
           <form onSubmit={onSubmit} className="w-full flex flex-col gap-20 mt-[20px]">
             <div className="self-stretch flex flex-col justify-start items-start gap-12">
               <div className="self-stretch flex flex-col justify-start items-start gap-2">
-                <div className="self-stretch text-[color:var(--color-primary-950)] text-lg md:text-2xl font-bold">
-                  예산 관리
-                </div>
-                <div className="self-stretch text-[color:var(--color-primary-400)] text-sm md:text-base font-normal">
-                  이번 달 예산을 정해서 지출을 관리해보세요
+                <h1
+                  id="budget-management-heading"
+                  className="self-stretch text-lg font-bold text-primary-950 md:text-2xl"
+                >
+                  Budget Management
+                </h1>
+                <div className="self-stretch text-sm font-normal text-primary-400 md:text-base">
+                  Set this month’s budget to manage your spending.
                 </div>
               </div>
               <div className="self-stretch flex flex-col justify-center items-start gap-16">
-                {/* 이번 달 예산 */}
+                {/* Current month budget */}
                 <div className="self-stretch flex flex-col justify-center items-start gap-3">
-                  <div className="self-stretch text-[color:var(--color-primary-950)] text-sm md:text-base font-bold">
-                    이번 달
-                  </div>
+                  <div className="self-stretch text-base font-bold text-primary-950 md:text-lg">This Month</div>
                   {savedCurrentMonthBudget !== undefined && (
-                    <div className="self-stretch text-[color:var(--color-primary-400)] text-sm md:text-base font-normal">
+                    <div className="self-stretch text-base font-normal text-primary-400 md:text-lg">
                       Currently saved: {formatCurrency(savedCurrentMonthBudget)}
                     </div>
                   )}
@@ -97,16 +98,13 @@ const BudgetFormUI: React.FC<BudgetFormUIProps> = ({
                     <input
                       type="text"
                       inputMode="decimal"
-                      style={
-                        currentMonthBudget ? { color: "var(--color-primary-950)", height: "37px" } : { height: "37px" }
-                      }
                       className={
-                        `flex-1 min-w-0 bg-transparent outline-none border-none` +
+                        `h-8 min-w-0 flex-1 border-none bg-transparent text-base font-extrabold leading-none tracking-tight outline-none md:text-lg` +
                         (currentMonthBudget
-                          ? " text-[color:var(--color-primary-950)] font-extrabold text-[20px] sm:text-[32px] md:text-[40px] tracking-tight leading-[100%] align-middle"
-                          : " text-neutral-300 text-xl sm:text-3xl md:text-3xl font-bold placeholder:text-neutral-300 placeholder:font-bold placeholder:text-[18px] sm:placeholder:text-[32px] md:placeholder:text-[32px] placeholder:leading-[100%] placeholder:align-bottom placeholder:tracking-tight")
+                          ? " text-primary-950"
+                          : " text-primary-300 placeholder:text-base placeholder:font-bold placeholder:leading-none placeholder:tracking-tight placeholder:text-primary-300 md:placeholder:text-lg")
                       }
-                      placeholder="예산을 입력해주세요"
+                      placeholder="Enter a budget"
                       value={
                         currentMonthBudget && currentMonthBudget !== "0"
                           ? formatNumberWithCommas(currentMonthBudget)
@@ -124,7 +122,7 @@ const BudgetFormUI: React.FC<BudgetFormUIProps> = ({
                       }}
                       disabled={loading}
                     />
-                    <div className="text-[color:var(--color-primary-950)] font-bold leading-[100%] align-middle tracking-tight sm:text-3xl md:text-4xl">
+                    <div className="text-base font-bold leading-none tracking-tight text-primary-950 md:text-lg">
                       CAD
                     </div>
                   </div>
@@ -132,25 +130,22 @@ const BudgetFormUI: React.FC<BudgetFormUIProps> = ({
                     <p className="text-red-500 text-xs mt-1 ml-2">{errors.currentMonthBudget}</p>
                   )}
                 </div>
-                {/* 다음 달 예산 */}
+                {/* Recurring budget starting next month */}
                 <div className="self-stretch flex flex-col justify-center items-start gap-3">
-                  <div className="self-stretch text-[color:var(--color-primary-950)] text-sm md:text-base font-bold">
-                    매달 시작
+                  <div className="self-stretch text-base font-bold text-primary-950 md:text-lg">
+                    Starting Next Month
                   </div>
                   <div className="self-stretch border-b-2 border-neutral-700 inline-flex justify-center items-center gap-1 w-full max-w-full h-[49px] pb-[12px] scrollbar-hide overflow-x-visible">
                     <input
                       type="text"
                       inputMode="decimal"
-                      style={
-                        nextMonthBudget ? { color: "var(--color-primary-950)", height: "37px" } : { height: "37px" }
-                      }
                       className={
-                        `flex-1 min-w-0 bg-transparent outline-none border-none` +
+                        `h-8 min-w-0 flex-1 border-none bg-transparent text-base font-extrabold leading-none tracking-tight outline-none md:text-lg` +
                         (nextMonthBudget
-                          ? " text-[color:var(--color-primary-950)] font-extrabold text-[20px] sm:text-[32px] md:text-[40px] tracking-tight leading-[100%] align-middle"
-                          : " text-neutral-300 text-xl sm:text-3xl md:text-3xl font-bold placeholder:text-neutral-300 placeholder:font-bold placeholder:text-[18px] sm:placeholder:text-[32px] md:placeholder:text-[32px] placeholder:leading-[100%] placeholder:align-bottom placeholder:tracking-tight")
+                          ? " text-primary-950"
+                          : " text-primary-300 placeholder:text-base placeholder:font-bold placeholder:leading-none placeholder:tracking-tight placeholder:text-primary-300 md:placeholder:text-lg")
                       }
-                      placeholder="예산을 입력해주세요"
+                      placeholder="Enter a budget"
                       value={
                         nextMonthBudget && nextMonthBudget !== "0"
                           ? formatNumberWithCommas(nextMonthBudget)
@@ -168,7 +163,7 @@ const BudgetFormUI: React.FC<BudgetFormUIProps> = ({
                       }}
                       disabled={loading}
                     />
-                    <div className="text-[color:var(--color-primary-950)] font-bold leading-[100%] align-middle tracking-tight sm:text-3xl md:text-4xl">
+                    <div className="text-base font-bold leading-none tracking-tight text-primary-950 md:text-lg">
                       CAD
                     </div>
                   </div>
@@ -184,7 +179,7 @@ const BudgetFormUI: React.FC<BudgetFormUIProps> = ({
                 className="w-full h-full text-center text-white text-base font-bold cursor-pointer"
                 disabled={loading}
               >
-                {loading ? "저장 중..." : "수정하기"}
+                {loading ? "Saving..." : "Save Changes"}
               </button>
             </div>
           </form>

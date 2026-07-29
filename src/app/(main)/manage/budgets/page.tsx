@@ -31,13 +31,13 @@ function ManageBudgetsPage() {
   const queryClient = useQueryClient();
   const [showSubmitSpinner, setShowSubmitSpinner] = useState(false);
 
-  // 예산 데이터 패칭
+  // Fetch the saved budgets.
   const { data, isLoading: isQueryLoading } = useQuery<BudgetResponse>({
     queryKey: queryKeys.budgets.all,
     queryFn: getBudgets,
   });
 
-  // 폼 세팅
+  // Configure the budget form.
   const {
     handleSubmit,
     setValue,
@@ -52,7 +52,7 @@ function ManageBudgetsPage() {
     },
   });
 
-  // 쿼리 데이터로 폼 초기화
+  // Initialize the form with the saved budgets.
   useEffect(() => {
     if (data) {
       reset({
@@ -63,7 +63,7 @@ function ManageBudgetsPage() {
     }
   }, [data, reset]);
 
-  // 예산 수정 뮤테이션
+  // Update the budgets.
   const {
     mutate: updateBudgets,
     isPending: isMutating,
@@ -87,36 +87,39 @@ function ManageBudgetsPage() {
     },
   });
 
-  // BudgetFormUI에 맞는 핸들러
+  // Adapt field changes for BudgetFormUI.
   const handleUIChange = (field: "currentMonthBudget" | "nextMonthBudget", value: string) => {
     setValue(field, value);
   };
 
-  // 초기 데이터 로딩 중일 때 스피너 표시
+  // Show a spinner while loading the initial budget data.
   if (isQueryLoading) {
     return (
       <div className="flex flex-1 flex-col justify-center items-center" role="main">
         <DogSpinner />
-        <p className="mt-4 text-neutral-600 text-sm font-['SUIT']">예산 정보를 불러오는 중...</p>
+        <p className="mt-4 text-neutral-600 text-sm font-['SUIT']">Loading budget information...</p>
       </div>
     );
   }
 
   return (
-    <main className="flex flex-1 flex-col justify-center relative" role="main" aria-labelledby="budget-management-heading">
-      {/* 제출 중 오버레이 스피너 */}
+    <main
+      className="flex flex-1 flex-col justify-center relative"
+      role="main"
+      aria-labelledby="budget-management-heading"
+    >
+      {/* Overlay shown while saving. */}
       {showSubmitSpinner && (
         <div className="absolute inset-0 bg-white bg-opacity-75 flex flex-col justify-center items-center z-10">
           <DogSpinner />
-          <p className="mt-4 text-neutral-600 text-sm font-['SUIT']">예산을 저장하는 중...</p>
+          <p className="mt-4 text-neutral-600 text-sm font-['SUIT']">Saving budgets...</p>
         </div>
       )}
 
-      <header className="sr-only">
-        <h1 id="budget-management-heading">예산 관리</h1>
-      </header>
       <section aria-labelledby="budget-form-section" role="region">
-        <h2 id="budget-form-section" className="sr-only">예산 설정 폼</h2>
+        <h2 id="budget-form-section" className="sr-only">
+          Budget settings form
+        </h2>
         <BudgetFormUI
           savedCurrentMonthBudget={data?.currentMonthBudget}
           currentMonthBudget={String((typeof watch === "function" ? watch("currentMonthBudget") : "") || "")}

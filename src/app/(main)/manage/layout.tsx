@@ -30,13 +30,13 @@ export default function ManagePageLayout({ children }: { children: React.ReactNo
           <div className="flex flex-col gap-1">
             <Menu
               icon="user"
-              text="회원 관리"
+              text="Member Management"
               isActive={pathname === "/manage/users"}
               onClick={() => handleMenuClick("/manage/users")}
             />
             <Menu
               icon="budget"
-              text="예산 관리"
+              text="Budget Management"
               isActive={pathname === "/manage/budgets"}
               onClick={() => handleMenuClick("/manage/budgets")}
             />

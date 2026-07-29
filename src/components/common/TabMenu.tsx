@@ -11,7 +11,7 @@ type TTabMenuProps = {
 export default function TabMenu({ isUserTabActive = false, onUserTabClick, onBudgetTabClick }: TTabMenuProps) {
   return (
     <div className="w-full  inline-flex justify-start items-start">
-      {/* 회원 관리 탭 */}
+      {/* Member management tab */}
       <div
         className={`flex-1 px-4 py-3 flex justify-center items-center gap-2 cursor-pointer ${
           isUserTabActive ? "border-b-2 border-primary-950" : "border-b border-primary-200"
@@ -24,11 +24,11 @@ export default function TabMenu({ isUserTabActive = false, onUserTabClick, onBud
             isUserTabActive ? "text-primary-950 font-bold" : "text-primary-500"
           }`}
         >
-          회원 관리
+          Member Management
         </div>
       </div>
 
-      {/* 예산 관리 탭 */}
+      {/* Budget management tab */}
       <div
         className={`flex-1 px-4 py-3 flex justify-center items-center gap-2 cursor-pointer ${
           !isUserTabActive ? "border-b-2 border-primary-950" : "border-b border-primary-200"
@@ -41,7 +41,7 @@ export default function TabMenu({ isUserTabActive = false, onUserTabClick, onBud
             !isUserTabActive ? "text-primary-950 font-bold" : "text-primary-500"
           }`}
         >
-          예산 관리
+          Budget Management
         </div>
       </div>
     </div>
