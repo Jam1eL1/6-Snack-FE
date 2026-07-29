@@ -93,7 +93,7 @@ export default function RequestListItem({
           {productName}
         </Link>
         <div className="min-w-[90px] text-sm md:text-base text-primary-950">{formatCurrency(price)}</div>
-        <div className="flex justify-center">
+        <div className="flex justify-start">
           <Badge type={getBadgeType()} />
         </div>
 

@@ -104,7 +104,7 @@ const OrderHistoryPage = () => {
         className="min-h-screen w-full relative bg-white overflow-hidden sm:hidden"
         aria-label="Purchase history mobile view"
       >
-        <header className="self-stretch flex justify-between items-center px-4 pt-6 pb-6" role="banner">
+        <header className="self-stretch flex justify-between items-center pt-6 pb-6" role="banner">
           <h1 className="text-primary-800 text-lg font-bold flex-shrink-0">Purchase History</h1>
           <nav aria-label="Sort options" className="flex-shrink-0">
             <div className="relative custom-sort-dropdown w-auto" role="region">
@@ -119,7 +119,7 @@ const OrderHistoryPage = () => {
             </div>
           </nav>
         </header>
-        <section className="w-full flex flex-col gap-4 px-4 pb-2" aria-labelledby="budget-section-mobile">
+        <section className="w-full flex flex-col gap-4 pb-2" aria-labelledby="budget-section-mobile">
           <h2 id="budget-section-mobile" className="sr-only">
             Budget Overview
           </h2>
@@ -211,7 +211,7 @@ const OrderHistoryPage = () => {
             {/* Mobile Budget Details Box */}
           </div>
         </section>
-        <section className="w-full flex flex-col gap-2 px-4" aria-labelledby="purchase-list-mobile" role="list">
+        <section className="w-full flex flex-col gap-2" aria-labelledby="purchase-list-mobile" role="list">
           <h2 id="purchase-list-mobile" className="sr-only">
             Purchase History List
           </h2>
@@ -337,7 +337,7 @@ const OrderHistoryPage = () => {
         className="min-h-screen w-full relative bg-white overflow-hidden hidden sm:block md:hidden"
         aria-label="Purchase history tablet view"
       >
-        <header className="self-stretch flex justify-between items-center pt-8 px-8 pb-6" role="banner">
+        <header className="self-stretch flex justify-between items-center pt-8 pb-6" role="banner">
           <h1 className="text-primary-800 text-lg font-bold flex-shrink-0">Purchase History</h1>
           <nav aria-label="Sort options" className="flex-shrink-0">
             <div className="relative custom-sort-dropdown w-auto" role="region">
@@ -352,7 +352,7 @@ const OrderHistoryPage = () => {
             </div>
           </nav>
         </header>
-        <section className="w-full flex flex-col gap-5 px-8" aria-labelledby="budget-section-tablet">
+        <section className="w-full flex flex-col gap-5" aria-labelledby="budget-section-tablet">
           <h2 id="budget-section-tablet" className="sr-only">
             Budget Overview
           </h2>
@@ -441,7 +441,7 @@ const OrderHistoryPage = () => {
             </div>
           </div>
         </section>
-        <section className="w-full flex flex-col gap-2 px-8" aria-labelledby="purchase-list-tablet" role="list">
+        <section className="w-full flex flex-col gap-2" aria-labelledby="purchase-list-tablet" role="list">
           <h2 id="purchase-list-tablet" className="sr-only">
             Purchase History List
           </h2>
@@ -572,7 +572,7 @@ const OrderHistoryPage = () => {
         className="min-h-screen w-full relative bg-white overflow-hidden hidden md:block"
         aria-label="Purchase history desktop view"
       >
-        <header className="self-stretch flex justify-between items-center pt-10 px-10 pb-8" role="banner">
+        <header className="self-stretch flex justify-between items-center pt-10 pb-8" role="banner">
           <h1 className="text-primary-800 text-lg font-bold flex-shrink-0">Purchase History</h1>
           <nav aria-label="Sort options" className="flex-shrink-0">
             <div className="relative custom-sort-dropdown w-auto" role="region">
@@ -587,7 +587,7 @@ const OrderHistoryPage = () => {
             </div>
           </nav>
         </header>
-        <section className="w-full flex flex-col gap-7 px-10" aria-labelledby="budget-section-desktop">
+        <section className="w-full flex flex-col gap-7" aria-labelledby="budget-section-desktop">
           <h2 id="budget-section-desktop" className="sr-only">
             Budget Overview
           </h2>
@@ -680,7 +680,7 @@ const OrderHistoryPage = () => {
             </div>
           </div>
         </section>
-        <section className="w-full flex flex-col gap-2 px-10 pb-5" aria-labelledby="purchase-list-desktop" role="list">
+        <section className="w-full flex flex-col gap-2 pb-5" aria-labelledby="purchase-list-desktop" role="list">
           <h2 id="purchase-list-desktop" className="sr-only">
             Purchase History List
           </h2>
