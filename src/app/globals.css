@@ -4,12 +4,12 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  /* 태블릿 사이즈 */
+  /* Tablet breakpoint */
   --breakpoint-sm: 744px;
-  /* 데스크탑 사이즈 */
+  /* Desktop breakpoint */
   --breakpoint-md: 1400px;
 
-  /* 색상 정의 */
+  /* Colors */
   --color-white: #ffffff;
   --color-black: #000000;
 
@@ -36,7 +36,7 @@
   /* error color */
   --color-error-500: #f31d1d;
 
-  /* 폰트 정의 */
+  /* Fonts */
   --font-suit: var(--font-suit);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -138,7 +138,7 @@ body {
     scrollbar-color: transparent transparent;
   }
 
-  /* Webkit 브라우저용 스크롤바 숨기기 */
+  /* Hide the scrollbar in WebKit browsers. */
   .category-tabs::-webkit-scrollbar {
     display: none;
   }

@@ -67,7 +67,7 @@ export type TMyProductsParams = {
   orderBy: "latest" | "priceLow" | "priceHigh";
 };
 
-// 스키마 변경시 타입도 변경예정, cumulativeQuantity field 추가예정
+// Update this type when the schema changes and cumulativeQuantity is added.
 // export type TProduct = {
 //   id: number;
 //   categoryId: number;

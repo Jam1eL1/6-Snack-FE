@@ -8,7 +8,7 @@ export const useOrderStatusUpdate = () => {
   return useMutation({
     mutationFn: updateOrderStatus,
     onSuccess: () => {
-      // 주문 목록 캐시 무효화 함 (주문목록 페이지로 이동시 바로 업데이트 된것 보여줌))
+      // Invalidate order caches so lists show the updated status immediately.
       queryClient.invalidateQueries({ queryKey: queryKeys.adminOrders.all });
       queryClient.invalidateQueries({ queryKey: queryKeys.adminOrders.detailPrefix });
       queryClient.invalidateQueries({ queryKey: queryKeys.pendingOrders.all });

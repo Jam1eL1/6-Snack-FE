@@ -1,33 +1,33 @@
 /**
- * 카테고리 메뉴 아이템 타입 (Prisma 스키마 기반)
+ * Category menu item based on the Prisma schema.
  */
 export type TCategoryItem = {
-  /** 고유 식별자 */
+  /** Unique identifier */
   id: number;
-  /** 카테고리 이름 */
+  /** Category name */
   name: string;
-  /** 부모 카테고리 ID */
+  /** Parent category ID */
   parentId?: number | null;
-  /** 서브 카테고리들 */
+  /** Child categories */
   children?: TCategoryItem[];
-  /** 현재 활성화 상태 */
+  /** Whether the category is active */
   isActive?: boolean;
-  /** 메뉴 아이콘 (선택사항) */
+  /** Optional menu icon */
   icon?: React.ReactNode;
-  /** 페이지 경로 (선택사항) */
+  /** Optional page path */
   href?: string;
 };
 
 /**
- * SubCategoryMenu Props 타입
+ * SubCategoryMenu props.
  */
 export type TSubCategoryMenuProps = {
-  /** 메인 카테고리 아이템 배열 */
+  /** Main category items */
   categories: TCategoryItem[];
-  /** 현재 페이지 경로 (활성화 상태 결정) */
+  /** Current path used to determine the active state */
   currentPath?: string;
-  /** 메뉴 아이템 클릭 시 호출되는 콜백 */
+  /** Called when a menu item is selected */
   onItemClick?: (item: TCategoryItem) => void;
-  /** 추가 CSS 클래스 */
+  /** Additional CSS classes */
   className?: string;
-}; 
+};

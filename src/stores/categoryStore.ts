@@ -8,11 +8,11 @@ type TCategoryState = {
     parent: string;
     child: string;
   } | null;
-  selectedChild: { id: number; name: string } | null; // 선택된 단일 자식 카테고리
-  childrenCategories: Array<{ id: number; name: string }>; // 해당 부모의 모든 자식 카테고리들
+  selectedChild: { id: number; name: string } | null; // Selected child category
+  childrenCategories: Array<{ id: number; name: string }>; // All children of the selected parent
 
   setSelectedCategory: (category: { id: number; parent: string; child: string } | null) => void;
-  setSelectedChild: (child: { id: number; name: string } | null) => void; // 선택된 자식 카테고리 설정
+  setSelectedChild: (child: { id: number; name: string } | null) => void; // Set the selected child
   clearSelectedCategory: () => void;
   findCategoryPath: (categoryId: number) => void;
   setChildrenCategories: (children: Array<{ id: number; name: string }>) => void;
@@ -26,8 +26,8 @@ type TCategoryState = {
 
 export const useCategoryStore = create<TCategoryState>((set, get) => ({
   selectedCategory: null,
-  selectedChild: null, // 선택된 단일 자식 카테고리
-  childrenCategories: [], // 해당 부모의 모든 자식 카테고리들
+  selectedChild: null, // Selected child category
+  childrenCategories: [], // All children of the selected parent
 
   setSelectedCategory: (category) => set({ selectedCategory: category }),
 
@@ -45,25 +45,25 @@ export const useCategoryStore = create<TCategoryState>((set, get) => ({
   findCategoryPath: (categoryId: number) => {
     const categories = CATEGORIES;
 
-    // 먼저 부모 카테고리에서 찾기
+    // Look for a matching parent category first.
     const parentCategory = categories.parentCategory.find((cat) => cat.id === categoryId);
     if (parentCategory) {
-      // 부모 카테고리인 경우, 해당 부모의 자식 카테고리들도 함께 저장
+      // Store the parent and all of its child categories.
       const children =
         categories.childrenCategory[parentCategory.name as keyof typeof categories.childrenCategory] || [];
       set({
         selectedCategory: {
           id: categoryId,
           parent: parentCategory.name,
-          child: "", // 부모 카테고리만 선택된 경우 child는 빈 문자열
+          child: "", // Leave child empty when only the parent is selected.
         },
-        selectedChild: null, // 부모 카테고리 선택 시 자식은 null
-        childrenCategories: children, // 해당 부모의 모든 자식 카테고리들 저장
+        selectedChild: null, // Clear the selected child.
+        childrenCategories: children, // Store all children of the selected parent.
       });
       return;
     }
 
-    // 자식 카테고리에서 찾기
+    // Look for a matching child category.
     for (const [parentName, children] of Object.entries(categories.childrenCategory)) {
       const child = children.find((c) => c.id === categoryId);
       if (child) {
@@ -73,8 +73,8 @@ export const useCategoryStore = create<TCategoryState>((set, get) => ({
             parent: parentName,
             child: child.name,
           },
-          selectedChild: child, // 선택된 단일 자식 카테고리 저장
-          childrenCategories: children, // 해당 부모의 모든 자식 카테고리들 저장
+          selectedChild: child, // Store the selected child.
+          childrenCategories: children, // Store all children of the selected parent.
         });
         return;
       }
@@ -92,7 +92,7 @@ export const useCategoryStore = create<TCategoryState>((set, get) => ({
     if (state.selectedChild) {
       return state.selectedChild.name;
     }
-    return state.selectedCategory?.parent || "전체";
+    return state.selectedCategory?.parent || "All";
   },
 
   isChildCategorySelected: () => {

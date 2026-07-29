@@ -15,7 +15,7 @@ export const useFlashToast = create<FlashToastState>((set, get) => ({
   setFlash: (message, variant = "success") => set({ message, variant }),
   consume: () => {
     const { message, variant } = get();
-    set({ message: undefined }); // 일회성 소비
+    set({ message: undefined }); // Consume the message once.
     return { message, variant };
   },
 }));

@@ -7,6 +7,6 @@ export const useProductDetail = (productId: number) => {
   return useQuery<TProduct>({
     queryKey: queryKeys.products.detail(productId),
     queryFn: () => getProductById(productId),
-    enabled: !!productId, // productId 있을 때만 실행
+    enabled: !!productId, // Run only when a product ID is available.
   });
 };

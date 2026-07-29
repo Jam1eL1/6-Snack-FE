@@ -9,7 +9,7 @@ export const useDeleteProduct = () => {
 
   return useMutation({
     mutationFn: (productId: number) => {
-      if (!user) throw new Error("로그인이 필요합니다.");
+      if (!user) throw new Error("You must be signed in.");
 
       const isAdmin = user.role === "ADMIN" || user.role === "SUPER_ADMIN";
       return isAdmin ? deleteProductAsAdmin(productId) : deleteProduct(productId);

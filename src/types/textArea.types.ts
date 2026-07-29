@@ -9,5 +9,5 @@ export type TTextAreaVariant = "cart" | "modal";
 
 /**
  * @JJOBO
- * 1. Props는 해당 컴포넌트에서 사용하도록 변경
+ * 1. Update the props for use by the relevant component.
  */
