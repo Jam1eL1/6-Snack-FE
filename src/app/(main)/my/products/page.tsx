@@ -59,7 +59,7 @@ export default function MyProductsPage() {
   return (
     <div className="md:px-[24px]">
       <div className="flex justify-between items-center pt-[10px] pb-[20px] md:mt-[80px] md:pt-0 md:pb-[40px]">
-        <h2 className="font-bold text-[18px]/[22px] tracking-tight text-primary-950">My Products</h2>
+        <h1 className="font-bold text-[18px]/[22px] tracking-tight text-primary-950">My Listings</h1>
         <Dropdown onChange={handleSort} options={["Newest", "Lowest Price", "Highest Price"]} />
       </div>
       <div className="mx-[-24px] outline-1 outline-[#e6e6e6] md:hidden"></div>

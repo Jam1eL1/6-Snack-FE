@@ -127,7 +127,7 @@ export default function Order() {
   return (
     <section className="pt-[30px] w-full relative" role="region" aria-label="Order management">
       <header className="w-full flex justify-between items-center gap-3 pb-3">
-        <h1 className="text-black text-base font-bold">Purchase Request Management</h1>
+        <h1 className="text-[18px]/[22px] font-bold text-primary-950">Manage Requests</h1>
         <div role="group" aria-label="Sort options">
           <Dropdown
             onChange={(selected) => setOrderBy(ORDER_BY_MAP[selected] ?? ORDER_BY_MAP.Newest)}

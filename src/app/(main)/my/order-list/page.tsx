@@ -116,7 +116,7 @@ export default function MyOrderListPage() {
   return (
     <main className="flex flex-col items-center md:px-0 pt-10 pb-40 min-h-[calc(100vh-112px)]">
       <div className="w-full max-w-[1400px] py-4 flex justify-between items-center">
-        <h1 className="text-lg font-bold text-primary-950">Purchase Requests</h1>
+        <h1 className="text-[18px]/[22px] font-bold text-primary-950">My Requests</h1>
         <Dropdown onChange={setSortOption} options={["Newest", "Lowest Price", "Highest Price"]} />
       </div>
 
