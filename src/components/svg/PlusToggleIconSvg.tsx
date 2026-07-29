@@ -18,10 +18,10 @@ export default function PlusToggleIconSvg({ isOpen = false, className = "", onCl
       onClick={onClick}
     >
       {isOpen ? (
-        // 토글 열린 상태: 가로선만
+        // Open state: show only the horizontal line.
         <rect width="18" height="1.5" transform="translate(3 11.25)" fill="currentColor" />
       ) : (
-        // 토글 닫힌 상태: 플러스 모양
+        // Closed state: show the plus icon.
         <>
           <path d="M11.25 21V3H12.75V21H11.25Z" fill="currentColor" />
           <path d="M3 11.25H21V12.75H3V11.25Z" fill="currentColor" />

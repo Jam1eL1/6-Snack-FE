@@ -24,7 +24,7 @@ export default function MobileCategoryMenu({
 }: TMobileCategoryMenuProps) {
   if (!isOpen) return null;
 
-  // 전역 상태에서 선택된 카테고리 정보를 사용
+  // Read the selected category from the global store.
   const isCurrentCategory = (item: TCategoryItem) => {
     if (!currentCategory || !item.id) return false;
     return currentCategory === item.id.toString();
@@ -72,7 +72,7 @@ export default function MobileCategoryMenu({
     </div>
   );
 
-  // Portal을 사용하여 body에 직접 렌더링
+  // Render directly into the document body through a portal.
   if (typeof window !== "undefined") {
     return createPortal(categoryMenuContent, document.body);
   }

@@ -2,13 +2,13 @@ import React from "react";
 
 type TLikeIconSvgProps = {
   className?: string;
-  isLiked: boolean; // ✅ 상태를 직접 props로 받는다
+  isLiked: boolean; // Receive the current state through props.
   onToggle?: (isLikedNow: boolean) => void;
 };
 
 export default function LikeIconSvg({ className = "", isLiked, onToggle }: TLikeIconSvgProps) {
   const handleClick = () => {
-    onToggle?.(isLiked); // 현재 상태 전달
+    onToggle?.(isLiked); // Pass the current state to the callback.
   };
 
   return (

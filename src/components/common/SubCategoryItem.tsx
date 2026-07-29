@@ -28,13 +28,12 @@ export default function SubCategoryItem({ categories }: TSubCategoryItemProps) {
   const { parentCategory, childrenCategory } = categories;
 
   useEffect(() => {
-    // 선택된 카테고리가 있으면 상태 업데이트
+    // Update the store when a category is selected.
     if (selectedCategory) {
-      console.log("Updating category states:", selectedCategory);
       setIsActiveParentCategory(selectedCategory.parent);
       setIsActiveChildrenCategory(selectedCategory.child);
     } else {
-      // 선택된 카테고리가 없으면 초기화
+      // Reset the store when no category is selected.
       setIsActiveParentCategory("");
       setIsActiveChildrenCategory("");
     }
