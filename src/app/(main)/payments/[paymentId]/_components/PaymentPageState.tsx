@@ -33,7 +33,7 @@ export default function PaymentPageState({
         <button
           type="button"
           onClick={onAction}
-          className="mt-6 h-11 w-full rounded-md bg-primary-950 px-4 text-sm font-bold text-white transition hover:bg-primary-800"
+          className="mt-6 h-11 w-full rounded-md bg-primary-950 px-4 text-sm font-bold text-white transition hover:bg-primary-800 cursor-pointer"
         >
           {actionLabel}
         </button>

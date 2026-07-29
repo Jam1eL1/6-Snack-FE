@@ -9,12 +9,12 @@ import { useCompletePayment, useFailPayment, usePayment } from "@/hooks/usePayme
 import { formatCurrency } from "@/lib/utils/currency.util";
 import { ApiError } from "@/lib/api/api.errors";
 import { paymentCardSchema, TPaymentCardFormData } from "@/lib/schemas/payment.schema";
-import Toast from "@/components/common/Toast";
+import { useFlashToast } from "@/stores/flashToast";
 import InvalidPaymentState from "./_components/InvalidPaymentState";
 import PaymentLoadingState from "./_components/PaymentLoadingState";
 import PaymentPageState from "./_components/PaymentPageState";
 import { SessionExpiredError } from "@/lib/api/auth.errors";
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 
 const fieldClassName =
   "h-11 w-full rounded-md border border-primary-200 bg-white px-3 text-sm text-primary-950 outline-none transition placeholder:text-primary-400 focus-within:border-primary-700";
@@ -41,6 +41,7 @@ export default function PaymentPage() {
   const params = useParams<{ paymentId: string }>();
   const router = useRouter();
   const paymentId = Number(params.paymentId);
+  const setFlash = useFlashToast((state) => state.setFlash);
 
   const { data: payment, isLoading, error } = usePayment(paymentId);
   const {
@@ -58,55 +59,19 @@ export default function PaymentPage() {
       cardCvc: "",
     },
   });
-  const [toast, setToast] = useState<{
-    isVisible: boolean;
-    text: string;
-    variant: "success" | "error";
-  }>({
-    isVisible: false,
-    text: "",
-    variant: "error",
-  });
-  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const showToast = (text: string, variant: "success" | "error") => {
-    if (toastTimerRef.current) {
-      clearTimeout(toastTimerRef.current);
-    }
-
-    setToast({ isVisible: true, text, variant });
-    toastTimerRef.current = setTimeout(() => {
-      setToast((currentToast) => ({
-        ...currentToast,
-        isVisible: false,
-      }));
-      toastTimerRef.current = null;
-    }, 3000);
-  };
-
-  useEffect(() => {
-    return () => {
-      if (toastTimerRef.current) {
-        clearTimeout(toastTimerRef.current);
-      }
-    };
-  }, []);
 
   const handlePaymentMutationError = (error: Error, fallbackMessage: string) => {
     if (error instanceof SessionExpiredError) return;
 
     if (error instanceof ApiError && error.status === 409) {
-      showToast("Another admin is currently processing this order.", "error");
+      setFlash("Another admin is currently processing this order.", "error");
       return;
     }
 
-    showToast(fallbackMessage, "error");
+    setFlash(fallbackMessage, "error");
   };
 
   const completePaymentMutation = useCompletePayment({
-    onCompletePaymentSuccess: () => {
-      router.push("/order-history");
-    },
     onCompletePaymentError: (error) => {
       handlePaymentMutationError(error, "Payment could not be completed.");
     },
@@ -117,7 +82,16 @@ export default function PaymentPage() {
     },
   });
   const isValidPaymentId = paymentId > 0 && Number.isInteger(paymentId);
-  const paymentToast = <Toast text={toast.text} variant={toast.variant} isVisible={toast.isVisible} />;
+
+  useEffect(() => {
+    if (payment?.status !== "PAID") return;
+
+    const redirectTimer = setTimeout(() => {
+      router.push("/order-history");
+    }, 3000);
+
+    return () => clearTimeout(redirectTimer);
+  }, [payment?.status, router]);
 
   if (!isValidPaymentId) {
     return <InvalidPaymentState onReturnToOrders={() => router.push("/order-manage")} />;
@@ -159,11 +133,6 @@ export default function PaymentPage() {
   const handleValidSubmit = (formData: TPaymentCardFormData) => {
     const normalizedCardNumber = formData.cardNumber.replace(/\s/g, "");
 
-    if (normalizedCardNumber === SUCCESSFUL_DUMMY_CARD_NUMBER) {
-      completePaymentMutation.mutate(paymentId);
-      return;
-    }
-
     if (normalizedCardNumber === FAILED_DUMMY_CARD_NUMBER) {
       failPaymentMutation.mutate({
         paymentId,
@@ -174,7 +143,7 @@ export default function PaymentPage() {
       return;
     }
 
-    showToast("Use one of the dummy card numbers shown below.", "error");
+    completePaymentMutation.mutate(paymentId);
   };
 
   const isProcessingPayment = completePaymentMutation.isPending || failPaymentMutation.isPending;
@@ -187,65 +156,53 @@ export default function PaymentPage() {
     const isNotFound = error instanceof ApiError && error.status === 404;
 
     return (
-      <>
-        {paymentToast}
-        <PaymentPageState
-          eyebrow={isNotFound ? "Payment Not Found" : "Unable to Load Payment"}
-          title={isNotFound ? "This payment could not be found" : "Something went wrong"}
-          description={
-            isNotFound
-              ? "Go to Manage Orders and select a purchase request to start or resume payment."
-              : "The payment could not be loaded. Go to Manage Orders and try again."
-          }
-          actionLabel="Go to Manage Orders"
-          onAction={() => router.push("/order-manage")}
-        />
-      </>
+      <PaymentPageState
+        eyebrow={isNotFound ? "Payment Not Found" : "Unable to Load Payment"}
+        title={isNotFound ? "This payment could not be found" : "Something went wrong"}
+        description={
+          isNotFound
+            ? "Go to Manage Orders and select a purchase request to start or resume payment."
+            : "The payment could not be loaded. Go to Manage Orders and try again."
+        }
+        actionLabel="Go to Manage Orders"
+        onAction={() => router.push("/order-manage")}
+      />
     );
   }
 
   if (!payment) {
     return (
-      <>
-        {paymentToast}
-        <PaymentPageState
-          eyebrow="Payment Not Found"
-          title="Payment data is unavailable"
-          description="Go to Manage Orders and select a purchase request to start or resume payment."
-          actionLabel="Go to Manage Orders"
-          onAction={() => router.push("/order-manage")}
-        />
-      </>
+      <PaymentPageState
+        eyebrow="Payment Not Found"
+        title="Payment data is unavailable"
+        description="Go to Manage Orders and select a purchase request to start or resume payment."
+        actionLabel="Go to Manage Orders"
+        onAction={() => router.push("/order-manage")}
+      />
     );
   }
 
   if (payment.status === "PAID") {
     return (
-      <>
-        {paymentToast}
-        <PaymentPageState
-          eyebrow="Payment Complete"
-          title="Payment completed successfully"
-          description="The order has been approved and the payment is complete."
-          actionLabel="View Order History"
-          onAction={() => router.push("/order-history")}
-          variant="success"
-        />
-      </>
+      <PaymentPageState
+        eyebrow="Payment Complete"
+        title="Payment completed successfully"
+        description="The order has been approved and the payment is complete."
+        actionLabel="View Order History"
+        onAction={() => router.push("/order-history")}
+        variant="success"
+      />
     );
   }
   if (payment.status === "FAILED") {
     return (
-      <>
-        {paymentToast}
-        <PaymentPageState
-          eyebrow="Payment Failed"
-          title="This payment attempt was unsuccessful"
-          description="Return to Manage Orders and select Approve to try the payment again."
-          actionLabel="Return to Manage Orders"
-          onAction={() => router.push("/order-manage")}
-        />
-      </>
+      <PaymentPageState
+        eyebrow="Payment Failed"
+        title="This payment attempt was unsuccessful"
+        description="Return to Manage Orders and select Approve to try the payment again."
+        actionLabel="Return to Manage Orders"
+        onAction={() => router.push("/order-manage")}
+      />
     );
   }
 
@@ -257,22 +214,18 @@ export default function PaymentPage() {
 
   if (!canProcessPayment) {
     return (
-      <>
-        {paymentToast}
-        <PaymentPageState
-          eyebrow="Payment Unavailable"
-          title="This payment can no longer be processed here"
-          description="Go to Manage Orders and select Approve to continue."
-          actionLabel="Go to Manage Orders"
-          onAction={() => router.push("/order-manage")}
-        />
-      </>
+      <PaymentPageState
+        eyebrow="Payment Unavailable"
+        title="This payment can no longer be processed here"
+        description="Go to Manage Orders and select Approve to continue."
+        actionLabel="Go to Manage Orders"
+        onAction={() => router.push("/order-manage")}
+      />
     );
   }
 
   return (
     <main className="min-h-screen bg-primary-25 px-4 py-8 sm:px-6 sm:py-12">
-      {paymentToast}
       <div className="mx-auto w-full max-w-[1040px]">
         <Link
           href={`/order-manage/${payment.orderId}`}
