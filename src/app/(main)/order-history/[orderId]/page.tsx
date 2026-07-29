@@ -28,7 +28,7 @@ const LoadingComponent = () => (
 // Optimized error component
 const ErrorComponent = ({ error }: { error: string | null }) => (
   <div className="min-h-screen bg-white flex items-center justify-center">
-    <div className="text-lg text-red-600">{error || "주문 내역을 찾을 수 없습니다."}</div>
+    <div className="text-lg text-red-600">{error || "Order details could not be found."}</div>
   </div>
 );
 
@@ -68,7 +68,7 @@ export default function OrderHistoryDetailPage({}: TOrderHistoryDetailPageProps)
       });
     } catch {
       requestAnimationFrame(() => {
-        setError("주문 내역을 불러오는데 실패했습니다.");
+        setError("Failed to load the order details.");
         setIsLoading(false);
       });
     }
@@ -88,9 +88,9 @@ export default function OrderHistoryDetailPage({}: TOrderHistoryDetailPageProps)
   // Memoized page title
   const pageTitle = useMemo(() => {
     if (orderData) {
-      return `구매 내역 상세 - ${orderData.products?.length || 0}개 상품`;
+      return `Order Details - ${orderData.products?.length || 0} products`;
     }
-    return "구매 내역 상세";
+    return "Order Details";
   }, [orderData]);
 
   // Memoized main content to reduce layout shift.
@@ -100,7 +100,7 @@ export default function OrderHistoryDetailPage({}: TOrderHistoryDetailPageProps)
     return (
       <div className="min-h-screen bg-white">
         <div className="w-full max-w-7xl mx-auto pt-[30px] flex flex-col justify-start items-start gap-[23px]">
-          <div className="self-stretch justify-center text-primary-950 text-lg font-bold ">구매 내역 상세</div>
+          <div className="self-stretch justify-center text-primary-950 text-lg font-bold ">Order Details</div>
 
           <Suspense
             fallback={
@@ -109,7 +109,7 @@ export default function OrderHistoryDetailPage({}: TOrderHistoryDetailPageProps)
           >
             <OrderItemsSection
               products={orderData.products}
-              title="구매 품목"
+              title="Order Items"
               productsPriceTotal={orderData.productsPriceTotal}
               shippingFee={orderData.deliveryFee}
             />
@@ -155,7 +155,7 @@ export default function OrderHistoryDetailPage({}: TOrderHistoryDetailPageProps)
               onClick={handleGoToOrderHistory}
               type="button"
             >
-              Back to List
+              Back to Order History
             </button>
           </div>
         </div>
@@ -167,8 +167,8 @@ export default function OrderHistoryDetailPage({}: TOrderHistoryDetailPageProps)
     return (
       <>
         <Head>
-          <title>구매 내역 상세 - 로딩 중</title>
-          <meta name="description" content="구매 내역을 불러오는 중입니다." />
+          <title>Order Details - Loading</title>
+          <meta name="description" content="Loading order details." />
           <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -203,8 +203,8 @@ export default function OrderHistoryDetailPage({}: TOrderHistoryDetailPageProps)
     return (
       <>
         <Head>
-          <title>구매 내역 상세 - 오류</title>
-          <meta name="description" content="구매 내역을 불러오는데 실패했습니다." />
+          <title>Order Details - Error</title>
+          <meta name="description" content="Failed to load the order details." />
           <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         </Head>
         <ErrorComponent error={error} />
@@ -216,10 +216,7 @@ export default function OrderHistoryDetailPage({}: TOrderHistoryDetailPageProps)
     <>
       <Head>
         <title>{pageTitle}</title>
-        <meta
-          name="description"
-          content={`구매 내역 상세 페이지입니다. ${orderData.products?.length || 0}개의 상품이 포함되어 있습니다.`}
-        />
+        <meta name="description" content={`Order details for ${orderData.products?.length || 0} products.`} />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

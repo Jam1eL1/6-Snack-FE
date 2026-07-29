@@ -136,7 +136,7 @@ const OrderHistoryPage = () => {
                   </div>
                 </div>
                 <div className="relative justify-center text-primary-600 text-sm font-normal">
-                  Last month's budget was{" "}
+                  Last month’s budget was{" "}
                   {safeBudgetData ? formatNumber(safeBudgetData.previousMonthBudget) : formatCurrency(0)}.
                 </div>
               </div>
@@ -368,7 +368,7 @@ const OrderHistoryPage = () => {
                 </div>
               </div>
               <div className="justify-center text-primary-600 text-base font-normal leading-relaxed">
-                Last month's budget was
+                Last month’s budget was
                 <br />
                 {safeBudgetData ? formatNumber(safeBudgetData.previousMonthBudget) : formatCurrency(0)}.
               </div>
@@ -602,7 +602,7 @@ const OrderHistoryPage = () => {
               </div>
               <div className="flex flex-col justify-start items-start gap-2">
                 <div className="justify-center text-primary-600 text-base font-normal leading-relaxed">
-                  Last month's budget was
+                  Last month’s budget was
                   <br />
                   {safeBudgetData ? formatNumber(safeBudgetData.previousMonthBudget) : formatCurrency(0)}.
                 </div>
