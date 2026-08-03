@@ -46,6 +46,3 @@ next-env.d.ts
 
 # documentation
 Convention.md
-
-# Sentry Config File
-.env.sentry-build-plugin

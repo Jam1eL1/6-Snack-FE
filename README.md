@@ -112,7 +112,6 @@
 ### 🛠 개발 도구
 [![ESLint](https://img.shields.io/badge/ESLint-4B32C3?style=for-the-badge&logo=eslint&logoColor=white)](https://eslint.org/)
 [![Prettier](https://img.shields.io/badge/Prettier-F7B93E?style=for-the-badge&logo=prettier&logoColor=black)](https://prettier.io/)
-[![Sentry](https://img.shields.io/badge/Sentry-362D59?style=for-the-badge&logo=sentry&logoColor=white)](https://sentry.io/)
 
 ### 🔧 유틸리티
 [![clsx](https://img.shields.io/badge/clsx-000000?style=for-the-badge)](https://github.com/lukeed/clsx)
@@ -312,4 +311,3 @@ src/
 
 
 </details>
-
