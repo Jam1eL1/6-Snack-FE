@@ -18,17 +18,6 @@ export function proxy(request: NextRequest) {
 
   // Read the authentication tokens from cookies.
   const authToken = request.cookies.get("accessToken")?.value;
-  const refreshToken = request.cookies.get("refreshToken")?.value;
-
-  // Users without either token may access only landing, sign-in, and sign-up paths.
-  if (!authToken && !refreshToken) {
-    const allowedPaths = ["/", "/signin"];
-    const isSignupPath = pathname === "/signup" || pathname.startsWith("/signup/");
-    const isAllowed = allowedPaths.includes(pathname) || isSignupPath;
-    if (!isAllowed) {
-      return NextResponse.redirect(new URL("/signin", request.url));
-    }
-  }
 
   // Extract the user role from the access token.
   const userRole = authToken ? getUserRoleFromToken(authToken) : null;
@@ -45,8 +34,6 @@ export function proxy(request: NextRequest) {
     // Redirect authenticated users to the main page.
     return NextResponse.redirect(new URL("/", request.url));
   }
-
-  // Allow protected paths without an access token so automatic refresh can run.
 
   // Apply role-based access control only to authenticated users.
   if (isAuthenticated && userRole) {
