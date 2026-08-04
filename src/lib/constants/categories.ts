@@ -29,14 +29,12 @@ export const CATEGORIES = {
       { id: 13, name: "Sparkling Water" },
     ],
 
-    ReadyToEat: [
-      // Key changed from "Ready-to-Eat" to "ReadyToEat" to be safe with object property access
+    "Ready-to-Eat": [
       { id: 15, name: "Instant Noodles" },
       { id: 16, name: "Cup Noodles" },
     ],
 
-    OfficeSupplies: [
-      // Key changed from "Office Supplies" to "OfficeSupplies" to be safe
+    "Office Supplies": [
       { id: 18, name: "Stationery" },
       { id: 19, name: "Disposables" },
     ],
