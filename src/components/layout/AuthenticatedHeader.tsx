@@ -79,7 +79,7 @@ export default function AuthenticatedHeader() {
       commonItems.push({ id: "profile", label: "Account", href: "/profile" });
     }
 
-    commonItems.push({ id: "logout", label: "Log Out", href: "" });
+    commonItems.push({ id: "logout", label: "Sign Out", href: "" });
 
     return commonItems;
   };
@@ -207,7 +207,7 @@ export default function AuthenticatedHeader() {
             onClick={signOut}
             className="cursor-pointer hidden sm:block font-normal text-primary-950 hover:font-bold transition-all"
           >
-            Log Out
+            Sign Out
           </button>
         </div>
 

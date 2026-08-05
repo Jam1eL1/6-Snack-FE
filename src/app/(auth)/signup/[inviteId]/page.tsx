@@ -108,7 +108,7 @@ export default function InviteSignUpPage() {
           href="/signin"
           className="rounded-[2px] inline-flex justify-center items-center bg-primary-100 font-semibold text-[16px]/[20px] tracking-tight w-full max-w-[230px] min-h-[56px] sm:max-w-[310px] sm:h-[64px]"
         >
-          Go back to the login page
+          Go back to the sign-in page
         </Link>
       </div>
     );
@@ -280,7 +280,7 @@ export default function InviteSignUpPage() {
             Already have an account?
             <Link href="/signin">
               <span className="text-primary-950 text-base/[20px] tracking-tight font-bold underline decoration-primary-950 underline-offset-2 ml-1">
-                Log In
+                Sign In
               </span>
             </Link>
           </p>

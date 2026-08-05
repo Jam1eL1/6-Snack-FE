@@ -16,7 +16,7 @@ export default function GuestHeader() {
   const router = useRouter();
 
   const menuItems = [
-    { id: "signin", label: "Log In", href: "/signin" },
+    { id: "signin", label: "Sign In", href: "/signin" },
     { id: "super-admin-signup", label: "Company Admin Sign Up", href: "/signup/super-admin" },
   ];
 
@@ -58,7 +58,7 @@ export default function GuestHeader() {
             <div className="relative w-[24px] h-[24px]">
               <Image src={ic_lock} alt="Lock Icon" fill className="object-contain" />
             </div>
-            <p className="font-normal text-primary-950">Log In</p>
+            <p className="font-normal text-primary-950">Sign In</p>
           </Link>
           {/* Company Admin Sign Up */}
           <Link href="/signup/super-admin" className="flex gap-1 items-center">
