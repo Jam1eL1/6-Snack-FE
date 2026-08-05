@@ -176,7 +176,7 @@ export default function AuthenticatedHeader() {
         <div className="hidden md:block">
           <Link href="/my/favorites">
             <div className="flex items-center justify-center p-1 gap-0.5">
-              <LikeIconSvg isLiked={false} className="pointer-events-none" />
+              <LikeIconSvg isLiked={pathname === "/my/favorites"} className="pointer-events-none" />
               <p
                 className={`text-primary-950 text-sm/[17px] tracking-tight ${pathname === "/my/favorites" ? "font-bold" : "font-normal"}`}
               >
