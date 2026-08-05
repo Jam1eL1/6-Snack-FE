@@ -3,6 +3,7 @@ import React, { Fragment } from "react";
 import Desktop from "./Desktop";
 import { formatDate } from "@/lib/utils/formatDate.util";
 import { formatCurrency } from "@/lib/utils/currency.util";
+import Link from "next/link";
 
 type TCategory = {
   id: number;
@@ -67,9 +68,11 @@ export default function ProductList({ products }: TProductListProps) {
                 <div className="flex flex-col min-w-[217px] gap-[10px]">
                   <div className="flex flex-col gap-[6px] sm:gap-[4px]">
                     <p className="font-normal text-[12px]/[15px] text-primary-500">{item.category.name}</p>
-                    <p className="font-normal text-[14px]/[17px] tracking-tight text-primary-950 line-clamp-1 sm:text-[16px]/[20px]">
-                      {item.name}
-                    </p>
+                    <Link href={`/products/${item.id}`} className="block min-w-0 hover:underline">
+                      <p className="font-normal text-[14px]/[17px] tracking-tight text-primary-950 line-clamp-1 sm:text-[16px]/[20px]">
+                        {item.name}
+                      </p>
+                    </Link>
                     <p className="font-extrabold text-[14px]/[17px] tracking-tight text-primary-950">
                       {formatCurrency(item.price)}
                     </p>

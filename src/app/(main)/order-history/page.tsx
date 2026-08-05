@@ -1,9 +1,8 @@
 "use client";
 
-import ChevronLeftIcon from "@/assets/icons/ic_chevron_left.svg";
-import ChevronRightIcon from "@/assets/icons/ic_chevron_right.svg";
 import Dropdown from "@/components/common/DropDown";
 import NoContent from "@/components/common/NoContent";
+import Pagination from "@/components/common/Pagination";
 import { useOrderHistory } from "@/hooks/useOrderHistory";
 import { formatCurrency } from "@/lib/utils/currency.util";
 import Image from "next/image";
@@ -302,34 +301,12 @@ const OrderHistoryPage = () => {
               ))
             : emptyOrdersContent}
         </section>
-        <nav className="self-stretch h-10 flex justify-between items-center px-4" aria-label="Pagination">
-          {/* Mobile Pagination */}
-          <div className="text-primary-800 text-base font-normal">
-            {currentPage} of {totalPages}
-          </div>
-          <div className="flex items-center gap-7">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="flex items-center gap-1.5 cursor-pointer disabled:cursor-default"
-            >
-              <div className="w-6 h-6 relative overflow-hidden">
-                <Image src={ChevronLeftIcon} alt="Chevron Left" width={24} height={24} />
-              </div>
-              <div className="text-primary-800 text-base font-normal">Prev</div>
-            </button>
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="flex items-center gap-[5px] cursor-pointer disabled:cursor-default"
-            >
-              <div className="text-primary-800 text-base font-normal">Next</div>
-              <div className="w-6 h-6 relative overflow-hidden">
-                <Image src={ChevronRightIcon} alt="Chevron Right" width={24} height={24} />
-              </div>
-            </button>
-          </div>
-        </nav>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+          className="px-4"
+        />
       </main>
 
       {/* Tablet Layout */}
@@ -537,34 +514,12 @@ const OrderHistoryPage = () => {
               ))
             : emptyOrdersContent}
         </section>
-        <nav className="self-stretch h-10 flex justify-between items-center px-8" aria-label="Pagination">
-          {/* Tablet Pagination */}
-          <div className="text-primary-800 text-base font-normal">
-            {currentPage} of {totalPages}
-          </div>
-          <div className="flex items-center gap-7">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="flex items-center gap-1.5 cursor-pointer disabled:cursor-default"
-            >
-              <div className="w-6 h-6 relative overflow-hidden">
-                <Image src={ChevronLeftIcon} alt="Chevron Left" width={24} height={24} />
-              </div>
-              <div className="text-primary-800 text-base font-normal">Prev</div>
-            </button>
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="flex items-center gap-[5px] cursor-pointer disabled:cursor-default"
-            >
-              <div className="text-primary-800 text-base font-normal">Next</div>
-              <div className="w-6 h-6 relative overflow-hidden">
-                <Image src={ChevronRightIcon} alt="Chevron Right" width={24} height={24} />
-              </div>
-            </button>
-          </div>
-        </nav>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+          className="px-8"
+        />
       </main>
 
       {/* Desktop Layout */}
@@ -746,36 +701,12 @@ const OrderHistoryPage = () => {
             </div>
           </div>
         </section>
-        <nav className="self-stretch h-10 flex justify-between items-center px-10" aria-label="Pagination">
-          {/* Desktop Pagination */}
-          <div className="flex items-center">
-            <div className="text-center justify-start text-primary-800 text-base font-normal">
-              {currentPage} of {totalPages}
-            </div>
-          </div>
-          <div className="flex items-center gap-7">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="flex justify-start items-center gap-1.5 cursor-pointer disabled:cursor-default"
-            >
-              <div className="w-6 h-6 relative overflow-hidden">
-                <Image src={ChevronLeftIcon} alt="Chevron Left" width={24} height={24} />
-              </div>
-              <div className="text-center justify-start text-primary-800 text-base font-normal">Prev</div>
-            </button>
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="flex justify-start items-center gap-[5px] cursor-pointer disabled:cursor-default"
-            >
-              <div className="text-center justify-start text-primary-800 text-base font-normal">Next</div>
-              <div className="w-6 h-6 relative overflow-hidden">
-                <Image src={ChevronRightIcon} alt="Chevron Right" width={24} height={24} />
-              </div>
-            </button>
-          </div>
-        </nav>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+          className="px-10"
+        />
       </main>
     </>
   );
