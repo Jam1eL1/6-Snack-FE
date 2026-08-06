@@ -137,7 +137,7 @@ export default function AuthenticatedHeader() {
       <div className="flex items-center justify-center md:gap-10">
         <Link href="/products">
           <div className="relative w-[102.75px] h-[44px]">
-            <Image src={img_logo} fill alt="Snack logo" className="object-contain" />
+            <Image src={img_logo} fill alt="Snack logo" loading="eager" className="object-contain" />
           </div>
         </Link>
         <div className="hidden md:block">

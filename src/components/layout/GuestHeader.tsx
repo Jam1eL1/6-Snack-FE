@@ -36,7 +36,7 @@ export default function GuestHeader() {
     <header className="w-full h-14 sm:h-25 md:h-[90px] sm:px-[24px] sm:py-[32px] md:px-[100px] flex justify-between items-center overflow-hidden pl-[10px] pr-[24px] pt-[16px] pb-[16px] bg-white/90 shadow-[0px_4px_6px_0px_rgba(0,0,0,0.02)] ">
       <Link href="/">
         <div className="relative w-[102.75px] h-[44px]">
-          <Image src={img_logo} fill alt="Snack Logo" className="object-contain" />
+          <Image src={img_logo} fill alt="Snack Logo" loading="eager" className="object-contain" />
         </div>
       </Link>
       <HamburgerMenuIconSvg className="sm:hidden text-primary-400" onClick={handleMenuClick} />
