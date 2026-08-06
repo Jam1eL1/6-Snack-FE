@@ -16,7 +16,7 @@ type TDropdownProps = {
   height?: string;
 };
 
-const defaultOptions = ["Newest", "Popular", "Lowest Price", "Highest Price"];
+const defaultOptions = ["Newest", "Popular", "Price: Low", "Price: High"];
 
 export default function Dropdown({
   options = [],

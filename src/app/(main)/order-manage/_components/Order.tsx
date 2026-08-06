@@ -20,8 +20,8 @@ import { useOrderStatusUpdate } from "@/hooks/useOrderStatusUpdate";
 
 const ORDER_BY_MAP: Record<string, TOrderSort> = {
   Newest: "latest",
-  "Lowest Price": "priceLow",
-  "Highest Price": "priceHigh",
+  "Price: Low": "priceLow",
+  "Price: High": "priceHigh",
 };
 
 export default function Order() {
@@ -101,7 +101,7 @@ export default function Order() {
         <div role="group" aria-label="Sort options">
           <Dropdown
             onChange={(selected) => setOrderBy(ORDER_BY_MAP[selected] ?? ORDER_BY_MAP.Newest)}
-            options={["Newest", "Lowest Price", "Highest Price"]}
+            options={["Newest", "Price: Low", "Price: High"]}
             aria-label="Sort order list"
           />
         </div>

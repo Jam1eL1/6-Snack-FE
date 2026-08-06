@@ -32,9 +32,9 @@ export default function ProductsPageContent() {
 
   const sortOptions = [
     { label: "Newest", value: "latest" as const },
-    { label: "Best selling", value: "popular" as const },
-    { label: "Price: Low to high", value: "low" as const },
-    { label: "Price: High to low", value: "high" as const },
+    { label: "Popular", value: "popular" as const },
+    { label: "Price: Low", value: "low" as const },
+    { label: "Price: High", value: "high" as const },
   ];
 
   const searchParams = useSearchParams();
@@ -64,9 +64,9 @@ export default function ProductsPageContent() {
   const handleSortChange = (selectedValue: string) => {
     const sortValueMap: Record<string, TSortOptions> = {
       Newest: "latest",
-      "Best selling": "popular",
-      "Price: Low to high": "low",
-      "Price: High to low": "high",
+      Popular: "popular",
+      "Price: Low": "low",
+      "Price: High": "high",
     };
 
     const sortValue = sortValueMap[selectedValue];

@@ -108,11 +108,11 @@ const OrderHistoryPage = () => {
           <nav aria-label="Sort options" className="flex-shrink-0">
             <div className="relative custom-sort-dropdown w-auto" role="region">
               <Dropdown
-                options={["Newest", "Lowest Price", "Highest Price"]}
+                options={["Newest", "Price: Low", "Price: High"]}
                 onChange={(selectedOption: string) => {
                   if (selectedOption === "Newest") setSortBy("latest");
-                  else if (selectedOption === "Lowest Price") setSortBy("priceLow");
-                  else if (selectedOption === "Highest Price") setSortBy("priceHigh");
+                  else if (selectedOption === "Price: Low") setSortBy("priceLow");
+                  else if (selectedOption === "Price: High") setSortBy("priceHigh");
                 }}
               />
             </div>
@@ -319,11 +319,11 @@ const OrderHistoryPage = () => {
           <nav aria-label="Sort options" className="flex-shrink-0">
             <div className="relative custom-sort-dropdown w-auto" role="region">
               <Dropdown
-                options={["Newest", "Lowest Price", "Highest Price"]}
+                options={["Newest", "Price: Low", "Price: High"]}
                 onChange={(selectedOption: string) => {
                   if (selectedOption === "Newest") setSortBy("latest");
-                  else if (selectedOption === "Lowest Price") setSortBy("priceLow");
-                  else if (selectedOption === "Highest Price") setSortBy("priceHigh");
+                  else if (selectedOption === "Price: Low") setSortBy("priceLow");
+                  else if (selectedOption === "Price: High") setSortBy("priceHigh");
                 }}
               />
             </div>
@@ -532,11 +532,11 @@ const OrderHistoryPage = () => {
           <nav aria-label="Sort options" className="flex-shrink-0">
             <div className="relative custom-sort-dropdown w-auto" role="region">
               <Dropdown
-                options={["Newest", "Lowest Price", "Highest Price"]}
+                options={["Newest", "Price: Low", "Price: High"]}
                 onChange={(selectedOption: string) => {
                   if (selectedOption === "Newest") setSortBy("latest");
-                  else if (selectedOption === "Lowest Price") setSortBy("priceLow");
-                  else if (selectedOption === "Highest Price") setSortBy("priceHigh");
+                  else if (selectedOption === "Price: Low") setSortBy("priceLow");
+                  else if (selectedOption === "Price: High") setSortBy("priceHigh");
                 }}
               />
             </div>

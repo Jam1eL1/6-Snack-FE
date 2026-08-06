@@ -44,9 +44,9 @@ export default function MyOrderListPage() {
   const sortedRequests = (() => {
     const copy = [...requests];
     switch (sortOption) {
-      case "Lowest Price":
+      case "Price: Low":
         return copy.sort((a, b) => a.productsPriceTotal - b.productsPriceTotal);
-      case "Highest Price":
+      case "Price: High":
         return copy.sort((a, b) => b.productsPriceTotal - a.productsPriceTotal);
       default:
         return copy.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
@@ -108,7 +108,7 @@ export default function MyOrderListPage() {
     <main className="flex flex-col items-center md:px-0 pt-10 pb-40 min-h-[calc(100vh-112px)]">
       <div className="w-full max-w-[1400px] py-4 flex justify-between items-center">
         <h1 className="text-[18px]/[22px] font-bold text-primary-950">My Requests</h1>
-        <Dropdown onChange={setSortOption} options={["Newest", "Lowest Price", "Highest Price"]} />
+        <Dropdown onChange={setSortOption} options={["Newest", "Price: Low", "Price: High"]} />
       </div>
 
       <div className="w-full max-w-[1400px] flex-1">
