@@ -70,7 +70,7 @@ export default function RequestListItem({
           </div>
         </div>
         <div className="flex flex-col gap-1">
-          <Link href={`/my/order-list/${orderId}`} className="text-blue-600">
+          <Link href={`/my/order-list/${orderId}`} className="text-blue-600 hover:text-blue-800 hover:underline">
             {productName}
           </Link>
           <div className="text-sm text-primary-950">{formatCurrency(price)}</div>
@@ -89,7 +89,7 @@ export default function RequestListItem({
       {/* Tablet & Desktop */}
       <div className="hidden sm:grid grid-cols-[1fr_1.5fr_1fr_1fr_1fr] items-center w-full h-24 md:gap-10 lg:gap-20 border-b border-primary-100">
         <div className="min-w-[90px] text-sm md:text-base text-primary-950">{requestDate}</div>
-        <Link href={`/my/order-list/${orderId}`} className="text-blue-600">
+        <Link href={`/my/order-list/${orderId}`} className="text-blue-600 hover:text-blue-800 hover:underline">
           {productName}
         </Link>
         <div className="min-w-[90px] text-sm md:text-base text-primary-950">{formatCurrency(price)}</div>

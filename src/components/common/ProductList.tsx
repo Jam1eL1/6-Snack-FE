@@ -68,8 +68,11 @@ export default function ProductList({ products }: TProductListProps) {
                 <div className="flex flex-col min-w-[217px] gap-[10px]">
                   <div className="flex flex-col gap-[6px] sm:gap-[4px]">
                     <p className="font-normal text-[12px]/[15px] text-primary-500">{item.category.name}</p>
-                    <Link href={`/products/${item.id}`} className="block min-w-0 hover:underline">
-                      <p className="font-normal text-[14px]/[17px] tracking-tight text-primary-950 line-clamp-1 sm:text-[16px]/[20px]">
+                    <Link
+                      href={`/products/${item.id}`}
+                      className="block min-w-0 text-blue-600 hover:text-blue-800 hover:underline"
+                    >
+                      <p className="font-normal text-[14px]/[17px] tracking-tight line-clamp-1 sm:text-[16px]/[20px]">
                         {item.name}
                       </p>
                     </Link>
@@ -77,9 +80,15 @@ export default function ProductList({ products }: TProductListProps) {
                       {formatCurrency(item.price)}
                     </p>
                   </div>
-                  <p className="font-normal text-[14px]/[17px] tracking-tight text-primary-600 truncate">
-                    {item.linkUrl.split("https://")}
-                  </p>
+                  <a
+                    href={item.linkUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={item.linkUrl}
+                    className="block truncate font-normal text-[14px]/[17px] tracking-tight text-primary-600 hover:underline"
+                  >
+                    {item.linkUrl.replace(/^https?:\/\//, "")}
+                  </a>
                 </div>
               </div>
             </div>
@@ -93,9 +102,12 @@ export default function ProductList({ products }: TProductListProps) {
                       <Image src={item.imageUrl} alt={item.name} fill className="object-contain" />
                     </div>
                   </div>
-                  <p className="font-normal text-[16px]/[20px] tracking-tight text-primary-950 line-clamp-2">
-                    {item.name}
-                  </p>
+                  <Link
+                    href={`/products/${item.id}`}
+                    className="block min-w-0 text-blue-600 hover:text-blue-800 hover:underline"
+                  >
+                    <p className="font-normal text-[16px]/[20px] tracking-tight line-clamp-2">{item.name}</p>
+                  </Link>
                 </div>
                 <p className="w-[180px] font-normal text-[16px]/[20px] tracking-tight text-primary-950">
                   {formatDate(item.createdAt)}
@@ -106,9 +118,15 @@ export default function ProductList({ products }: TProductListProps) {
                 <p className="w-[160px] font-normal text-[16px]/[20px] tracking-tight text-primary-950">
                   {formatCurrency(item.price)}
                 </p>
-                <p className="w-[112px] font-normal text-[16px]/[20px] tracking-tight text-primary-950 truncate">
-                  {item.linkUrl.split("https://")}
-                </p>
+                <a
+                  href={item.linkUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={item.linkUrl}
+                  className="block w-[112px] truncate font-normal text-[16px]/[20px] tracking-tight text-primary-600 hover:underline"
+                >
+                  {item.linkUrl.replace(/^https?:\/\//, "")}
+                </a>
               </div>
             </div>
           </Desktop>

@@ -96,7 +96,7 @@ export default function RequestList({ orderRequests, onClickReject, onClickAppro
                     </div>
                     <div className="flex flex-col gap-[8px]">
                       <button
-                        className="font-normal text-[14px]/[17px] tracking-tight text-blue-600 cursor-pointer hover:text-blue-800 truncate text-left inline-block w-fit"
+                        className="font-normal text-[14px]/[17px] tracking-tight text-blue-600 cursor-pointer hover:text-blue-800 hover:underline truncate text-left inline-block w-fit"
                         onClick={() => handleProductNameClick(request.id, request.status.toLowerCase())}
                         aria-label={`View ${request.productName} details`}
                       >
@@ -151,7 +151,7 @@ export default function RequestList({ orderRequests, onClickReject, onClickAppro
                   {formatDate(request.createdAt)}
                 </div>
                 <button
-                  className="flex min-w-0 cursor-pointer truncate text-left font-normal text-[16px]/[20px] tracking-tight text-blue-600 hover:text-blue-800"
+                  className="flex min-w-0 cursor-pointer truncate text-left font-normal text-[16px]/[20px] tracking-tight text-blue-600 hover:text-blue-800 hover:underline"
                   onClick={() => handleProductNameClick(request.id, request.status.toLowerCase())}
                   role="cell"
                   aria-label="Product information"
