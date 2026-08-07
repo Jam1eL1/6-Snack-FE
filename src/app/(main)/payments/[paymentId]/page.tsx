@@ -14,7 +14,6 @@ import InvalidPaymentState from "./_components/InvalidPaymentState";
 import PaymentLoadingState from "./_components/PaymentLoadingState";
 import PaymentPageState from "./_components/PaymentPageState";
 import { SessionExpiredError } from "@/lib/api/auth.errors";
-import { useEffect } from "react";
 
 const fieldClassName =
   "h-11 w-full rounded-md border border-primary-200 bg-white px-3 text-sm text-primary-950 outline-none transition placeholder:text-primary-400 focus-within:border-primary-700";
@@ -82,16 +81,6 @@ export default function PaymentPage() {
     },
   });
   const isValidPaymentId = paymentId > 0 && Number.isInteger(paymentId);
-
-  useEffect(() => {
-    if (payment?.status !== "PAID") return;
-
-    const redirectTimer = setTimeout(() => {
-      router.push("/order-history");
-    }, 3000);
-
-    return () => clearTimeout(redirectTimer);
-  }, [payment?.status, router]);
 
   if (!isValidPaymentId) {
     return <InvalidPaymentState onReturnToOrders={() => router.push("/order-manage")} />;
@@ -191,6 +180,7 @@ export default function PaymentPage() {
         actionLabel="View Order History"
         onAction={() => router.push("/order-history")}
         variant="success"
+        centeredInViewport
       />
     );
   }
@@ -202,6 +192,7 @@ export default function PaymentPage() {
         description="Return to Manage Orders and select Approve to try the payment again."
         actionLabel="Return to Manage Orders"
         onAction={() => router.push("/order-manage")}
+        centeredInViewport
       />
     );
   }

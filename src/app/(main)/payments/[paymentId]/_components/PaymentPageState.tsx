@@ -7,6 +7,7 @@ type TPaymentPageStateProps = {
   actionLabel: string;
   onAction: () => void;
   variant?: "default" | "success";
+  centeredInViewport?: boolean;
 };
 
 export default function PaymentPageState({
@@ -16,11 +17,18 @@ export default function PaymentPageState({
   actionLabel,
   onAction,
   variant = "default",
+  centeredInViewport = false,
 }: TPaymentPageStateProps) {
   const Icon = variant === "success" ? CircleCheck : CircleX;
 
   return (
-    <main className="flex min-h-[70vh] items-center justify-center px-4">
+    <main
+      className={`flex items-center justify-center px-4 ${
+        centeredInViewport
+          ? "min-h-[calc(100dvh-80px)] sm:min-h-[calc(100dvh-124px)] md:min-h-[calc(100dvh-114px)]"
+          : "min-h-[70vh]"
+      }`}
+    >
       <div className="w-full max-w-md rounded-xl border border-primary-100 bg-white p-8 text-center shadow-[0_12px_40px_rgba(34,34,34,0.08)]">
         <Icon
           className={`mx-auto size-10 ${variant === "success" ? "text-secondary-500" : "text-error-500"}`}
