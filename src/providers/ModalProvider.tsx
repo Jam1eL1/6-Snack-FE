@@ -1,6 +1,7 @@
 "use client";
 
 import { TChildrenProps } from "@/types/children.types";
+import { usePathname } from "next/navigation";
 import React, { createContext, ReactElement, useContext, useEffect, useRef, useState } from "react";
 
 type TModalContext = {
@@ -23,16 +24,27 @@ export const useModal = () => {
 export default function ModalProvider({ children }: TChildrenProps) {
   const [modal, setModal] = useState<ReactElement | null>(null);
   const modalRef = useRef<HTMLDivElement | null>(null);
+  const pathname = usePathname();
 
   const openModal = (component: ReactElement) => {
     setModal(component);
-    document.body.style.overflow = "hidden";
   };
 
   const closeModal = () => {
     setModal(null);
-    document.body.style.overflow = "auto";
   };
+
+  useEffect(() => {
+    setModal(null);
+  }, [pathname]);
+
+  useEffect(() => {
+    document.body.style.overflow = modal ? "hidden" : "";
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [modal]);
 
   useEffect(() => {
     if (!modal) return;
