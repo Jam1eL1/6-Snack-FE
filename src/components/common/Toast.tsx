@@ -19,9 +19,16 @@ type TToastProps = {
 
 const Toast = ({ text, budget, variant = "error", isVisible, className = "" }: TToastProps) => {
   const [isMounted, setIsMounted] = useState<boolean>(false);
+  const [isAnimatedIn, setIsAnimatedIn] = useState<boolean>(false);
 
   useEffect(() => {
     setIsMounted(true);
+
+    const animationFrame = requestAnimationFrame(() => {
+      setIsAnimatedIn(true);
+    });
+
+    return () => cancelAnimationFrame(animationFrame);
   }, []);
 
   const iconSrc = variant === "success" ? checkIc : exclamationIc;
@@ -33,10 +40,8 @@ const Toast = ({ text, budget, variant = "error", isVisible, className = "" }: T
     <div
       role="alert"
       className={twMerge(
-        "pointer-events-none fixed flex justify-between items-center max-w-[1200px] h-[64px] top-[76px] inset-x-6 mx-auto transition-all duration-500 px-4 py-4 text-[14px]/[22px] text-white tracking-tight bg-black/80 rounded shadow-[0px_10px_8px_0px_rgba(0,0,0,0.1)] backdrop-blur-[30px] font-bold sm:h-[80px] sm:top-[120px] sm:px-[40px] sm:text-[20px]/[25px] md:max-w-[1152px] md:px-[50px]",
-        isVisible
-          ? "z-105 opacity-100 translate-y-0 sm:translate-y-0 md:translate-y-0"
-          : "z-1 opacity-0 translate-y-1/4 sm:translate-y-1/4 md:translate-y-1/4",
+        "pointer-events-none fixed left-1/2 flex h-16 w-[calc(100%-48px)] max-w-[640px] -translate-x-1/2 items-center justify-between rounded bg-black/80 px-4 py-4 text-[14px]/[22px] font-bold tracking-tight text-white shadow-[0px_10px_8px_0px_rgba(0,0,0,0.1)] backdrop-blur-[30px] transition-[opacity,transform] duration-300 ease-out bottom-6 sm:bottom-8 sm:h-20 sm:px-10 sm:text-[20px]/[25px] md:px-12",
+        isVisible && isAnimatedIn ? "z-105 translate-y-0 opacity-100" : "z-1 translate-y-3 opacity-0",
         className,
       )}
     >
