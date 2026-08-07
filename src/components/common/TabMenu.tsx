@@ -13,14 +13,14 @@ export default function TabMenu({ isUserTabActive = false, onUserTabClick, onBud
     <div className="w-full  inline-flex justify-start items-start">
       {/* Member management tab */}
       <div
-        className={`flex-1 px-4 py-3 flex justify-center items-center gap-2 cursor-pointer ${
+        className={`flex min-w-0 flex-1 cursor-pointer items-center justify-center gap-1 px-1 py-3 sm:gap-2 sm:px-4 ${
           isUserTabActive ? "border-b-2 border-primary-950" : "border-b border-primary-200"
         }`}
         onClick={onUserTabClick}
       >
-        <UserIconSvg isActive={isUserTabActive} className="sm:w-6 sm:h-6" />
+        <UserIconSvg isActive={isUserTabActive} className="h-5 w-5 shrink-0 sm:h-6 sm:w-6" />
         <div
-          className={`justify-center text-sm/[17px] sm:text-base/[20px] tracking-tight ${
+          className={`min-w-0 whitespace-nowrap text-center text-[13px]/[16px] tracking-tight sm:text-base/[20px] ${
             isUserTabActive ? "text-primary-950 font-bold" : "text-primary-500"
           }`}
         >
@@ -30,14 +30,14 @@ export default function TabMenu({ isUserTabActive = false, onUserTabClick, onBud
 
       {/* Budget management tab */}
       <div
-        className={`flex-1 px-4 py-3 flex justify-center items-center gap-2 cursor-pointer ${
+        className={`flex min-w-0 flex-1 cursor-pointer items-center justify-center gap-1 px-1 py-3 sm:gap-2 sm:px-4 ${
           !isUserTabActive ? "border-b-2 border-primary-950" : "border-b border-primary-200"
         }`}
         onClick={onBudgetTabClick}
       >
-        <BudgetIconSvg isActive={!isUserTabActive} className="sm:w-6 sm:h-6" />
+        <BudgetIconSvg isActive={!isUserTabActive} className="h-5 w-5 shrink-0 sm:h-6 sm:w-6" />
         <div
-          className={`justify-center text-sm/[17px] sm:text-base/[20px] tracking-tight ${
+          className={`min-w-0 whitespace-nowrap text-center text-[13px]/[16px] tracking-tight sm:text-base/[20px] ${
             !isUserTabActive ? "text-primary-950 font-bold" : "text-primary-500"
           }`}
         >

@@ -98,7 +98,7 @@ export default function InviteMemberModal({
           </p>
         </div>
 
-        <div className="flex flex-col items-center p-[24px] pt-[20px] pb-[100px] sm:p-0 sm:pt-[32px] sm:pb-0">
+        <div className="flex flex-col items-center p-6 pt-5 sm:p-0 sm:pt-8">
           <div className="flex flex-col w-full gap-[32px] mb-[20px] sm:max-w-[480px] sm:mb-0">
             <div className="flex flex-col justify-start items-start gap-5">
               <Input
@@ -177,18 +177,18 @@ export default function InviteMemberModal({
             </div>
           </div>
 
-          <div className="flex justify-center items-center w-full pt-[384px] gap-[20px] sm:pt-0 sm:max-w-[480px] sm:mt-8">
+          <div className="mt-8 flex w-full items-center justify-center gap-3 sm:max-w-[480px] sm:gap-5">
             <Button
               onClick={handleCancel}
               type="white"
               label="Cancel"
-              className="flex justify-center items-center w-full min-w-[155px] sm:max-w-[230px] h-[64px] py-[12px] px-[16px] font-bold"
+              className="h-12 min-w-0 flex-1 px-4 py-3 font-bold sm:h-16 sm:max-w-[230px]"
             />
             <Button
               onClick={handleSubmit}
               type={updateRoleMutation.isPending ? "grayDisabled" : "black"}
               label={updateRoleMutation.isPending ? "Processing..." : mode === "edit" ? "Update Role" : "Invite"}
-              className="flex justify-center items-center w-full  min-w-[155px] sm:max-w-[230px] h-[64px] py-[12px] px-[16px] font-bold"
+              className="h-12 min-w-0 flex-1 px-4 py-3 font-bold sm:h-16 sm:max-w-[230px]"
               disabled={updateRoleMutation.isPending}
             />
           </div>
