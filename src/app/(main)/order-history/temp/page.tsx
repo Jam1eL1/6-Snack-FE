@@ -5,10 +5,10 @@ import Pagination from "@/components/common/Pagination";
 import { useOrderHistory } from "@/hooks/useOrderHistory";
 
 export default function OrderHistoryTempPage() {
-  // const [sortOption, setSortOption] = useState("Newest");
-  // const [currentPage, setCurrentPage] = useState(1);
   const { budgetData, currentItems, totalPages, currentPage, handlePageChange, setSortBy, formatNumber } =
     useOrderHistory("latest");
+  console.log("currentItems:", currentItems);
+  console.log("first order:", currentItems[0]);
 
   const SORT_MAP = {
     Newest: "latest",
@@ -129,7 +129,26 @@ export default function OrderHistoryTempPage() {
         </div>
 
         {/* desktop table here - default hidden then md:block */}
-        <table className="hidden md:block"></table>
+        <table className="hidden md:table w-full table-fixed">
+          <thead>
+            <tr className="font-bold text-base text-primary-500">
+              {["Request Date", "Requested By", "Product", "Order Total", "Approval Date", "Approver"].map((h) => (
+                <th key={h} className="py-[10px] text-left">
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              {/* {cells.map((cell, i) => (
+                <td key={i} className="py-[10px]">
+                  {cell}
+                </td>
+              ))} */}
+            </tr>
+          </tbody>
+        </table>
       </div>
 
       {/* Pagination */}

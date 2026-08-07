@@ -1,3 +1,5 @@
+import type { TAdminOrdersQueryParams } from "@/types/order.types";
+
 export const queryKeys = {
   cartItems: {
     all: ["cartItems"] as const,
@@ -23,7 +25,7 @@ export const queryKeys = {
   },
   adminOrders: {
     all: ["adminOrders"] as const,
-    list: (status: "pending" | "approved") => ["adminOrders", status] as const,
+    list: (params: TAdminOrdersQueryParams) => ["adminOrders", params] as const,
     detailPrefix: ["orderDetail"] as const,
     detail: (orderId: string, status: "pending" | "approved") => ["orderDetail", orderId, status] as const,
   },

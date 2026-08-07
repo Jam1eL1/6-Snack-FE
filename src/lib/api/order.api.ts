@@ -1,28 +1,21 @@
-import {
+import type {
   TAdminOrdersData,
+  TAdminOrdersQueryParams,
   TAdminOrdersResponse,
   TCreateOrderData,
   TCreateOrderResponse,
   TOrderNowResponse,
   TOrderRequestBody,
-  TOrderSort,
   TStartOrderPaymentData,
 } from "@/types/order.types";
 import { cookieFetch } from "./fetchClient.api";
 
-// Retrieve admin order history
-type TGetAdminOrdersParams = {
-  status: "pending" | "approved";
-  offset?: number;
-  limit?: number;
-  orderBy?: TOrderSort;
-};
 export const getAdminOrders = async ({
   status,
-  offset = 0,
-  limit = 4,
-  orderBy = "latest",
-}: TGetAdminOrdersParams): Promise<TAdminOrdersData> => {
+  offset,
+  limit,
+  orderBy,
+}: TAdminOrdersQueryParams): Promise<TAdminOrdersData> => {
   const page = Math.floor(offset / limit) + 1;
   const params = new URLSearchParams({
     status,

@@ -1,6 +1,12 @@
 import type { TPaymentStatus } from "./payment.types";
 export type TOrderSort = "latest" | "priceLow" | "priceHigh";
 
+export type TAdminOrdersQueryParams = {
+  status: "pending" | "approved";
+  offset: number;
+  limit: number;
+  orderBy: TOrderSort;
+};
 export type TOrdersMeta = {
   totalCount: number;
   itemsPerPage: number;

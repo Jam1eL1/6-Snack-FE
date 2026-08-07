@@ -34,7 +34,7 @@ export const useOrderHistory = (sortByDefault: string = "latest", itemsPerPage: 
     isLoading: approvedLoading,
     isError: approvedIsError,
     error: approvedErrorObj,
-  } = useAdminOrders({ status: "approved" }); // offset, limit, and orderBy are handled outside this hook.
+  } = useAdminOrders({ status: "approved", offset: 0, limit: 100, orderBy: "latest" });
 
   const purchaseListLoading = approvedLoading;
   const purchaseListError = approvedIsError ? (approvedErrorObj as Error)?.message : null;
