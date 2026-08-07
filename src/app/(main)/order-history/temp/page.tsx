@@ -1,9 +1,11 @@
 "use client";
 
+import DogSpinner from "@/components/common/DogSpinner";
 import Dropdown from "@/components/common/DropDown";
 import NoContent from "@/components/common/NoContent";
 import Pagination from "@/components/common/Pagination";
 import { useOrderHistoryA } from "@/hooks/useOrderHistoryA";
+import { formatCurrency } from "@/lib/utils/currency.util";
 import { toOrderHistoryRow } from "@/lib/utils/orderHistory.util";
 import type { TOrderSort } from "@/types/order.types";
 import Link from "next/link";
@@ -20,7 +22,7 @@ export default function OrderHistoryTempPage() {
   const { ordersQuery, budgetQuery } = useOrderHistoryA({ offset, limit: ITEMS_PER_PAGE, orderBy });
   const orders = ordersQuery.data?.orders ?? [];
   const totalPages = ordersQuery.data?.meta.totalPages ?? 0;
-  const budgets = budgetQuery.data;
+  const budget = budgetQuery.data;
   const router = useRouter();
 
   const SORT_MAP = {
@@ -30,6 +32,33 @@ export default function OrderHistoryTempPage() {
   } as const;
 
   const rows = orders.map(toOrderHistoryRow);
+  const isLoading = ordersQuery.isPending || budgetQuery.isPending;
+  const isError = ordersQuery.isError || budgetQuery.isError;
+  if (isLoading) {
+    return (
+      <div className="flex min-h-80 items-center justify-center">
+        <DogSpinner />
+      </div>
+    );
+  }
+
+  if (isError || !budget) {
+    return (
+      <p role="alert" className="py-10 text-center text-red-600">
+        Unable to load purchase history.
+      </p>
+    );
+  }
+  const yearlyDifference = budget.currentYearTotalExpense - budget.previousYearTotalExpense;
+
+  const yearlyComparison = yearlyDifference > 0 ? "more" : yearlyDifference < 0 ? "less" : "equal";
+  const hasMonthlyBudget = budget.currentMonthBudget > 0;
+  const spendingPercent = hasMonthlyBudget
+    ? Math.round((budget.currentMonthExpense / budget.currentMonthBudget) * 100)
+    : 0;
+
+  const progressWidth = Math.min(Math.max(spendingPercent, 0), 100);
+  const isOverBudget = spendingPercent > 100;
 
   return (
     <main className="w-full flex flex-col gap-4 sm:gap-7.5 md:gap-10 pt-6 sm:pt-7.5 md:pt-15 pb-20">
@@ -47,21 +76,18 @@ export default function OrderHistoryTempPage() {
         />
       </div>
 
-      {/* This month budget three boxes */}
       <div className="grid w-full grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 md:gap-7.5">
         <div className="min-w-0 flex flex-col gap-5 md:gap-2 p-5 md:py-7.5 md:pl-7.5 md:pr-10 rounded bg-primary-50 min-h-[156px]">
           <div className="flex flex-col gap-2.5">
             <h2 className="text-base font-bold text-left sm:text-[18px]/[22px] text-primary-950 ">
               Current Month Budget
             </h2>
-            {/* TODO - add this mo budget amt data */}
-            <p className="text-lg sm:text-2xl text-left font-extrabold ">$2222{}</p>
+            <p className="text-lg sm:text-2xl text-left font-extrabold ">{formatCurrency(budget.currentMonthBudget)}</p>
           </div>
-          {/* TODO - replace */}
+
           <p className="text-sm sm:text-base text-primary-600 ">
-            Last month&apos;s budget <br />
-            was
-            {}.
+            Last month&apos;s budget was <br />
+            {formatCurrency(budget.previousMonthBudget)}.
           </p>
         </div>
 
@@ -70,41 +96,51 @@ export default function OrderHistoryTempPage() {
             <h2 className="text-base font-bold text-left sm:text-[18px]/[22px] text-primary-950 ">
               Current Month Spending
             </h2>
-            {/* TODO :replace the below with actual data */}
-            <p className="text-lg sm:text-2xl text-left font-extrabold ">$1,444</p>
+            <p className="text-lg sm:text-2xl text-left font-extrabold ">
+              {formatCurrency(budget.currentMonthExpense)}
+            </p>
           </div>
-          {/* TODO add spent amount */}
-          <p className="text-sm sm:text-base text-primary-600 ">Last Month:{}</p>
-          {/* TODO ADD a progress bar base + current bar*/}
-          {/* <div className="flex w-full items-center gap-1 sm:gap-2.5">
+          <p className="text-sm sm:text-base text-primary-600 ">
+            Last Month: {formatCurrency(budget.previousMonthExpense)}
+          </p>
+          <div className="flex w-full items-center gap-1 sm:gap-2.5">
             <div
               role="progressbar"
-              aria-valuenow={barPercent}
               aria-valuemin={0}
               aria-valuemax={100}
-              aria-valuetext={`${spendingPercent}% of monthly budget spent`}
+              aria-valuenow={progressWidth}
+              aria-valuetext={hasMonthlyBudget ? `${spendingPercent}% of monthly budget spent` : "No monthly budget"}
               className="h-1.5 flex-1 overflow-hidden rounded-md bg-primary-200"
             >
               <div
-                className={`h-full rounded-md ${spendingPercent > 100 ? "bg-red-500" : "bg-secondary-500"}`}
-                style={{ width: `${barPercent}%` }}
+                className={`h-full rounded-md ${isOverBudget ? "bg-red-500" : "bg-secondary-500"}`}
+                style={{ width: `${progressWidth}%` }}
               />
             </div>
 
-            <span className="shrink-0 text-sm text-primary-800">{spendingPercent}%</span>
-          </div> */}
+            <span className="shrink-0 text-sm text-primary-800">
+              {hasMonthlyBudget ? `${spendingPercent}%` : "No budget"}
+            </span>
+          </div>
         </div>
 
-        <div className="col-span-2 min-w-0 sm:col-span-1 min-h-[156px] flex flex-col justify-center p-5 md:py-7.5 md:pl-7.5 md:pr-10 rounded bg-primary-50">
+        <div className="col-span-2 min-w-0 sm:col-span-1 min-h-[156px] flex flex-col justify-between p-5 md:py-7.5 md:pl-7.5 md:pr-10 rounded bg-primary-50">
           <div className="flex flex-col gap-2.5">
             <h2 className="text-base font-bold text-left sm:text-[18px]/[22px] text-primary-950">
               Total Spending This Year
             </h2>
-            {/* TODO :replace the below with actual data */}
-            <p className="text-lg sm:text-2xl text-left font-extrabold ">$1,444</p>
+
+            <p className="text-lg sm:text-2xl text-left font-extrabold ">
+              {formatCurrency(budget.currentYearTotalExpense)}
+            </p>
           </div>
-          {/* TODO - calculate {} and conditional to say more than / less than */}
-          <p className="text-sm sm:text-base text-primary-600 ">You spent {} more than / less than last year.</p>
+          {yearlyComparison === "equal" ? (
+            <p className="text-sm sm:text-base text-primary-600">You spent the same as last year.</p>
+          ) : (
+            <p className="text-sm sm:text-base text-primary-600">
+              You spent {formatCurrency(Math.abs(yearlyDifference))} {yearlyComparison} than last year.
+            </p>
+          )}
         </div>
       </div>
 
