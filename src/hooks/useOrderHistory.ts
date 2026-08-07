@@ -1,182 +1,23 @@
-import { useState, useEffect, useCallback } from "react";
-import { useBudgets } from "@/hooks/useBudgets";
-import { useAdminOrders } from "@/hooks/useAdminOrders";
-import { formatDate } from "@/lib/utils/formatDate.util";
-import { formatCurrency } from "@/lib/utils/currency.util";
+import type { TOrderSort } from "@/types/order.types";
+import { useBudgets } from "./useBudgets";
+import { useAdminOrders } from "./useAdminOrders";
 
-export type TPurchaseItem = {
-  id: string;
-  requestDate: string;
-  requester: string;
-  status?: "PENDING" | "APPROVED" | "REJECTED" | "CANCELED" | "INSTANT_APPROVED";
-  item: string;
-  amount: string;
-  amountInCents: number | null;
-  approvalDate: string;
-  manager: string;
-  adminMessage?: string;
-  totalQuantity?: number;
-  productName?: string;
+type TUseOrderHistoryParams = {
+  offset: number;
+  limit: number;
+  orderBy: TOrderSort;
 };
+export const useOrderHistory = ({ offset, limit, orderBy }: TUseOrderHistoryParams) => {
+  const ordersQuery = useAdminOrders({
+    status: "approved",
+    offset,
+    limit,
+    orderBy,
+  });
 
-export const useOrderHistory = (sortByDefault: string = "latest", itemsPerPage: number = 4) => {
-  const [sortBy, setSortBy] = useState<string>(sortByDefault);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-
-  // Fetch budget data.
-  const { data: budgetData, isLoading: budgetLoading, isError: budgetIsError, error: budgetErrorObj } = useBudgets();
-  const budgetError = budgetIsError ? (budgetErrorObj as Error)?.message || "Failed to load budget data." : null;
-
-  // Fetch approved purchase history and cache the full dataset client-side.
-  const {
-    data: approvedData,
-    isLoading: approvedLoading,
-    isError: approvedIsError,
-    error: approvedErrorObj,
-  } = useAdminOrders({ status: "approved", offset: 0, limit: 100, orderBy: "latest" });
-
-  const purchaseListLoading = approvedLoading;
-  const purchaseListError = approvedIsError ? (approvedErrorObj as Error)?.message : null;
-
-  type TOrderStatus = "PENDING" | "APPROVED" | "REJECTED" | "CANCELED" | "INSTANT_APPROVED";
-
-  type TOrderItem = {
-    id: number | string;
-    requestDate?: string;
-    createdAt?: string;
-    requesterName?: string;
-    requester?: string;
-    status?: TOrderStatus;
-    productName?: string;
-    itemSummary?: string;
-    item?: string;
-    deliveryFee?: number;
-    productsPriceTotal?: number;
-    amount?: number;
-    approvalDate?: string;
-    updatedAt?: string;
-    approver?: string;
-    managerName?: string;
-    manager?: string;
-    adminMessage?: string;
-    products?: Array<{ quantity: number }>;
-  };
-
-  const parse = (item: TOrderItem): TPurchaseItem => {
-    const amountInCents =
-      typeof item.productsPriceTotal === "number" && typeof item.deliveryFee === "number"
-        ? item.productsPriceTotal + item.deliveryFee
-        : null;
-    return {
-      id: String(item.id),
-      requestDate: item.requestDate ? formatDate(item.requestDate) : item.createdAt ? formatDate(item.createdAt) : "-",
-      requester: item.requesterName || item.requester || "-",
-      status: item.status,
-      item: item.productName || item.itemSummary || item.item || "-",
-      approvalDate: item.approvalDate
-        ? formatDate(item.approvalDate)
-        : item.updatedAt
-          ? formatDate(item.updatedAt)
-          : "-",
-      manager: item.approver || item.managerName || item.manager || "-",
-      adminMessage: item.adminMessage,
-      totalQuantity: item.products?.reduce((sum, product) => sum + product.quantity, 0) || 0,
-      productName: item.productName,
-      amountInCents,
-      amount: amountInCents !== null ? formatCurrency(amountInCents) : "-",
-    };
-  };
-
-  // Parse all items into the UI-facing shape.
-  const allPurchaseItems: TPurchaseItem[] = ((approvedData as { orders?: TOrderItem[] })?.orders || []).map(
-    (item: TOrderItem) => parse(item),
-  );
-
-  // Handle sorting on the client.
-  const sortedItems = useCallback(() => {
-    const items = [...allPurchaseItems];
-
-    switch (sortBy) {
-      case "latest":
-        return items.sort((a, b) => {
-          const dateA = new Date(a.approvalDate).getTime();
-          const dateB = new Date(b.approvalDate).getTime();
-          return dateB - dateA; // Latest first, based on approval date.
-        });
-      case "priceLow":
-        return items.sort((a, b) => {
-          const priceA = a.amountInCents ?? 0;
-          const priceB = b.amountInCents ?? 0;
-          return priceA - priceB; // Lowest price first.
-        });
-      case "priceHigh":
-        return items.sort((a, b) => {
-          const priceA = a.amountInCents ?? 0;
-          const priceB = b.amountInCents ?? 0;
-          return priceB - priceA; // Highest price first.
-        });
-      default:
-        return items;
-    }
-  }, [allPurchaseItems, sortBy]);
-
-  const sortedPurchaseItems = sortedItems();
-
-  // Handle pagination on the client.
-  const totalCount = sortedPurchaseItems.length;
-  const totalPages = Math.ceil(totalCount / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentItems: TPurchaseItem[] = sortedPurchaseItems.slice(startIndex, startIndex + itemsPerPage);
-
-  // Reset to page 1 whenever the sort order changes.
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [sortBy]);
-
-  const handlePageChange = useCallback(
-    (page: number) => {
-      if (page > 0 && page <= totalPages) {
-        setCurrentPage(page);
-      }
-    },
-    [totalPages],
-  );
-
-  // Close the dropdown when clicking outside of it.
-  useEffect(() => {
-    if (!dropdownOpen) return;
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (!target.closest(".custom-sort-dropdown")) {
-        setDropdownOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [dropdownOpen]);
-
-  // Currency formatting helper
-  const formatNumber = (num: number | undefined) => (typeof num === "number" ? formatCurrency(num) : "-");
-
+  const budgetQuery = useBudgets();
   return {
-    // Budget state
-    budgetData,
-    budgetLoading,
-    budgetError,
-    // Purchase history state
-    purchaseListLoading,
-    purchaseListError,
-    currentItems,
-    totalPages,
-    currentPage,
-    handlePageChange,
-    // Sorting state
-    sortBy,
-    setSortBy,
-    dropdownOpen,
-    setDropdownOpen,
-    // Helpers
-    formatNumber,
+    ordersQuery,
+    budgetQuery,
   };
 };
