@@ -56,7 +56,13 @@ export default function ProductRegistrationForm({ onSubmitSuccess, onClose }: TP
                   <div className="relative w-[30px] h-[30px]">
                     <Image src={photoIcon} fill alt="Photo upload" className="object-contain" />
                   </div>
-                  <input id="imageUpload" type="file" accept="image/*" onChange={onImageChange} className="hidden" />
+                  <input
+                    id="imageUpload"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/avif"
+                    onChange={onImageChange}
+                    className="hidden"
+                  />
                 </label>
               ) : (
                 <>
@@ -75,6 +81,8 @@ export default function ProductRegistrationForm({ onSubmitSuccess, onClose }: TP
                 </>
               )}
             </div>
+            <div className="mt-2 text-xs text-primary-500 text-center">JPG, PNG, WEBP, or AVIF · Max 5 MB</div>
+
             {imageFileError && <div className="mt-2 text-sm text-red-500 text-center">{imageFileError}</div>}
           </div>
           <form onSubmit={onSubmit} className="w-full flex flex-col gap-[20px] sm:gap-[32px]">
