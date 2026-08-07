@@ -3,7 +3,7 @@ export const getStatusText = (status: string): string => {
   const statusMap: Record<string, string> = {
     PENDING: "Pending",
     APPROVED: "Approved",
-    INSTANT_APPROVED: "Instant Approved",
+    INSTANT_APPROVED: "Auto-approved",
     REJECTED: "Rejected",
     CANCELED: "Canceled",
   };
@@ -21,4 +21,4 @@ export const formatDate = (dateString: string | undefined | null): string => {
     console.error("Date formatting error:", error);
     return "-";
   }
-}; 
+};
