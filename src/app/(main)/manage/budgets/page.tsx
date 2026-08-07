@@ -4,12 +4,14 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getBudgets, patchBudgets } from "@/lib/api/budgets.api";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { patchBudgets } from "@/lib/api/budgets.api";
 import { queryKeys } from "@/lib/queryKeys";
 import BudgetFormUI from "./_components/BudgetFormUI";
 import DogSpinner from "@/components/common/DogSpinner";
 import { centsToDollars, dollarsToCents } from "@/lib/utils/currency.util";
+import { useAuth } from "@/providers/AuthProvider";
+import { useBudgets } from "@/hooks/useBudgets";
 
 const dollarAmountSchema = z.string().refine((value) => value === "" || /^\d+(\.\d{1,2})?$/.test(value), {
   message: "Enter a valid CAD amount with no more than two decimal places.",
@@ -22,20 +24,14 @@ const budgetSchema = z.object({
 
 type BudgetInputs = z.infer<typeof budgetSchema>;
 
-interface BudgetResponse {
-  currentMonthBudget?: number;
-  monthlyBudget?: number;
-}
-
 function ManageBudgetsPage() {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const companyId = user?.company.id;
   const [showSubmitSpinner, setShowSubmitSpinner] = useState(false);
 
   // Fetch the saved budgets.
-  const { data, isLoading: isQueryLoading } = useQuery<BudgetResponse>({
-    queryKey: queryKeys.budgets.all,
-    queryFn: getBudgets,
-  });
+  const { data, isLoading: isQueryLoading } = useBudgets();
 
   // Configure the budget form.
   const {
@@ -69,11 +65,16 @@ function ManageBudgetsPage() {
     isPending: isMutating,
     isSuccess,
   } = useMutation({
-    mutationFn: (formData: BudgetInputs) =>
-      patchBudgets({
+    mutationFn: (formData: BudgetInputs) => {
+      if (companyId === undefined) {
+        throw new Error("Company ID is required to update budgets.");
+      }
+
+      return patchBudgets(companyId, {
         currentMonthBudget: dollarsToCents(formData.currentMonthBudget ?? 0),
         monthlyBudget: dollarsToCents(formData.nextMonthBudget ?? 0),
-      }),
+      });
+    },
     onMutate: () => {
       setShowSubmitSpinner(true);
     },
@@ -93,7 +94,7 @@ function ManageBudgetsPage() {
   };
 
   // Show a spinner while loading the initial budget data.
-  if (isQueryLoading) {
+  if (companyId === undefined || isQueryLoading) {
     return (
       <div className="flex flex-1 flex-col justify-center items-center" role="main">
         <DogSpinner />

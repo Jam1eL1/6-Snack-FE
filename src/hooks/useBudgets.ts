@@ -9,6 +9,13 @@ export const useBudgets = () => {
 
   return useQuery({
     queryKey: queryKeys.budgets.company(companyId),
-    queryFn: () => getBudgets(),
+    queryFn: () => {
+      if (companyId === undefined) {
+        throw new Error("Company ID is required to retrieve budgets.");
+      }
+
+      return getBudgets(companyId);
+    },
+    enabled: companyId !== undefined,
   });
 };
