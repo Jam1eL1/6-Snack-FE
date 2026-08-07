@@ -74,12 +74,9 @@ export default function MyFavoritesPage() {
 
   return (
     <section className="flex justify-center">
-      <div className="flex flex-col w-full max-w-[1200px]">
-        <h2 className="pt-[10px] pb-[20px] md:mt-[80px] font-bold text-[18px]/[22px] tracking-tight text-primary-950">
-          My Favorites
-        </h2>
-        <div className="mx-[-24px] outline-1 outline-[#e6e6e6] md:mx-0"></div>
-        <figure className="pt-[20px] sm:pt-[30px]">
+      <div className="flex flex-col gap-4 sm:gap-7.5 md:gap-10 pt-6 sm:pt-7.5 md:pt-15 pb-20">
+        <h2 className="font-bold text-[18px]/[22px] tracking-tight text-primary-950">My Favorites</h2>
+        <figure>
           <ProductGrid products={products} />
         </figure>
         {hasNextPage && (

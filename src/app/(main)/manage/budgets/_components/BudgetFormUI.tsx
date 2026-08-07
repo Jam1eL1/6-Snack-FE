@@ -55,7 +55,7 @@ const BudgetFormUI: React.FC<BudgetFormUIProps> = ({
               <div className="self-stretch flex flex-col justify-start items-start gap-2">
                 <h1
                   id="budget-management-heading"
-                  className="self-stretch text-lg font-bold text-primary-950 md:text-2xl"
+                  className="self-stretch text-lg font-bold text-primary-950 sm:text-2xl"
                 >
                   Budget Management
                 </h1>

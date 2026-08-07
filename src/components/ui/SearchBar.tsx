@@ -56,7 +56,7 @@ export default function SearchBar({ placeholder = "Search by name", initialValue
       <input
         type="text"
         placeholder={placeholder.trim()}
-        className="flex bg-transparent outline-none text-base md:text-lg text-primary-900 font-normal font-suit placeholder-primary-400 placeholder:truncate"
+        className="min-w-0 flex-1 flex bg-transparent outline-none text-base md:text-lg text-primary-900 font-normal font-suit placeholder-primary-400 placeholder:truncate"
         value={searchText}
         onChange={handleChange}
         onKeyDown={handleKeyDown}

@@ -57,12 +57,12 @@ export default function MyProductsPage() {
   }
 
   return (
-    <div>
-      <div className="flex justify-between items-center pt-[10px] pb-[20px] md:mt-[80px] md:pt-0 md:pb-[40px]">
+    <main className="w-full flex flex-col gap-4 sm:gap-7.5 md:gap-10 pt-6 sm:pt-7.5 md:pt-15 pb-20">
+      <header className="flex justify-between items-center w-full">
         <h1 className="font-bold text-[18px]/[22px] tracking-tight text-primary-950">My Listings</h1>
         <Dropdown onChange={handleSort} options={["Newest", "Price: Low", "Price: High"]} />
-      </div>
-      <div className="mx-[-24px] outline-1 outline-[#e6e6e6] md:hidden"></div>
+      </header>
+      {/* <div className="mx-[-24px] outline-1 outline-[#e6e6e6] md:hidden"></div> */}
       {isPending ? (
         <div className="flex justify-center items-center h-[80vh] md:h-[60vh]">
           <DogSpinner />
@@ -77,23 +77,23 @@ export default function MyProductsPage() {
         />
       ) : (
         <>
-          <Desktop>
-            <aside className="flex justify-center w-full">
-              <div className="flex justify-start items-center w-full h-[60px] px-[40px] py-[20px] gap-[80px] border-y-[1px] border-[#e6e6e6]">
-                <p className="ml-[60px] w-[260px] font-bold text-[16px]/[20px] tracking-tight text-primary-500">
-                  Product
-                </p>
-                <p className="w-[180px] font-bold text-[16px]/[20px] tracking-tight text-primary-500">Date added</p>
-                <p className="w-[180px] font-bold text-[16px]/[20px] tracking-tight text-primary-500">Category</p>
-                <p className="w-[160px] font-bold text-[16px]/[20px] tracking-tight text-primary-500">Price</p>
-                <p className="w-[112px] font-bold text-[16px]/[20px] tracking-tight text-primary-500">Product link</p>
-              </div>
-            </aside>
-          </Desktop>
-          <section className="flex flex-col gap-[10px] my-[20px] sm:mb-[30px] md:mt-0">
+          <section className="w-full flex flex-col gap-[10px] sm:mb-[30px] md:mt-0">
             <p className="font-bold text-[14px]/[17px] tracking-tight text-primary-950 sm:text-[16px]/[20px] md:hidden">
               {products.meta.totalCount} products added
             </p>
+            <Desktop>
+              <aside className="flex justify-center w-full">
+                <div className="flex justify-start items-center w-full h-[60px] px-[40px] py-[20px] gap-[80px] border-y-[1px] border-[#e6e6e6]">
+                  <p className="ml-[60px] w-[260px] font-bold text-[16px]/[20px] tracking-tight text-primary-500">
+                    Product
+                  </p>
+                  <p className="w-[180px] font-bold text-[16px]/[20px] tracking-tight text-primary-500">Date added</p>
+                  <p className="w-[180px] font-bold text-[16px]/[20px] tracking-tight text-primary-500">Category</p>
+                  <p className="w-[160px] font-bold text-[16px]/[20px] tracking-tight text-primary-500">Price</p>
+                  <p className="w-[112px] font-bold text-[16px]/[20px] tracking-tight text-primary-500">Product link</p>
+                </div>
+              </aside>
+            </Desktop>
             <ProductList products={products} />
           </section>
           <Pagination
@@ -103,6 +103,6 @@ export default function MyProductsPage() {
           />
         </>
       )}
-    </div>
+    </main>
   );
 }

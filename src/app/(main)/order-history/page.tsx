@@ -62,10 +62,8 @@ export default function OrderHistoryPage() {
 
   return (
     <main className="w-full flex flex-col gap-4 sm:gap-7.5 md:gap-10 pt-6 sm:pt-7.5 md:pt-15 pb-20">
-      <div className="flex justify-between w-full">
-        <header className="flex items-center justify-between">
-          <h1 className="text-[18px]/[22px] font-bold text-primary-950">Purchase History</h1>
-        </header>
+      <header className="flex justify-between items-center w-full">
+        <h1 className="text-[18px]/[22px] font-bold text-primary-950">Purchase History</h1>
         <Dropdown
           placeholder="Sort"
           options={Object.keys(SORT_MAP)}
@@ -74,7 +72,7 @@ export default function OrderHistoryPage() {
             setCurrentPage(1);
           }}
         />
-      </div>
+      </header>
 
       <div className="grid w-full grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 md:gap-7.5">
         <div className="min-w-0 flex flex-col gap-5 md:gap-2 p-5 md:py-7.5 md:pl-7.5 md:pr-10 rounded bg-primary-50 min-h-[156px]">

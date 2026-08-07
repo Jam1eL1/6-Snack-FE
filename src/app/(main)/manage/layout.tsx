@@ -25,7 +25,7 @@ export default function ManagePageLayout({ children }: { children: React.ReactNo
           />
         </div>
       </div>
-      <div className="flex md:pt-[80px] gap-16">
+      <div className="flex gap-16 pt-6 sm:pt-7.5 md:pt-15 pb-20">
         <Desktop>
           <div className="flex flex-col gap-1">
             <Menu

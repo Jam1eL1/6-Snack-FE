@@ -128,9 +128,9 @@ export default function User() {
   }, [membersError, setFlash]);
 
   return (
-    <main aria-label="Member Management Page">
-      <header className="flex justify-between items-center sm:mt-15 md:mt-[21px]">
-        <h1 className="mt-[20px] pb-3 self-stretch text-lg font-bold sm:mt-0 sm:text-2xl">Member Management</h1>
+    <main className="w-full" aria-label="Member Management Page">
+      <header className="flex justify-between items-center">
+        <h1 className="self-center text-lg font-bold sm:text-2xl">Member Management</h1>
         <Button
           type="black"
           label="Invite Member"
@@ -153,11 +153,15 @@ export default function User() {
           role="table"
           aria-label="Member list table header"
         >
-          <div className="px-14 flex justify-start items-center mr-2" role="columnheader" aria-label="Name column">
+          <div
+            className="min-w-0 px-14 flex justify-start items-center mr-2"
+            role="columnheader"
+            aria-label="Name column"
+          >
             <div className="justify-center text-primary-500 text-base font-bold">Name</div>
           </div>
           <div
-            className="flex-1 justify-center text-primary-500 text-base font-bold"
+            className="min-w-0 flex-1 justify-center text-primary-500 text-base font-bold"
             role="columnheader"
             aria-label="Email column"
           >

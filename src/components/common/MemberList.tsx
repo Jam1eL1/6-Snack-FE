@@ -15,20 +15,21 @@ export default function MemberList({ id, name, email, role, onClickDeleteUser, o
   return (
     <>
       {/* Mobile layout */}
-      <div className="sm:hidden w-full py-4 border-b border-[#e6e6e6] flex justify-between gap-3 hover:bg-primary-25 transition-colors">
-        <div className="flex gap-3">
-          <div className="w-12 h-12 bg-primary-50 rounded-full flex justify-center items-center text-black text-sm font-medium ">
+      <div className="sm:hidden min-w-0 w-full py-4 border-b border-[#e6e6e6] flex justify-between gap-3 hover:bg-primary-25 transition-colors">
+        <div className="flex gap-3 flex-1 min-w-0">
+          <div className="shrink-0 w-12 h-12 bg-primary-50 rounded-full flex justify-center items-center text-black text-sm font-medium ">
             {name.slice(0, 1).toUpperCase()}
           </div>
-          <div className="flex flex-col justify-between">
+          <div className="flex flex-col justify-between min-w-0">
             <div className="flex items-center gap-2">
               <div className="text-primary-950 text-base font-bold truncate">{name}</div>
               <Badge type={role === "ADMIN" ? "admin" : "user"} />
             </div>
-            <div className="text-primary-950 text-base truncate">{email}</div>
+            <div className="min-w-0 text-primary-950 text-base truncate">{email}</div>
           </div>
         </div>
         <MenuDropdown
+          className="shrink-0"
           menuType="member"
           onEdit={() => {
             openModal(

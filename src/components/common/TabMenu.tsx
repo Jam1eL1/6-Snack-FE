@@ -10,7 +10,7 @@ type TTabMenuProps = {
 
 export default function TabMenu({ isUserTabActive = false, onUserTabClick, onBudgetTabClick }: TTabMenuProps) {
   return (
-    <div className="w-full  inline-flex justify-start items-start">
+    <div className="w-full  inline-flex min-w-0 justify-start items-start">
       {/* Member management tab */}
       <div
         className={`flex min-w-0 flex-1 cursor-pointer items-center justify-center gap-1 px-1 py-3 sm:gap-2 sm:px-4 ${
@@ -20,11 +20,11 @@ export default function TabMenu({ isUserTabActive = false, onUserTabClick, onBud
       >
         <UserIconSvg isActive={isUserTabActive} className="h-5 w-5 shrink-0 sm:h-6 sm:w-6" />
         <div
-          className={`min-w-0 whitespace-nowrap text-center text-[13px]/[16px] tracking-tight sm:text-base/[20px] ${
+          className={`min-w-0 text-center text-[13px]/[16px] tracking-tight sm:text-base/[20px] ${
             isUserTabActive ? "text-primary-950 font-bold" : "text-primary-500"
           }`}
         >
-          Member Management
+          Members
         </div>
       </div>
 
@@ -37,11 +37,11 @@ export default function TabMenu({ isUserTabActive = false, onUserTabClick, onBud
       >
         <BudgetIconSvg isActive={!isUserTabActive} className="h-5 w-5 shrink-0 sm:h-6 sm:w-6" />
         <div
-          className={`min-w-0 whitespace-nowrap text-center text-[13px]/[16px] tracking-tight sm:text-base/[20px] ${
+          className={`min-w-0 text-center text-[13px]/[16px] tracking-tight sm:text-base/[20px] ${
             !isUserTabActive ? "text-primary-950 font-bold" : "text-primary-500"
           }`}
         >
-          Budget Management
+          Budgets
         </div>
       </div>
     </div>

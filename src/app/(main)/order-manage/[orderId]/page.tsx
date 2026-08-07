@@ -112,7 +112,7 @@ export default function OrderManageDetailPage() {
   return (
     <div className="min-h-screen bg-white">
       <main
-        className="w-full max-w-[1200px] mx-auto pt-[30px] md:pt-[60px] flex flex-col justify-start items-start gap-[30px]"
+        className="w-full mx-auto flex flex-col justify-start items-start gap-4 sm:gap-7.5 md:gap-10 pt-6 sm:pt-7.5 md:pt-15 pb-20"
         role="main"
       >
         <header>
@@ -326,29 +326,29 @@ export default function OrderManageDetailPage() {
             </div>
           </div>
         </section>
+        <section
+          className="flex w-full gap-4 sm:gap-7.5 md:gap-10 justify-center"
+          role="region"
+          aria-label="Order request action buttons"
+        >
+          <Button
+            type="white"
+            label={updateOrderMutation.isPending ? "Processing..." : "Reject"}
+            className="w-full h-16 disabled:cursor-not-allowed md:max-w-[300px]"
+            onClick={handleReject}
+            disabled={updateOrderMutation.isPending || isProcessingByAnotherAdmin}
+            aria-label={updateOrderMutation.isPending ? "Processing" : "Reject"}
+          />
+          <Button
+            type="primary"
+            label={isPaymentPending || isProcessingByAnotherAdmin ? "Processing..." : "Approve"}
+            className="w-full h-16 disabled:cursor-not-allowed md:max-w-[300px]"
+            onClick={handleApprove}
+            disabled={isPaymentPending || isProcessingByAnotherAdmin}
+            aria-label={isPaymentPending || isProcessingByAnotherAdmin ? "Processing" : "Approve"}
+          />
+        </section>
       </main>
-      <section
-        className="flex w-full justify-center gap-4 sm:gap-5 py-6 md:py-0 mt-[20px] md:mt-[70px] md:items-center"
-        role="region"
-        aria-label="Order request action buttons"
-      >
-        <Button
-          type="white"
-          label={updateOrderMutation.isPending ? "Processing..." : "Reject Request"}
-          className="w-full h-16 disabled:cursor-not-allowed md:max-w-[300px]"
-          onClick={handleReject}
-          disabled={updateOrderMutation.isPending || isProcessingByAnotherAdmin}
-          aria-label={updateOrderMutation.isPending ? "Processing" : "Reject purchase request"}
-        />
-        <Button
-          type="primary"
-          label={isPaymentPending || isProcessingByAnotherAdmin ? "Processing..." : "Approve Request"}
-          className="w-full h-16 disabled:cursor-not-allowed md:max-w-[300px]"
-          onClick={handleApprove}
-          disabled={isPaymentPending || isProcessingByAnotherAdmin}
-          aria-label={isPaymentPending || isProcessingByAnotherAdmin ? "Processing" : "Approve purchase request"}
-        />
-      </section>
     </div>
   );
 }

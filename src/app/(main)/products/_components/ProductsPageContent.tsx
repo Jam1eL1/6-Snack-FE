@@ -91,7 +91,7 @@ export default function ProductsPageContent() {
 
   return (
     <main
-      className="w-full flex items-start justify-center sm:gap-5 md:gap-10 md:mt-[80px]"
+      className="w-full flex items-start justify-center sm:gap-5 md:gap-10 pt-6 sm:pt-7.5 md:pt-15"
       role="main"
       aria-label="Product catalog"
     >

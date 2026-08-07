@@ -95,8 +95,8 @@ export default function Order() {
   }
 
   return (
-    <section className="relative w-full" role="region" aria-label="Order management">
-      <header className="flex w-full items-center justify-between gap-3 pt-[10px] pb-[20px] md:pt-0 md:pb-[40px]">
+    <>
+      <header className="flex w-full items-center justify-between gap-3">
         <h1 className="text-[18px]/[22px] font-bold text-primary-950">Manage Requests</h1>
         <div role="group" aria-label="Sort options">
           <Dropdown
@@ -106,8 +106,7 @@ export default function Order() {
           />
         </div>
       </header>
-
-      <div className="flex flex-col" role="main" aria-live="polite" aria-busy={isLoading}>
+      <div className="flex flex-col" aria-live="polite" aria-busy={isLoading}>
         {isLoading ? (
           <div className="flex justify-center items-center py-12" role="status" aria-label="Loading">
             <DogSpinner />
@@ -120,32 +119,16 @@ export default function Order() {
               onClickReject={async (orderSummary) => {
                 const fullOrder = await getPendingOrderDetail(orderSummary.id);
                 openModal(
-                  <OrderManageModal
-                    order={fullOrder}
-                    type="reject"
-                    onUpdateOrderStatus={updateOrderStatusMutation}
-                  />,
+                  <OrderManageModal order={fullOrder} type="reject" onUpdateOrderStatus={updateOrderStatusMutation} />,
                 );
               }}
               onClickApprove={async (orderSummary) => {
                 const fullOrder = await getPendingOrderDetail(orderSummary.id);
                 openModal(
-                  <OrderManageModal
-                    order={fullOrder}
-                    type="approve"
-                    onUpdateOrderStatus={updateOrderStatusMutation}
-                  />,
+                  <OrderManageModal order={fullOrder} type="approve" onUpdateOrderStatus={updateOrderStatusMutation} />,
                 );
               }}
             />
-            <nav className="mt-[20px] sm:mt-10" role="navigation" aria-label="Page navigation">
-              <Pagination
-                className="mt-[20px] sm:mt-10"
-                currentPage={currentPaginationPage}
-                totalPages={totalPages}
-                onPageChange={setCurrentPaginationPage}
-              />
-            </nav>
           </>
         ) : (
           <section className="flex flex-1 justify-center min-h-screen" role="status" aria-label="Empty state">
@@ -175,6 +158,16 @@ export default function Order() {
           </section>
         )}
       </div>
-    </section>
+      {orderRequests.length > 0 ? (
+        <nav aria-label="Page navigation">
+          <Pagination
+            className=""
+            currentPage={currentPaginationPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPaginationPage}
+          />
+        </nav>
+      ) : null}
+    </>
   );
 }

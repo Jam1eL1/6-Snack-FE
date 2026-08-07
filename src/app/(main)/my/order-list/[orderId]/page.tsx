@@ -176,8 +176,8 @@ export default function MyOrderDetailPage() {
         <style dangerouslySetInnerHTML={{ __html: criticalCSS }} />
       </Head>
       <div className="min-h-screen bg-white">
-        <div className="w-full max-w-7xl mx-auto pt-[30px] flex flex-col justify-start items-start gap-[23px]">
-          <div className="self-stretch justify-center text-primary-950 text-lg font-bold">Purchase Request History</div>
+        <main className="w-full max-w-7xl mx-auto flex flex-col justify-start items-start gap-4 sm:gap-7.5 md:gap-10 pt-6 sm:pt-7.5 md:pt-15 pb-20">
+          <h1 className="self-stretch  text-primary-950 text-lg font-bold">Purchase Request History</h1>
 
           <Suspense
             fallback={<div className="w-full h-32 bg-primary-100 rounded" style={{ minHeight: "128px" }}></div>}
@@ -219,7 +219,7 @@ export default function MyOrderDetailPage() {
             onReorderToCart={handleReorderToCart}
             isReorderingToCart={reorderToCartMutation.isPending}
           />
-        </div>
+        </main>
       </div>
     </>
   );
