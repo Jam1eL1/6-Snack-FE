@@ -77,7 +77,7 @@ export default function MyProductsPage() {
         />
       ) : (
         <>
-          <section className="w-full flex flex-col gap-[10px] sm:mb-[30px] md:mt-0">
+          <section className="w-full flex flex-col sm:mb-[30px] md:mt-0">
             <p className="font-bold text-[14px]/[17px] tracking-tight text-primary-950 sm:text-[16px]/[20px] md:hidden">
               {products.meta.totalCount} products added
             </p>
