@@ -5,7 +5,7 @@ import TextArea from "@/components/common/TextArea";
 import OrderItem from "./OrderItem";
 import Button from "@/components/ui/Button";
 import ArrowIconSvg from "@/components/svg/ArrowIconSvg";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCartItems } from "@/lib/api/cart.api";
 import { TGetCartItemsParams, TGetCartItemsResponse } from "@/types/cart.types";
 import { useRouter } from "next/navigation";
@@ -35,7 +35,7 @@ export default function OrderPageContent({ cartItemId }: TOrderPageContentProps)
     queryKey: queryKeys.cartItems.order(cartItemId),
     queryFn: () => getCartItems(params),
   });
-
+  const queryClient = useQueryClient();
   // Submit the purchase request
   const { mutate: orderRequest } = useMutation<
     TCreateOrderData,
@@ -43,7 +43,12 @@ export default function OrderPageContent({ cartItemId }: TOrderPageContentProps)
     { requestMessage?: string; cartItemIds: number[] }
   >({
     mutationFn: ({ requestMessage, cartItemIds }) => createOrder({ requestMessage, cartItemIds }),
-    onSuccess: (order) => router.push(`/cart/order-confirmed/${order.id}`),
+    onSuccess: (order) => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.cartItems.all,
+      });
+      router.push(`/cart/order-confirmed/${order.id}`);
+    },
     onError: () => setIsDisabled(true),
   });
 

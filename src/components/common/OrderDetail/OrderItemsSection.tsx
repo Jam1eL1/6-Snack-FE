@@ -49,13 +49,14 @@ export default function OrderItemsSection({
           className="inline-flex justify-start items-start gap-1.5 cursor-pointer"
           onClick={() => setIsItemsExpanded(!isItemsExpanded)}
         >
-          <div className="justify-center text-primary-950 text-base font-bold">
-            {title}
+          <div className="justify-center text-primary-950 text-base font-bold">{title}</div>
+          <div className="justify-center <text-primary-950 text-base font-normal">
+            {items.length} {items.length <= 1 ? "item total" : "items total"}
           </div>
-          <div className="justify-center text-primary-950 text-base font-normal">
-            {items.length} items
-          </div>
-          <ArrowIconSvg direction={isItemsExpanded ? "up" : "down"} className="w-5 h-5 text-primary-950 relative z-[110]" />
+          <ArrowIconSvg
+            direction={isItemsExpanded ? "up" : "down"}
+            className="w-5 h-5 text-primary-950 relative z-[110]"
+          />
         </div>
 
         {isItemsExpanded && (
@@ -80,7 +81,7 @@ export default function OrderItemsSection({
                         </div>
                       )}
                     </div>
-                    <div className="flex-1 inline-flex flex-col items-start gap-2 sm:justify-start sm:inline-flex sm:flex-col sm:justify-start sm:items-start sm:gap-3">
+                    <div className="flex-1 inline-flex flex-col items-start gap-2 sm:justify-start sm:inline-flex sm:flex-col sm:items-start sm:gap-3">
                       <div className="flex flex-col justify-center items-start gap-1 sm:justify-start sm:gap-2.5">
                         <div className="text-center justify-center text-primary-950 text-sm sm:text-base font-medium">
                           {item.productName}
@@ -89,7 +90,7 @@ export default function OrderItemsSection({
                           {formatCurrency(item.price)}
                         </div>
                       </div>
-                      <div className="flex justify-between items-center w-full sm:justify-start sm:flex sm:justify-start">
+                      <div className="flex justify-between items-center w-full sm:flex sm:justify-start">
                         <div className="justify-center text-primary-500 text-[13px] sm:text-base font-bold">
                           Quantity {item.quantity}
                         </div>
@@ -125,9 +126,7 @@ export default function OrderItemsSection({
                 </div>
               </div>
               <div className="flex justify-between items-center">
-                <div className="text-center justify-center text-primary-950 text-lg sm:text-lg font-bold">
-                  Total
-                </div>
+                <div className="text-center justify-center text-primary-950 text-lg sm:text-lg font-bold">Total</div>
                 <div className="text-center justify-center text-primary-950 text-lg sm:text-2xl font-bold sm:font-extrabold">
                   {formatCurrency(finalTotal)}
                 </div>
@@ -138,4 +137,4 @@ export default function OrderItemsSection({
       </div>
     </div>
   );
-} 
+}

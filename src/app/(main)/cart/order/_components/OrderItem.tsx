@@ -12,13 +12,13 @@ type TOrderItemProps = {
 
 export default function OrderItem({ isPending, cartItems }: TOrderItemProps) {
   const totalPrice = cartItems?.cart.reduce((total, item) => total + item.product.price * item.quantity, 0);
-
+  const itemCount = cartItems?.cart.length ?? 0;
   return (
     <>
       <div className="flex justify-start items-center gap-[6px] mt-[40px] sm:mt-[80px] sm:mb-[20px]">
         <p className="font-bold text-[16px]/[20px] tracking-tight text-primary-950">Requested Items</p>
         <p className="font-normal text-[16px]/[20px] tracking-tight text-primary-950">
-          Total {cartItems?.cart.length ?? 0} items
+          Total {itemCount} {itemCount <= 1 ? "item" : "items"}
         </p>
       </div>
 

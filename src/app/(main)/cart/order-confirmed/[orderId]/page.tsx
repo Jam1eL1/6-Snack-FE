@@ -13,51 +13,51 @@ import { formatCurrency } from "@/lib/utils/currency.util";
 import DogSpinner from "@/components/common/DogSpinner";
 
 // Memoized product item component
-const ProductItem = React.memo(({ receipt }: { receipt: { price: number; quantity: number; imageUrl: string; productName: string } }) => {
-  const totalPrice = useMemo(() => receipt.price * receipt.quantity, [receipt.price, receipt.quantity]);
-  
-  return (
-    <div
-      className="self-stretch border-b border-primary-200 inline-flex justify-between items-center pb-[8px] sm:py-5 sm:pr-5"
-    >
-      <div className="flex gap-5 flex-1 sm:flex sm:justify-start sm:items-center sm:gap-5">
-        <div className="relative w-[72px] sm:w-[140px] h-[72px] sm:h-[140px] bg-primary-50 rounded-xs sm:bg-white flex justify-center items-center flex-shrink-0">
-          <div className="relative w-[75%] h-[75%]">
-            <Image
-              src={receipt.imageUrl}
-              alt={`${receipt.productName} product image`}
-              fill
-              className="object-contain"
-            />
-          </div>
-        </div>
-        <div className="flex-1 inline-flex flex-col items-start gap-2 sm:justify-start sm:inline-flex sm:flex-col sm:justify-start sm:items-start sm:gap-7">
-          <div className="flex flex-col justify-center items-start gap-1 sm:justify-start sm:gap-2.5">
-            <div className="text-center justify-center text-primary-950 text-sm sm:text-base font-medium">
-              {receipt.productName}
-            </div>
-            <div className="justify-start text-primary-950 text-sm sm:text-base font-bold">
-              {formatCurrency(receipt.price)}
-            </div>
-          </div>
-          <div className="flex justify-between items-center w-full sm:justify-start sm:flex sm:justify-start">
-            <div className="justify-center text-primary-500 text-[13px] sm:text-base font-bold">
-              Quantity {receipt.quantity}
-            </div>
-            <div className="text-center justify-center text-primary-700 text-base font-bold sm:hidden">
-              {formatCurrency(totalPrice)}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="hidden sm:block text-center justify-center text-primary-700 text-[20px] font-extrabold">
-        {formatCurrency(totalPrice)}
-      </div>
-    </div>
-  );
-});
+const ProductItem = React.memo(
+  ({ receipt }: { receipt: { price: number; quantity: number; imageUrl: string; productName: string } }) => {
+    const totalPrice = useMemo(() => receipt.price * receipt.quantity, [receipt.price, receipt.quantity]);
 
-ProductItem.displayName = 'ProductItem';
+    return (
+      <div className="self-stretch border-b border-primary-200 inline-flex justify-between items-center pb-[8px] sm:py-5 sm:pr-5">
+        <div className="flex gap-5 flex-1 sm:flex sm:justify-start sm:items-center sm:gap-5">
+          <div className="relative w-[72px] sm:w-[140px] h-[72px] sm:h-[140px] bg-primary-50 rounded-xs sm:bg-white flex justify-center items-center flex-shrink-0">
+            <div className="relative w-[75%] h-[75%]">
+              <Image
+                src={receipt.imageUrl}
+                alt={`${receipt.productName} product image`}
+                fill
+                className="object-contain"
+              />
+            </div>
+          </div>
+          <div className="flex-1 inline-flex flex-col items-start gap-2 sm:justify-start sm:inline-flex sm:flex-col sm:justify-start sm:items-start sm:gap-7">
+            <div className="flex flex-col justify-center items-start gap-1 sm:justify-start sm:gap-2.5">
+              <div className="text-center justify-center text-primary-950 text-sm sm:text-base font-medium">
+                {receipt.productName}
+              </div>
+              <div className="justify-start text-primary-950 text-sm sm:text-base font-bold">
+                {formatCurrency(receipt.price)}
+              </div>
+            </div>
+            <div className="flex justify-between items-center w-full sm:flex sm:justify-start">
+              <div className="justify-center text-primary-500 text-[13px] sm:text-base font-bold">
+                Quantity {receipt.quantity}
+              </div>
+              <div className="text-center justify-center text-primary-700 text-base font-bold sm:hidden">
+                {formatCurrency(totalPrice)}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="hidden sm:block text-center justify-center text-primary-700 text-[20px] font-extrabold">
+          {formatCurrency(totalPrice)}
+        </div>
+      </div>
+    );
+  },
+);
+
+ProductItem.displayName = "ProductItem";
 
 // Loading state
 const LoadingComponent = () => (
@@ -79,7 +79,7 @@ export default function OrderConfirmedPage() {
   const router = useRouter();
   const params = useParams();
   const { user } = useAuth();
-  
+
   // Read the Order ID from the URL
   const orderId = params.orderId as string;
 
@@ -100,10 +100,10 @@ export default function OrderConfirmedPage() {
   }, [router]);
 
   // Memoized totals
-  const shippingFee = useMemo(() => orderData ? orderData.deliveryFee : 0, [orderData]);
-  const totalAmount = useMemo(() => 
-    orderData ? orderData.productsPriceTotal + shippingFee : 0, 
-    [orderData, shippingFee]
+  const shippingFee = useMemo(() => (orderData ? orderData.deliveryFee : 0), [orderData]);
+  const totalAmount = useMemo(
+    () => (orderData ? orderData.productsPriceTotal + shippingFee : 0),
+    [orderData, shippingFee],
   );
 
   // Memoized page title
@@ -124,15 +124,11 @@ export default function OrderConfirmedPage() {
     if (user?.role === "USER") {
       return (
         <>
-          <div className="justify-center text-zinc-400 text-base sm:text-lg md:text-lg font-bold">
-            1. Shopping Cart
-          </div>
+          <div className="justify-center text-zinc-400 text-base sm:text-lg md:text-lg font-bold">1. Shopping Cart</div>
           <div className="hidden sm:block">
             <ArrowIconSvg direction="right" className="w-6 h-6 text-zinc-400 cursor-default" />
           </div>
-          <div className="justify-center text-zinc-400 text-base sm:text-lg md:text-lg font-bold">
-            2. Order
-          </div>
+          <div className="justify-center text-zinc-400 text-base sm:text-lg md:text-lg font-bold">2. Order</div>
           <div className="hidden sm:block">
             <ArrowIconSvg direction="right" className="w-6 h-6 text-zinc-400 cursor-default" />
           </div>
@@ -144,9 +140,7 @@ export default function OrderConfirmedPage() {
     } else {
       return (
         <>
-          <div className="justify-center text-zinc-400 text-base sm:text-lg md:text-lg font-bold">
-            1. Shopping Cart
-          </div>
+          <div className="justify-center text-zinc-400 text-base sm:text-lg md:text-lg font-bold">1. Shopping Cart</div>
           <div className="hidden sm:block">
             <ArrowIconSvg direction="right" className="w-6 h-6 text-zinc-400 cursor-default" />
           </div>
@@ -166,17 +160,9 @@ export default function OrderConfirmedPage() {
   // Memoized page content
   const mainContent = useMemo(() => {
     if (!orderData) return null;
-    
+
     return (
-      <div
-        className={clsx(
-          "min-h-screen",
-          "bg-white",
-          "text-primary-950",
-          "flex",
-          "flex-col",
-        )}
-      >
+      <div className={clsx("min-h-screen", "bg-white", "text-primary-950", "flex", "flex-col")}>
         <main
           className={clsx(
             "flex-1",
@@ -216,7 +202,7 @@ export default function OrderConfirmedPage() {
               <div className="inline-flex justify-start items-start gap-1.5">
                 <div className="justify-center text-primary-950 text-base font-bold">Requested Items</div>
                 <div className="justify-center text-primary-950 text-base font-normal">
-                  {orderData.receipts.length} items total
+                  {orderData.receipts.length} {orderData.receipts.length <= 1 ? "item" : "items"}
                 </div>
               </div>
 
@@ -261,9 +247,7 @@ export default function OrderConfirmedPage() {
 
           {/* Request message */}
           <div className="self-stretch flex flex-col justify-start items-start gap-5">
-            <div className="self-stretch justify-center text-primary-800 text-base font-bold">
-              Request Message
-            </div>
+            <div className="self-stretch justify-center text-primary-800 text-base font-bold">Request Message</div>
             <div className="self-stretch h-40 p-6 bg-white rounded-sm outline-1 outline-offset-[-1px] outline-primary-300 inline-flex justify-start items-start gap-2 overflow-hidden">
               <div className="justify-center text-primary-400 text-base font-normal leading-relaxed">
                 {orderData.requestMessage || "No request message was provided."}
@@ -290,7 +274,16 @@ export default function OrderConfirmedPage() {
         </main>
       </div>
     );
-  }, [orderData, progressSteps, completionMessage, shippingFee, totalAmount, handleBackToCart, handleViewOrderHistory, buttonText]);
+  }, [
+    orderData,
+    progressSteps,
+    completionMessage,
+    shippingFee,
+    totalAmount,
+    handleBackToCart,
+    handleViewOrderHistory,
+    buttonText,
+  ]);
 
   if (isLoading) {
     return (

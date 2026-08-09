@@ -131,7 +131,7 @@ export default function QuantityDropdown({ value, onClick: updateQuantity, type 
         <div
           ref={dropdownRef}
           className={`
-        absolute h-[80px] top-[40px] left-0 w-full z-10
+        absolute h-[160px] top-[40px] left-0 w-full z-10
         bg-white overflow-auto overflow-x-hidden shadow-[0_0_10px_0_rgba(0,0,0,0.1)] scrollbar-hide cursor-pointer
         ${type === "product" ? "border-l border-r border-b border-primary-200 rounded-none" : ""}
       `}

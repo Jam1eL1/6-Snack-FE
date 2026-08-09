@@ -114,7 +114,13 @@ export default function ProductRegistrationForm({ onSubmitSuccess, onClose }: TP
               <FormInput name="price" type="text" inputMode="decimal" placeholder="0.00" label="Price (CAD)" />
             </div>
             <div className="w-full">
-              <FormInput name="productLink" type="text" placeholder="Enter product URL" label="Product URL" />
+              <FormInput
+                name="productLink"
+                type="text"
+                placeholder="Enter product URL"
+                label="Product URL"
+                toLowerCase={true}
+              />
             </div>
           </form>
         </div>

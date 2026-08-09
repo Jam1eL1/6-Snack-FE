@@ -12,6 +12,7 @@ type TFormInputProps = {
   inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
   className?: string;
   containerClassName?: string;
+  toLowerCase?: boolean;
 };
 
 export default function FormInput({
@@ -22,6 +23,7 @@ export default function FormInput({
   inputMode,
   className,
   containerClassName,
+  toLowerCase = false,
 }: TFormInputProps) {
   const {
     register,
@@ -59,7 +61,13 @@ export default function FormInput({
 
         {/* Input */}
         <input
-          {...register(name)}
+          {...register(name, {
+            onChange: (e) => {
+              if (toLowerCase) {
+                e.target.value = e.target.value.toLowerCase();
+              }
+            },
+          })}
           id={name}
           type={type}
           inputMode={inputMode}
