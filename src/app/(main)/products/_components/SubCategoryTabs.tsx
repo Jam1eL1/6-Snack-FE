@@ -10,7 +10,7 @@ export default function SubCategoryTabs() {
 
   // Dim the tabs when the selected parent category has no child categories.
   return (
-    <div className="max-w-full border-b border-primary-100 inline-flex justify-start items-center gap-2 sm:hidden category-tabs-scroll -mx-6 px-6">
+    <div className="w-[calc(100%+3rem)] border-b border-primary-100 flex justify-start items-center gap-2 sm:hidden category-tabs-scroll -mx-6 px-6">
       {childrenCategories.map((child) => (
         <button
           key={child.id}
