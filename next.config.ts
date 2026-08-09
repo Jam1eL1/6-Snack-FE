@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "snack-s3-production.s3.us-west-2.amazonaws.com",
+        hostname: "dz2vogxllkvqq.cloudfront.net",
         pathname: "/products/**",
       },
     ],
