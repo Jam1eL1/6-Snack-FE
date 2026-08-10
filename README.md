@@ -1,313 +1,262 @@
-# Snack(스낵) - 원스톱 구매 내역 관리 서비스
-<img width="1107" height="380" alt="스크린샷 2025-08-18 130003" src="https://github.com/user-attachments/assets/1b33e7da-435f-47bd-bb99-1a0faf7e91b3" />
+# 🍪 Snack — One-Stop Workplace Purchase Management
 
+Snack is a responsive workplace purchasing platform that combines product requests, approvals, budgets, payments, and purchase records in one workflow. Teams can register products from different online stores, submit requests, control company spending, and review purchase history.
 
+## 🔄 How Snack Works
 
-## 📑 프로젝트 소개
-- 간식 대장
-    
-    > <mark>**Snack**</mark>은 쿠팡, 네이버 쇼핑 등 다양한 온라인 플랫폼에서 이루어진 간식 구매 내역을 통합 관리할 수 있는 **원스톱 솔루션**입니다.  
-    구매처와 상관없이, 간식 품목, 수량, 금액 등의 정보를 **일괄적으로 등록 및 관리**할 수 있어,  
-    산발적으로 흩어진 데이터를 체계적으로 정리할 수 있습니다.  
-    또한, 비용 분석 리포트, 기간별 통계, 품목별 정렬 등의 기능을 통해 기업은 간식 운영에 대한 인사이트를 확보하고,  
-    **불필요한 지출을 줄이며 합리적인 소비 패턴을 도출**할 수 있습니다.  
-    **복잡한 총무 업무를 줄이고, 기업 복지 운영의 효율성을 극대화**하는 도구, 바로 <mark>**Snack**</mark>입니다.
+Snack uses three roles: **Super Admin**, **Admin**, and **User**.
 
-### 📗 팀 문서 
-- [Notion 링크 바로가기](https://www.notion.so/3-Snack-2156e9d243fd81cd90e7e05503fe930b)  
+The person responsible for company purchasing—such as a procurement manager, office manager, or team lead—creates the company account as the **Super Admin**. They manage the company’s members, roles, and purchasing budget.
 
-### 🔧 백엔드 Git 저장소  
-- [GitHub Repository 보러가기](https://github.com/De-cal/6-Snack-BE)
+Employee accounts are invite-only. The Super Admin invites coworkers to join Snack and assigns each person one of these roles:
 
-### 🧾 API 명세서
-- [Swagger API 보러가기](https://api.5nack.site/api-docs)
+- **User:** Browses products and submits purchase requests.
+- **Admin:** Has all User permissions, plus the ability to review purchase requests and manage completed orders.
 
+This role system gives each member the tools they need for their responsibilities.
 
-
-## 🖼️ Snack(스낵) 미리보기
-<table align="center">
-  <thead>
-    <tr>
-      <th align="center">AI 챗봇 도우미</th>
-      <th align="center">결제 모듈</th>
-      <th align="center">모바일 구매 내역 확인</th>
-      <th align="center">상품 상세와 담기</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td align="center"><img src="https://github.com/user-attachments/assets/42bd0632-4e3a-404f-aeb8-02576ac02d07" width="180" alt="AI 챗봇 도우미"></td>
-      <td align="center"><img src="https://github.com/user-attachments/assets/ca2a3cff-ddc5-40ed-bd96-a933744eb2b0" width="180" alt="결제 모듈"></td>
-      <td align="center"><img src="https://github.com/user-attachments/assets/4f56bb40-c95a-4c10-8a95-7831355372c0" width="180" alt="모바일 구매 내역 확인"></td>
-      <td align="center"><img src="https://github.com/user-attachments/assets/ff45a00e-e42c-4d7f-8355-fb326ed719ef" width="180" alt="상품 상세와 담기"></td>
-    </tr>
-  </tbody>
-    
-  <thead>
-    <tr>
-      <th align="center">스낵 예산 관리</th>
-      <th align="center">찜하기 해제 기능</th>
-      <th align="center">카테고리 정렬 둘러보기</th>
-      <th align="center">회원 관리 모바일</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td align="center"><img src="https://github.com/user-attachments/assets/25c63f64-8f8e-492b-bf48-f8e5f6f826d6" width="180" alt="스낵 예산 관리"></td>
-      <td align="center"><img src="https://github.com/user-attachments/assets/2c8a665c-2956-4273-bd68-a146ff3c645f" width="180" alt="찜하기 해제 기능"></td>
-      <td align="center"><img src="https://github.com/user-attachments/assets/efec779a-5d3b-41fd-8158-f50b9826c240" width="180" alt="카테고리 정렬 둘러보기"></td>
-      <td align="center"><img src="https://github.com/user-attachments/assets/4f5850e2-051d-4383-9143-3852a7f71174" width="180" alt="회원 관리 모바일"></td>
-    </tr>
-  </tbody>
-</table>
-
-
-
-
-
-
-
-## 📱 기능 구현 영상
-
-<div align="center">
-    
-  [![Snack 시연 영상](https://img.youtube.com/vi/57Z76QTaeqA/hqdefault.jpg)](https://www.youtube.com/watch?v=57Z76QTaeqA)
-</div>
-
-
-
-## 🚧 프론트엔드 시스템 아키텍쳐
-<p align="center">
- <img width="455" height="511" alt="image" src="https://github.com/user-attachments/assets/d58f6d2e-bdbf-4898-b77f-5c302d460c31" />
-</p>
-
-
-
-## ⚙️ 기술 스택
+> **Explore each workflow 👇** Click a section below to view its feature GIF and a short explanation.
 
 <details>
-  <summary><h3>FE 기술 스택 한눈에 보기</h3></summary>
-  
-<img width="1076" height="565" alt="image" src="https://github.com/user-attachments/assets/46b1ca37-3e59-40b0-9d0f-4281a6dbd813" />
+  <summary><strong>🔐 Account setup and sign-in</strong></summary>
 
+  <br />
 
-  
+|                                                           Super Admin signup and sign-in                                                            |                                                           Invited member signup and sign-in                                                            |
+| :-------------------------------------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------: |
+| <img width="250" alt="Super Admin signup and sign-in flow" src="https://github.com/user-attachments/assets/29dedca7-0b4a-47c6-b362-867a6b283d44" /> | <img width="250" alt="Invited member signup and sign-in flow" src="https://github.com/user-attachments/assets/c3756c39-5731-4a70-8fae-1d49f756d4a5" /> |
+|                        A Super Admin creates the company account and becomes responsible for its members, roles, and budget.                        |                      Employees join through an email invitation and finish setting up their account through a unique signup link.                      |
+
+Existing Users, Admins, and Super Admins use the same sign-in page.
+
 </details>
 
-### 📌 프레임워크 & 언어
-[![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+---
 
-### 🎨 UI & 스타일링
-[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
-[![tailwind-merge](https://img.shields.io/badge/tailwind--merge-0F172A?style=for-the-badge)](https://tailwind-merge.vercel.app/)
-
-### 📊 상태 & 데이터 관리
-[![React Query](https://img.shields.io/badge/React%20Query-FF4154?style=for-the-badge&logo=reactquery&logoColor=white)](https://tanstack.com/query)
-[![Zustand](https://img.shields.io/badge/Zustand-443E38?style=for-the-badge&logo=zustand&logoColor=white)](https://zustand-demo.pmnd.rs/)
-[![Zod](https://img.shields.io/badge/Zod-3E67B1?style=for-the-badge&logo=zod&logoColor=white)](https://zod.dev/)
-[![React Hook Form](https://img.shields.io/badge/React%20Hook%20Form-EC5990?style=for-the-badge&logo=reacthookform&logoColor=white)](https://react-hook-form.com/)
-
-### 🛠 개발 도구
-[![ESLint](https://img.shields.io/badge/ESLint-4B32C3?style=for-the-badge&logo=eslint&logoColor=white)](https://eslint.org/)
-[![Prettier](https://img.shields.io/badge/Prettier-F7B93E?style=for-the-badge&logo=prettier&logoColor=black)](https://prettier.io/)
-
-### 🔧 유틸리티
-[![clsx](https://img.shields.io/badge/clsx-000000?style=for-the-badge)](https://github.com/lukeed/clsx)
-[![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white)](https://openai.com/)
-[![TossPayments](https://img.shields.io/badge/Toss%20Payments-0064FF?style=for-the-badge)](https://developers.tosspayments.com/)
-
-### 🚀 배포 & 협업 도구
-[![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com/)
-[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/)
-[![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/)
-[![Notion](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white)](https://notion.so/)
-
-
-## 👨‍👩‍👧‍👦 팀원 소개
-<table align="center">
-  <tbody>
-    <tr>
-      <th>팀장</th>
-      <th>부팀장</th>
-      <th>팀원</th>
-      <th>팀원</th>
-      <th>팀원</th>
-      <th>팀원</th>
-    </tr>
-    <tr>
-      <td align="center">
-        <a href="https://github.com/De-cal">
-          <img src="https://avatars.githubusercontent.com/u/194280696?v=4" width="100px" alt="이태빈 GitHub"/>
-          <br />
-          <sub><b>이태빈</b></sub>
-        </a>
-      </td>
-      <td align="center">
-        <a href="https://github.com/Jam1eL1">
-          <img src="https://avatars.githubusercontent.com/u/53666518?v=4" width="100px" alt="이지수 GitHub"/>
-          <br />
-          <sub><b>이지수</b></sub>
-        </a>
-      </td>
-      <td align="center">
-        <a href="https://github.com/wooju01">
-          <img src="https://github.com/wooju01.png?size=100" width="100px" alt="김우주 GitHub"/>
-          <br />
-          <sub><b>김우주</b></sub>
-        </a>
-      </td>
-      <td align="center">
-        <a href="https://github.com/rakaso598">
-          <img src="https://avatars.githubusercontent.com/u/112613372?v=4" width="100px" alt="김홍 GitHub"/>
-          <br />
-          <sub><b>김홍섭</b></sub>
-        </a>
-      </td>
-      <td align="center">
-        <a href="https://github.com/xdnjs7">
-          <img src="https://github.com/xdnjs7.png?size=100" width="100px" alt="장원빈 GitHub"/>
-          <br />
-          <sub><b>장원빈</b></sub>
-        </a>
-      </td>
-      <td align="center">
-        <a href="https://github.com/JJOBO">
-          <img src="https://avatars.githubusercontent.com/u/194863819?v=4" width="100px" alt="조성빈 GitHub"/>
-          <br />
-          <sub><b>조성빈</b></sub>
-        </a>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-## 🏗️ 프로젝트 구조
 <details>
-  <summary><h3>프로젝트 구조 보기</h3></summary>
+  <summary><strong>👤 User: Find products and request a purchase</strong></summary>
 
+  <br />
+
+|                                                                       Browse and request products                                                                        |                                                                    Register and manage listings                                                                    |                                                                       Save favorites                                                                        |                                                                         Review requests                                                                         |
+| :----------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| <img width="210" alt="User browsing products and submitting a purchase request" src="https://github.com/user-attachments/assets/2124aef6-40a3-4332-84e5-e483873ed2fe" /> | <img width="210" alt="User registering a product and viewing My Listings" src="https://github.com/user-attachments/assets/954da944-3c32-4593-9b49-1ba86b9aea8e" /> | <img width="210" alt="User liking a product and viewing Favorites" src="https://github.com/user-attachments/assets/184666be-250f-440f-ba71-c1b639478159" /> | <img width="210" alt="User reviewing and canceling a purchase request" src="https://github.com/user-attachments/assets/0780c93a-c76d-4b17-acb3-79aef96bf2be" /> |
+|                                                  Browse products, add items to the cart, and submit a purchase request.                                                  |                                                        Register products and view them in **My Listings**.                                                         |                                                     Like products and find them later in **Favorites**.                                                     |                                                      Review or cancel submitted requests in **My Orders**.                                                      |
+
+</details>
+
+---
+
+<details>
+  <summary><strong>🛡️ Admin: Review and complete orders</strong></summary>
+
+  <br />
+
+|                                                                    Review purchase requests                                                                     |                                                                   Process payments                                                                   |                                                                  Review order history                                                                   |
+| :-------------------------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------: |
+| <img width="250" alt="Admin reviewing and approving purchase requests" src="https://github.com/user-attachments/assets/26b292d2-3ed0-4f48-9c53-859302d6b400" /> | <img width="250" alt="Admin completing a simulated payment" src="https://github.com/user-attachments/assets/f49582b9-a0e1-4617-bd1b-274d30824c8e" /> | <img width="250" alt="Admin reviewing completed order history" src="https://github.com/user-attachments/assets/d9be9069-3774-4a53-8ff1-e6a272f11a9e" /> |
+|                                                 Approve or reject team purchase requests in **Manage Orders**.                                                  |                                           Complete approved orders through the simulated payment workflow.                                           |                                                Review completed company purchases in **Order History**.                                                 |
+
+> **Note:** Purchase requests submitted by an Admin are approved automatically.
+
+</details>
+
+---
+
+<details>
+  <summary><strong>👑 Super Admin: Manage the company</strong></summary>
+
+  <br />
+
+|                                                                    Invite members                                                                     |                                                                    Remove members                                                                     |                                                                Change member roles                                                                 |                                                                Manage the company budget                                                                |
+| :---------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------: |
+| <img width="210" alt="Super Admin inviting a company member" src="https://github.com/user-attachments/assets/308e457e-2785-4d62-9ea4-89d6427e7196" /> | <img width="210" alt="Super Admin removing a company member" src="https://github.com/user-attachments/assets/b363779b-ef33-4e2c-8ad1-3a2534d3dcdd" /> | <img width="210" alt="Super Admin changing a member role" src="https://github.com/user-attachments/assets/64c36b60-3124-4a2d-a83d-f70383ef1b22" /> | <img width="210" alt="Super Admin managing the company budget" src="https://github.com/user-attachments/assets/e3827b83-0d4d-41f7-b860-a2c53d0d15cd" /> |
+|                                           Invite coworkers to join the company through **Administration**.                                            |                                                       Remove existing members from the company.                                                       |                                                     Assign members the `USER` or `ADMIN` role.                                                     |                                  Set current or upcoming budgets, track spending, and review previous budget periods.                                   |
+
+> **Note:** Super Admins have all Admin permissions. Snack is designed around one primary Super Admin per company, although this is not an enforced limit. Members can only be assigned the `USER` or `ADMIN` role.
+
+</details>
+
+## 🔗 Project Links
+
+| Resource                     | Link                                                        |
+| ---------------------------- | ----------------------------------------------------------- |
+| Live application             | [sn8ck.com](https://sn8ck.com)                              |
+| Frontend repository          | [Jam1eL1/6-Snack-FE](https://github.com/Jam1eL1/6-Snack-FE) |
+| Backend repository           | [Jam1eL1/6-Snack-BE](https://github.com/Jam1eL1/6-Snack-BE) |
+| Original frontend repository | [De-cal/6-Snack-FE](https://github.com/De-cal/6-Snack-FE)   |
+| Original backend repository  | [De-cal/6-Snack-BE](https://github.com/De-cal/6-Snack-BE)   |
+
+<details>
+  <summary><strong>About the original project</strong></summary>
+
+Our full-stack team originally built Snack in Korean. The current production version is translated into English and includes additional changes made after the team project.
+The [original Figma design](https://www.figma.com/design/c3Lo8L4eTWNHEazE9lDNTu/-%EC%8A%A4%ED%94%84%EB%A6%B0%ED%84%B0-%EA%B3%B5%EC%9C%A0%EC%9A%A9--SNACK_V2--Copy-?node-id=0-1&t=Yoj5wZj8yq7nTkwf-1) for this bootcamp project was provided by [Codeit](https://www.codeit.kr/), a coding education company based in South Korea.
+For a detailed record of those updates, see the closed pull requests for the [frontend](https://github.com/Jam1eL1/6-Snack-FE/pulls?q=is%3Apr+is%3Aclosed) and [backend](https://github.com/Jam1eL1/6-Snack-BE/pulls?q=is%3Apr+is%3Aclosed).
+
+</details>
+
+## 🏗️ System Architecture
+
+```text
+Browser
+  ├── sn8ck.com -> Next.js frontend on Vercel
+  ├── API request -> Cloudflare -> Express API on Amazon EC2
+  │                                   ├── PostgreSQL on Amazon RDS
+  │                                   └── Product uploads to Amazon S3
+  └── Product image request -> Amazon CloudFront -> Amazon S3
 ```
+
+The Next.js frontend sends REST requests with cookie-based JWT authentication to the Express backend. The backend follows a controller-service-repository structure: controllers handle HTTP requests, services run business logic, and repositories access PostgreSQL through Prisma. Product images are stored in Amazon S3 and delivered through Amazon CloudFront, which caches them at edge locations for faster loading.
+
+## 🛠️ Technology Stack
+
+- **Frontend:** Next.js, React, TypeScript, Tailwind CSS, TanStack Query, and Zustand
+- **Backend:** Node.js, Express, Prisma, PostgreSQL, and JWT authentication
+- **Infrastructure:** Vercel, Amazon EC2, Amazon RDS, Amazon S3, Amazon CloudFront, and Cloudflare
+
+## 📁 Project Structure
+
+### Frontend
+
+```text
 src/
-├── app/                 # 앱 엔트리포인트 및 주요 페이지 구조
-├── assets/              # 정적 자원 (이미지, 폰트 등)
-├── components/          # 공용 UI 컴포넌트
-├── hooks/               # 커스텀 훅 정의
-├── lib/                 # 외부 라이브러리 설정 및 유틸 함수
-├── providers/           # 전역 상태/컨텍스트 제공자
-├── stores/              # 상태 관리
-├── types/               # TypeScript 타입 정의
-├── instrumentation-client.ts # 클라이언트 측 계측 로직
-├── instrumentation.ts   # 서버/공용 계측 로직
-└── middleware.ts        # 서버 미들웨어 (인증, 로깅 등)
+├── app/          # Routes, layouts, and page-specific components
+├── assets/       # Icons, fonts, and static assets
+├── components/   # Shared UI and layout components
+├── hooks/        # Reusable React and data-fetching hooks
+├── lib/          # API clients, schemas, constants, and utilities
+├── providers/    # Application context providers
+├── stores/       # Client-side stores
+├── types/        # Shared TypeScript types
+└── proxy.ts      # Authentication-aware request proxy
 ```
 
-</details>
+### Backend
 
-## ✨ 주요 기능
-<details>
-<summary>1. 사내 간식 주문 플랫폼 </summary>
+```text
+src/
+├── config/        # Environment and database configuration
+├── constants/     # Shared server constants
+├── controllers/   # HTTP request handlers
+├── cron/          # Scheduled budget job
+├── dtos/          # Request and response data contracts
+├── middlewares/   # Authentication, validation, and error handling
+├── repositories/  # Database queries
+├── routes/        # REST route definitions
+├── services/      # Business workflows
+├── types/         # Shared server types
+└── utils/         # Cookies, tokens, dates, and S3 helpers
 
-- **상품 카테고리** : 카테고리별 간식 상품 조회  
-- **장바구니 시스템** : 상품 선택, 수량 조절, 주문 전 확인  
-- **주문 프로세스** : 결제 연동, 주문 상태 추적  
-</details>
+prisma/
+├── migrations/    # Database migrations
+├── mocks/         # Development seed records
+├── schema.prisma  # Relational data model
+└── seed.ts        # Destructive development seed script
+```
 
-<details>
-<summary>2. 예산 관리 시스템</summary>
-
-- **월별 예산 설정** : 관리자가 회사 예산 한도 설정  
-- **지출 현황 모니터링** : 실시간 예산 사용량 추적  
-- **예산 초과 알림** : 한도 초과 시 경고 시스템  
-</details>
-
-<details>
-<summary>3. 사용자 권한 관리</summary>
-
-- **역할 기반 접근 제어** : USER, ADMIN, SUPER_ADMIN 권한 체계  
-- **회원 초대 시스템** : 이메일 초대 링크 발송  
-- **회사별 사용자 그룹 관리**  
-</details>
+## 🚀 Development
 
 <details>
-<summary>4. 주문 관리 대시보드</summary>
+  <summary><strong>Local development</strong></summary>
 
-- **주문 현황 모니터링** : 전체 주문 상태 실시간 확인  
-- **승인 워크플로우** : 관리자 주문 승인/거절 프로세스  
-- **주문 이력 관리** : 과거 주문 내역 조회 및 분석  
-</details>
+### Requirements
 
-<details>
-<summary>5. 결제 시스템 연동</summary>
+- A supported Node.js version from the backend `engines` field
+- npm
+- PostgreSQL
+- AWS credentials with S3 access if testing product image uploads locally
 
-- **토스페이먼츠 연동** : 안전한 결제 처리  
-- **결제 성공/실패 처리** : 사용자 피드백 및 에러 핸들링  
-- **영수증 관리** : 주문 완료 후 상세 내역 제공  
+### Frontend
 
-</details>
+```bash
+git clone https://github.com/Jam1eL1/6-Snack-FE.git
+cd 6-Snack-FE
+npm install
+```
 
-<details>
-<summary>6. 개인 맞춤형 시스템</summary>
+Create `.env.local`:
 
-- **찜 기능** : 자주 주문하는 상품 즐겨찾기  
-- **판매 통계** : 주문량 기반 상품 표시
-</details>
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8080
+```
 
+Start the frontend:
 
-## 💣 트러블 슈팅
+```bash
+npm run dev
+```
 
-### 기획 의도 관련 문제
+The application runs at [http://localhost:3000](http://localhost:3000).
 
+### Backend
 
-<details>
-<summary>1.문제점 (Problem)<</summary>
+```bash
+git clone https://github.com/Jam1eL1/6-Snack-BE.git
+cd 6-Snack-BE
+npm install
+```
 
-이번 프로젝트에서 가장 크게 부딪힌 문제는 **기획 의도 문제**였습니다.
-<p align="center">
-  <img width="730" height="384" alt="image" src="https://github.com/user-attachments/assets/abd5713a-42b2-4052-975f-5c0008799a03" />
-</p>
-    
-- **구매 횟수 집계 오류**
-  - '코카콜라' 상품이 등록되어 총 29회 구매된 상태에서, 상품명을 '환타 오렌지'로 수정하면, 시스템에서는 '환타 오렌지'에 기존 구매 기록이 잘못 누적됩니다.
-  - 기존 '코카콜라'의 구매 이력은 사라지고, 다른 상품에 기존 구매 데이터가 섞이는 현상이 발생합니다.
+Create `.env` with the required local values:
 
-    <p align="center">
-    <img width="730" height="384" alt="image" src="https://github.com/user-attachments/assets/10651a22-61e6-420b-94c4-90a551d09565" />
-    </p>
-- **장바구니 동기화 문제**
-  - 사용자가 '자일리톨 껌'을 장바구니에 담아두었는데, 판매자가 상품명을 '단백질 바'로 수정하면 문제가 발생합니다.
-  - 장바구니에 담긴 상품과 실제 상품 정보가 달라지며, 사용자가 선택한 상품과 다른 결과를 확인하게 됩니다.
+```env
+DATABASE_URL=<postgresql-connection-string>
+PORT=8080
+ACCESS_TOKEN_SECRET=<secret>
+REFRESH_TOKEN_SECRET=<secret>
+JWT_EXPIRATION=<expiration>
+AWS_BUCKET_NAME=<bucket-name>
+SMTP_HOST=<smtp-host>
+SMTP_PORT=<smtp-port>
+SMTP_USER=<smtp-user>
+SMTP_PASS=<smtp-password>
+SMTP_FROM_NAME=<sender-name>
+SIGNUP_HOST=http://localhost:3000
+```
 
-</details>
+Prepare the database and start the API:
 
-<details>
-<summary>2.원인 (Cause) </summary>
+```bash
+npx prisma generate
+npx prisma migrate deploy
+npm run dev
+```
 
+The API runs at [http://localhost:8080](http://localhost:8080) with the configuration above.
 
-- 문제의 근본 원인은 **상품 수정 기능**이었습니다.
-- 초기에는 상품 정보 중 **가격만 수정 가능**하도록 제한하는 방안을 고려했습니다.
-- 그러나 플랫폼이 이미 존재하는 상품을 공유하는 구조였기 때문에, 사용자가 임의로 가격을 변경하는 방식은 **기획 의도와 맞지 않는 비자연스러운 로직**이었습니다.
-
-</details>
-
-<details>
-<summary>3. 해결 과정 (Solution)</summary>
-
-- 벤치마킹 대상으로 **AirSupply** 플랫폼을 참고했습니다.
-  - 해당 서비스는 상품 정보를 직접 수정하지 않고, **URL 입력 시 자동으로 상품 정보를 가져오는 구조**를 사용하고 있었습니다.
-- 저희도 같은 방식으로 기획을 재조정:
-  - **상품 수정 기능 제거**
-  - URL 기반 **자동 상품 등록 구조** 도입
-- 이를 통해 데이터 흐름을 명확하게 하고, **일관된 사용자 경험**을 확보했습니다.
+> The backend seed command deletes existing records before inserting mock data. Do not run it against a database you need to preserve.
 
 </details>
 
 <details>
-<summary>4. 결과 및 배운 점 (Result & Learnings)</summary>
-    
-- 실제 개발 과정에서 발생하는 **다양한 오류와 문제 상황을 해결하며 트러블슈팅 능력**을 키울 수 있었습니다.
-- 단순히 기능을 구현하는 개발자가 아니라, **실제 서비스 운영을 고려한 기획과 설계**의 중요성을 체감했습니다.
-- 이번 경험을 통해, 앞으로의 기능 설계에서도 **기획 의도와 기술 구현 간의 일관성**을 항상 점검해야 한다는 교훈을 얻었습니다.
+  <summary><strong>Available scripts</strong></summary>
 
+### Frontend scripts
+
+| Command         | Purpose                                              |
+| --------------- | ---------------------------------------------------- |
+| `npm run dev`   | Start the Next.js development server with Turbopack. |
+| `npm run build` | Create a production frontend build.                  |
+| `npm run start` | Run the production frontend build.                   |
+| `npm run lint`  | Run the configured frontend lint command.            |
+
+### Backend scripts
+
+| Command         | Purpose                                                |
+| --------------- | ------------------------------------------------------ |
+| `npm run dev`   | Start the API with automatic TypeScript reloads.       |
+| `npm run build` | Compile the backend into `dist/`.                      |
+| `npm run start` | Run the compiled API.                                  |
+| `npm run cron`  | Run the compiled monthly-budget job.                   |
+| `npm run seed`  | Delete existing database records and insert mock data. |
 
 </details>
+
+## 👥 Team
+
+- **Team Lead:** [De-cal](https://github.com/De-cal)
+- **Assistant Lead:** [Jam1eL1](https://github.com/Jam1eL1)
+- **Team Member:** [wooju01](https://github.com/wooju01)
+- **Team Member:** [rakaso598](https://github.com/rakaso598)
+- **Team Member:** [xdnjs7](https://github.com/xdnjs7)
+- **Team Member:** [JJOBO](https://github.com/JJOBO)
