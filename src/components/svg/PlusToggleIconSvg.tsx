@@ -3,10 +3,9 @@ import React from "react";
 type TPlusToggleIconSvgProps = {
   isOpen?: boolean;
   className?: string;
-  onClick?: () => void;
 };
 
-export default function PlusToggleIconSvg({ isOpen = false, className = "", onClick }: TPlusToggleIconSvgProps) {
+export default function PlusToggleIconSvg({ isOpen = false, className = "" }: TPlusToggleIconSvgProps) {
   return (
     <svg
       width="24"
@@ -15,7 +14,6 @@ export default function PlusToggleIconSvg({ isOpen = false, className = "", onCl
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={`cursor-pointer text-primary-950 ${className}`}
-      onClick={onClick}
     >
       {isOpen ? (
         // Open state: show only the horizontal line.

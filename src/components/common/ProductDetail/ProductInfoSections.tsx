@@ -8,14 +8,18 @@ export default function ProductInfoSections() {
 
   return (
     <div className="flex flex-col justify-center items-center w-full">
-      <InfoSection title="Purchase Benefits" isOpen={isBenefitOpen} onToggle={() => setIsBenefitOpen(!isBenefitOpen)}>
+      <InfoSection
+        title="Purchase Benefits"
+        isOpen={isBenefitOpen}
+        onToggle={() => setIsBenefitOpen((isOpen) => !isOpen)}
+      >
         Earn 5 points
       </InfoSection>
 
       <InfoSection
         title="Shipping Method"
         isOpen={isDeliveryMethodOpen}
-        onToggle={() => setIsDeliveryMethodOpen(!isDeliveryMethodOpen)}
+        onToggle={() => setIsDeliveryMethodOpen((isOpen) => !isOpen)}
       >
         Parcel delivery
       </InfoSection>
@@ -23,7 +27,7 @@ export default function ProductInfoSections() {
       <InfoSection
         title="Shipping Fee"
         isOpen={isDeliveryFeeOpen}
-        onToggle={() => setIsDeliveryFeeOpen(!isDeliveryFeeOpen)}
+        onToggle={() => setIsDeliveryFeeOpen((isOpen) => !isOpen)}
       >
         $5 flat-rate shipping.
       </InfoSection>
