@@ -1,4 +1,4 @@
-# 🍪 Snack — One-Stop Workplace Purchase Management
+# 🍪 [Snack — One-Stop Workplace Purchase Management](https://sn8ck.com) 
 
 Snack is a responsive workplace purchasing platform that combines product requests, approvals, budgets, payments, and purchase records in one workflow. Teams can register products from different online stores, submit requests, control company spending, and review purchase history.
 
